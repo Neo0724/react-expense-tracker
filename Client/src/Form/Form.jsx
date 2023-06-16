@@ -1,6 +1,6 @@
 import { useState } from "react"
-import DatePicker from "react-date-picker"
-import "react-datepicker/dist/react-datepicker.css"
+import ReactDatePicker from "react-datepicker"
+import "react-datepicker/dist/react-datepicker.css";
 
 export default function Form() {
     const [ data, setData ] = useState({
@@ -43,21 +43,18 @@ export default function Form() {
 
         }
     }
+
+    const handleDateChange = (date) => {
+        setData(prev => { 
+            return {...prev, date: date}
+        })
+    }
+
   return (
     <form action="POST" className="formContainer">
         <input type="text" className="titleInput" placeholder="Enter the title..." required value={data.title} onChange={(e) => handleChange(e, "title")}/>
         <input type="text" className="amountInput" placeholder="Enter the amount..." required value={data.amount} onChange={(e) => handleChange(e, "amount")}/>
-        <DatePicker 
-            id="date"
-            placeholder="Enter A Date"
-            selected={data.date}
-            onChange={(date) => {
-                setData(prev => {
-                    return {...prev, date: date}
-                })}
-            } 
-            dateFormat="dd/MM/yyyy"
-        />
+        <ReactDatePicker dateFormat="dd/MM/yyyy" selected={data.date} onChange={(date) => handleDateChange(date)} placeholderText="Select a date..."/>
         <select required value={data.category} onChange={(e) => handleChange(e, "category")}>
             <option value="" disabled>Select an option</option>
             <option value="salary" >Salary</option>
