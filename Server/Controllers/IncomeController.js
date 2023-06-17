@@ -1,15 +1,15 @@
 const IncomeSchema = require("../Models/IncomeSchema");
 
 const addIncome = async (req, res) => {
-  const { title, amount, type, date, category } = req.body;
+  const { title, amount, date, category, description } = req.body;
 
   try {
     const income = await IncomeSchema.create({
       title,
       amount,
-      type,
       date,
       category,
+      description
     });
 
     await income.save();
@@ -32,7 +32,6 @@ const getIncome = async (req, res) => {
 
 const deleteIncome = async (req,res) => {
     const { id } = req.params
-    console.log(id)
     try {
         await IncomeSchema.findByIdAndDelete(id)
 

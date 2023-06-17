@@ -1,12 +1,14 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import ReactDatePicker from "react-datepicker"
 import "react-datepicker/dist/react-datepicker.css";
+import axios from "axios";
+import { useGlobalContext } from "../Context/GlobalContextProvider";
 
-export default function Form() {
+export default function FormComponent({ type }) {
+    const { fetchIncome, fetchExpenses, BASE_URL} = useGlobalContext()
     const [ data, setData ] = useState({
         title: "",
         amount: "",
-        type: "income",
         date: "",
         category: "",
         description: ""
@@ -50,11 +52,24 @@ export default function Form() {
         })
     }
 
+    const handleSubmit = async (e) => {
+        e.preventDefault()
+        try {
+            type === "income" ? await axios.post(`${BASE_URL}/income/add-income`, {...data}) : await axios.post("http://localhost:3000/expense/add-expense", {...data})
+            alert("Success")
+            type === "income" ? fetchIncome() : fetchExpenses() 
+        } catch (err) {
+            console.log(err)
+        }
+
+
+    }
+
   return (
-    <form action="POST" className="formContainer">
+    <form action="POST" className="formContainer" onSubmit={(e) => handleSubmit(e)}>
         <input type="text" className="titleInput" placeholder="Enter the title..." required value={data.title} onChange={(e) => handleChange(e, "title")}/>
         <input type="text" className="amountInput" placeholder="Enter the amount..." required value={data.amount} onChange={(e) => handleChange(e, "amount")}/>
-        <ReactDatePicker dateFormat="dd/MM/yyyy" selected={data.date} onChange={(date) => handleDateChange(date)} placeholderText="Select a date..."/>
+        <ReactDatePicker className="dateInput" dateFormat="dd/MM/yyyy" selected={data.date} onChange={(date) => handleDateChange(date)} placeholderText="Select a date..." className="optionInput"/>
         <select required value={data.category} onChange={(e) => handleChange(e, "category")}>
             <option value="" disabled>Select an option</option>
             <option value="salary" >Salary</option>
@@ -65,6 +80,7 @@ export default function Form() {
             <option value="other" >Other</option>
         </select>
         <textarea cols="30" rows="6" className="descriptionInput" value={data.description} onChange={(e) => handleChange(e, "description")}></textarea>
+        <button className="submitBtn" type="submit">submit</button>
     </form>
   )
 }

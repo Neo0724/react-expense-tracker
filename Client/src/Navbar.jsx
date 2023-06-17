@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router'
 import { useCookies } from 'react-cookie'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import dashboardIcon from "/public/dashboard.png"
 import expenseIcon from "/public/expense.png"
 import profitIcon from "/public/profits.png"
@@ -13,9 +13,35 @@ export default function Navbar() {
 
     const navigate = useNavigate()
 
-    const [ navbar, setNavbar ] = useState(navbarItems)
+    const [ navbar, setNavbar ] = useState(() => {
+      const exist = localStorage.getItem("Navbar")
+      if (exist) {
+        return JSON.parse(exist)
+      } 
 
-    const handleSignOut = () => {
+      return navbarItems
+    })
+
+    useEffect(() => {
+      localStorage.setItem("Navbar", JSON.stringify(navbar))
+    }, [navbar])
+
+    const removeNavbarItem = async () => {
+      return new Promise((resolve, reject) => {
+        const defaultNavbar = navbar.map(item => {
+          return {...item, active: false}
+        })
+
+        setNavbar(defaultNavbar)
+
+        resolve(defaultNavbar)
+      })
+    }
+
+    const handleSignOut = async () => {
+        localStorage.removeItem("Navbar")
+        const defaultNavbar = await removeNavbarItem()
+        console.log(defaultNavbar)
         setCookies("access_token", "")
         localStorage.removeItem("User ID")
         navigate("/expenseTracker/login")

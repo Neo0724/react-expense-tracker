@@ -35,7 +35,7 @@ export const GlobalContextProvider = ({ children }) => {
     },[])
 
     return (
-        <GlobalContext.Provider value={{ expenses, income }}>
+        <GlobalContext.Provider value={{ expenses, income, setExpenses, setIncome, fetchExpenses, fetchIncome, BASE_URL }}>
             { children }
         </GlobalContext.Provider>
     )

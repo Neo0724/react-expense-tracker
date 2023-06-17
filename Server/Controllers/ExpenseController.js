@@ -1,15 +1,15 @@
 const ExpenseSchema = require("../Models/ExpenseSchema");
 
 const addExpense = async (req, res) => {
-  const { title, amount, type, date, category } = req.body;
+  const { title, amount, date, category, description } = req.body;
 
   try {
     const Expense = await ExpenseSchema.create({
       title,
       amount,
-      type,
       date,
       category,
+      description
     });
 
     await Expense.save();
@@ -32,7 +32,7 @@ const getExpense = async (req, res) => {
 
 const deleteExpense = async (req, res) => {
   const { id } = req.params;
-  console.log(id);
+  
   try {
     await ExpenseSchema.findByIdAndDelete(id);
 

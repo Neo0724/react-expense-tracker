@@ -1,36 +1,40 @@
 const mongoose = require("mongoose")
 
-const ExpenseSchema = mongoose.Schema({
+const ExpenseSchema = mongoose.Schema(
+  {
     title: {
-        type: String,
-        required: true,
-        trim: true,
-        maxLength: 50,
+      type: String,
+      required: true,
+      trim: true,
+      maxLength: 50,
     },
 
     amount: {
-        type: Number,
-        required: true,
-        maxLength: 20,
-        trim: true,
-    },
-
-    type: {
-        type: String,
-        default: "expense",
+      type: Number,
+      required: true,
+      maxLength: 20,
+      trim: true,
     },
 
     date: {
-        type: Date,
-        required: true,
-        trim: true,
+      type: Date,
+      required: true,
+      trim: true,
     },
 
     category: {
-        type: String,
-        required: true,
-        trim: true,
+      type: String,
+      required: true,
+      trim: true,
     },
-}, {timestamps: true});
+    
+    description: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+  },
+  { timestamps: true }
+);
 
 module.exports = mongoose.model("expense", ExpenseSchema)
