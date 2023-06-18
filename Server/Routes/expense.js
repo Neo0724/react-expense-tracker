@@ -7,7 +7,7 @@ const ExpenseRouter = express.Router()
 
 ExpenseRouter.post("/add-expense", addExpense)
 
-ExpenseRouter.get("/get-expense", getExpense)
+ExpenseRouter.get("/get-expense/:id", getExpense)
 
 ExpenseRouter.delete("/delete-expense/:id", deleteExpense)
 

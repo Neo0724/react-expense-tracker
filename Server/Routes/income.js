@@ -6,7 +6,7 @@ const { deleteIncome } = require("../Controllers/IncomeController.js")
 
 IncomeRouter.post("/add-income", addIncome);
 
-IncomeRouter.get("/get-income", getIncome);
+IncomeRouter.get("/get-income/:id", getIncome);
 
 IncomeRouter.delete("/delete-income/:id", deleteIncome);
 

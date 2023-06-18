@@ -33,6 +33,12 @@ const ExpenseSchema = mongoose.Schema(
       required: true,
       trim: true,
     },
+
+    userOwner: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "users",
+      required: true,
+    },
   },
   { timestamps: true }
 );

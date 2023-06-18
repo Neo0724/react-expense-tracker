@@ -11,8 +11,18 @@ export default function FormComponent({ type }) {
         amount: "",
         date: "",
         category: "",
-        description: ""
+        description: "",
+        userOwner: ""
     })
+
+    const addUserOwner = async () => {
+        return new Promise((resolve, reject) => {
+            const userOwner = localStorage.getItem("User ID")
+            let newData = { ...data, userOwner}
+            setData(newData)
+            resolve(newData)
+        })
+    }
 
     const handleChange = (e, type) => {
         switch (type) {
@@ -55,7 +65,9 @@ export default function FormComponent({ type }) {
     const handleSubmit = async (e) => {
         e.preventDefault()
         try {
-            type === "income" ? await axios.post(`${BASE_URL}/income/add-income`, {...data}) : await axios.post("http://localhost:3000/expense/add-expense", {...data})
+            const updatedData = await addUserOwner()
+            console.log(updatedData)
+            type === "income" ? await axios.post(`${BASE_URL}/income/add-income`, {...updatedData}) : await axios.post("http://localhost:3000/expense/add-expense", {...updatedData})
             alert("Success")
             type === "income" ? fetchIncome() : fetchExpenses() 
         } catch (err) {

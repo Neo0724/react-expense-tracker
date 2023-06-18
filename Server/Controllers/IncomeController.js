@@ -1,7 +1,7 @@
 const IncomeSchema = require("../Models/IncomeSchema");
 
 const addIncome = async (req, res) => {
-  const { title, amount, date, category, description } = req.body;
+  const { title, amount, date, category, description, userOwner } = req.body;
 
   try {
     const income = await IncomeSchema.create({
@@ -9,7 +9,8 @@ const addIncome = async (req, res) => {
       amount,
       date,
       category,
-      description
+      description,
+      userOwner
     });
 
     await income.save();
@@ -22,7 +23,9 @@ const addIncome = async (req, res) => {
 
 const getIncome = async (req, res) => {
   try {
-    const income = await IncomeSchema.find({});
+    const { id } = req.params
+    const income = await IncomeSchema.find({ userOwner: id });
+    console.log(income)
 
     res.status(200).json(income);
   } catch (err) {

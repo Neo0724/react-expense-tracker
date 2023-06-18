@@ -11,9 +11,11 @@ export const GlobalContextProvider = ({ children }) => {
 
     const [income, setIncome] = useState([])
 
+    const userOwner = localStorage.getItem("User ID")
+
     const fetchExpenses = async () => {
         try {
-            const response = await axios.get(`${BASE_URL}/expense/get-expense`)
+            const response = await axios.get(`${BASE_URL}/expense/get-expense/${userOwner}`)
             setExpenses(response.data)
         } catch (err) {
             console.log(err)
@@ -22,7 +24,7 @@ export const GlobalContextProvider = ({ children }) => {
 
     const fetchIncome = async () => {
         try {
-            const res = await axios.get(`${BASE_URL}/income/get-income`)
+            const res = await axios.get(`${BASE_URL}/income/get-income/${userOwner}`)
             setIncome(res.data)
         } catch (err) {
             console.log(err)

@@ -10,6 +10,8 @@ export default function Income() {
   income.map(item => {
     totalIncome += item.amount
   })
+
+  console.log(income)
   
   return (
     <div className="incomeUpperContainer">
@@ -20,7 +22,6 @@ export default function Income() {
         <div className="incomeTransactionContainer">
           {income.length === 0 ? <div className='empty'>Empty</div> : null}
           {income.map(income => {
-            console.log(income)
             const randomID = crypto.randomUUID()
             return <IncomeContainer income={income} setIncome={setIncome} key={randomID} />
           })}

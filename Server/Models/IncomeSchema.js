@@ -31,7 +31,14 @@ const IncomeSchema = mongoose.Schema({
     type: String,
     required: true,
     trim: true
-  }
+  },
+  
+  userOwner: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "users",
+    required: true,
+  },
+
 }, {timestamps: true});
 
 module.exports = mongoose.model("income", IncomeSchema);

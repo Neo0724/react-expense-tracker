@@ -3,11 +3,14 @@ import { useNavigate } from "react-router"
 import axios from "axios"
 import { useCookies } from "react-cookie"
 import { Link } from "react-router-dom"
+import { useGlobalContext } from "../Context/GlobalContextProvider"
 
 export default function Login() {
   const [data, setData] = useState({ username: "", password: "" })
 
   const [cookie, setCookie] = useCookies(["access_token"])
+
+  const { fetchIncome, fetchExpenses } = useGlobalContext()
 
   const navigate = useNavigate()
 
@@ -31,6 +34,8 @@ export default function Login() {
       setCookie("access_token", res.data.token)
       localStorage.setItem("User ID", res.data.userID)
       alert("Login Success")
+      fetchExpenses()
+      fetchIncome()
       navigate("/expenseTracker/dashboard")
     } catch (err) {
       alert(err)

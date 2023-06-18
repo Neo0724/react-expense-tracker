@@ -1,7 +1,7 @@
 const ExpenseSchema = require("../Models/ExpenseSchema");
 
 const addExpense = async (req, res) => {
-  const { title, amount, date, category, description } = req.body;
+  const { title, amount, date, category, description, userOwner } = req.body;
 
   try {
     const Expense = await ExpenseSchema.create({
@@ -9,7 +9,8 @@ const addExpense = async (req, res) => {
       amount,
       date,
       category,
-      description
+      description,
+      userOwner
     });
 
     await Expense.save();
@@ -22,7 +23,9 @@ const addExpense = async (req, res) => {
 
 const getExpense = async (req, res) => {
   try {
-    const Expense = await ExpenseSchema.find({});
+    const { id } = req.params
+    const Expense = await ExpenseSchema.find({ userOwner: id });
+    console.log(Expense)
 
     res.status(200).json(Expense);
   } catch (err) {
