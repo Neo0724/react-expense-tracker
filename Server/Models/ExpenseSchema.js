@@ -1,4 +1,6 @@
-const mongoose = require("mongoose")
+const mongoose = require("mongoose");
+const moment = require("moment-timezone")
+const dateMalaysia = moment.tz(Date.now(), "Asia/Shanghai").toDate()
 
 const ExpenseSchema = mongoose.Schema(
   {
@@ -16,8 +18,14 @@ const ExpenseSchema = mongoose.Schema(
       trim: true,
     },
 
+    type: {
+      type: String,
+      required: true,
+      default: "expenses"
+    },
+
     date: {
-      type: Date,
+      type: String,
       required: true,
       trim: true,
     },
@@ -27,7 +35,7 @@ const ExpenseSchema = mongoose.Schema(
       required: true,
       trim: true,
     },
-    
+
     description: {
       type: String,
       required: true,
@@ -43,4 +51,4 @@ const ExpenseSchema = mongoose.Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model("expense", ExpenseSchema)
+module.exports = mongoose.model("expense", ExpenseSchema);

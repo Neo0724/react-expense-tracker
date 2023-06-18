@@ -7,24 +7,14 @@ import profitIcon from "/public/profits.png"
 import viewTransactionIcon from "/public/transaction.png"
 import NavbarComponent from "./Component/NavbarComponent"
 import { navbarItems } from './Component/navbarItems'
+import { useGlobalContext } from './Context/GlobalContextProvider'
 
 export default function Navbar() {
     const [ cookies, setCookies ] = useCookies(["access_token"]) 
 
     const navigate = useNavigate()
 
-    const [ navbar, setNavbar ] = useState(() => {
-      const exist = localStorage.getItem("Navbar")
-      if (exist) {
-        return JSON.parse(exist)
-      } 
-
-      return navbarItems
-    })
-
-    useEffect(() => {
-      localStorage.setItem("Navbar", JSON.stringify(navbar))
-    }, [navbar])
+    const { navbar, setNavbar } = useGlobalContext()
 
     const removeNavbarItem = async () => {
       return new Promise((resolve, reject) => {

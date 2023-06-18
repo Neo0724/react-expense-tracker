@@ -57,6 +57,7 @@ export default function FormComponent({ type }) {
     }
 
     const handleDateChange = (date) => {
+        console.log(date.toISOString())
         setData(prev => { 
             return {...prev, date: date}
         })
@@ -81,7 +82,14 @@ export default function FormComponent({ type }) {
     <form action="POST" className="formContainer" onSubmit={(e) => handleSubmit(e)}>
         <input type="text" className="titleInput" placeholder="Enter the title..." required value={data.title} onChange={(e) => handleChange(e, "title")}/>
         <input type="text" className="amountInput" placeholder="Enter the amount..." required value={data.amount} onChange={(e) => handleChange(e, "amount")}/>
-        <ReactDatePicker className="dateInput" dateFormat="dd/MM/yyyy" selected={data.date} onChange={(date) => handleDateChange(date)} placeholderText="Select a date..." className="optionInput"/>
+        <ReactDatePicker 
+            className="dateInput" 
+            dateFormat="dd/MM/yyyy"
+            selected={data.date} 
+            onChange={(date) => handleDateChange(date)} placeholderText="Select a date..." 
+            startDate={data.date}
+            className="optionInput"
+        />
         <select required value={data.category} onChange={(e) => handleChange(e, "category")}>
             <option value="" disabled>Select an option</option>
             <option value="salary" >Salary</option>

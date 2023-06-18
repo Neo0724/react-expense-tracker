@@ -10,7 +10,7 @@ export default function Login() {
 
   const [cookie, setCookie] = useCookies(["access_token"])
 
-  const { fetchIncome, fetchExpenses } = useGlobalContext()
+  const { fetchIncome, fetchExpenses, setNavbar, navbar } = useGlobalContext()
 
   const navigate = useNavigate()
 
@@ -26,6 +26,18 @@ export default function Login() {
     })
   }
 
+  const handleNavbar = async () => {
+    return new Promise((resolve, reject) => {
+      let updatedNavbar = navbar.map(item => {
+        if (item.id === 1) return {...item, active: true}
+        return item
+      })
+
+      setNavbar(updatedNavbar)
+      resolve(updatedNavbar)
+    })
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
 
@@ -34,8 +46,7 @@ export default function Login() {
       setCookie("access_token", res.data.token)
       localStorage.setItem("User ID", res.data.userID)
       alert("Login Success")
-      fetchExpenses()
-      fetchIncome()
+      handleNavbar()
       navigate("/expenseTracker/dashboard")
     } catch (err) {
       alert(err)

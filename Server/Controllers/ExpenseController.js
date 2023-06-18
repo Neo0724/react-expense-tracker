@@ -1,16 +1,20 @@
 const ExpenseSchema = require("../Models/ExpenseSchema");
+const moment = require('moment-timezone')
 
 const addExpense = async (req, res) => {
-  const { title, amount, date, category, description, userOwner } = req.body;
+  const { title, amount, date, category, description, type, userOwner } = req.body;
+
+  const newDate = moment.utc(date).tz("Asia/Shanghai").format();
 
   try {
     const Expense = await ExpenseSchema.create({
       title,
       amount,
-      date,
+      date: newDate,
       category,
       description,
-      userOwner
+      userOwner,
+      type
     });
 
     await Expense.save();
@@ -25,7 +29,6 @@ const getExpense = async (req, res) => {
   try {
     const { id } = req.params
     const Expense = await ExpenseSchema.find({ userOwner: id });
-    console.log(Expense)
 
     res.status(200).json(Expense);
   } catch (err) {

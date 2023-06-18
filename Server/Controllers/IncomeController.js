@@ -1,16 +1,20 @@
 const IncomeSchema = require("../Models/IncomeSchema");
+const moment = require("moment-timezone")
 
 const addIncome = async (req, res) => {
-  const { title, amount, date, category, description, userOwner } = req.body;
+  const { title, amount, date, category, description, type, userOwner } = req.body;
+
+  const newDate = moment.utc(date).tz("Asia/Shanghai").format();
 
   try {
     const income = await IncomeSchema.create({
       title,
       amount,
-      date,
+      date: newDate,
       category,
       description,
-      userOwner
+      userOwner,
+      type
     });
 
     await income.save();
@@ -25,7 +29,6 @@ const getIncome = async (req, res) => {
   try {
     const { id } = req.params
     const income = await IncomeSchema.find({ userOwner: id });
-    console.log(income)
 
     res.status(200).json(income);
   } catch (err) {

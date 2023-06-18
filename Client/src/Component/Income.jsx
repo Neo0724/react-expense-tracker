@@ -10,8 +10,6 @@ export default function Income() {
   income.map(item => {
     totalIncome += item.amount
   })
-
-  console.log(income)
   
   return (
     <div className="incomeUpperContainer">

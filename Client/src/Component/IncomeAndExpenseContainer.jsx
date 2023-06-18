@@ -54,7 +54,7 @@ export function IncomeContainer({ income, setIncome }) {
   let date = income.date.split("T")[0].split("-").reverse().join("-")
 
   const { fetchIncome, BASE_URL } = useGlobalContext()
-  console.log(BASE_URL)
+
   const handleDelete = async () => {
     try {
       await axios.delete(`${BASE_URL}/income/delete-income/${income._id}`)
@@ -91,6 +91,21 @@ export function IncomeContainer({ income, setIncome }) {
           </div>
           <img src={deleteIcon} alt="deleteIcon" className="deleteIcon" onClick={handleDelete}/>
         </div>
+    </div>
+  )
+}
+
+
+export function HistoryContainer({ history }) {
+
+  const style = {
+    color: history.type === "income" ? "green" : "red"
+  }
+
+  return (
+    <div className="historyAndExpenseContainer">
+        <div className="historyTitle" style={style}>{history.title}</div>
+        <div className="historyAmount" style={style}>{history.type === "income" ? `+ ` : `- ` }{history.amount}</div>
     </div>
   )
 }
