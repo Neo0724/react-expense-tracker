@@ -45,8 +45,9 @@ export default function Login() {
       const res = await axios.post("http://localhost:3000/auth/login", { username: data.username, password: data.password })
       setCookie("access_token", res.data.token)
       localStorage.setItem("User ID", res.data.userID)
+      localStorage.setItem("Username", res.data.userName)
       alert("Login Success")
-      handleNavbar()
+      await handleNavbar()
       navigate("/expenseTracker/dashboard")
     } catch (err) {
       alert(err)

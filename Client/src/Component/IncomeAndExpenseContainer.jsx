@@ -1,9 +1,9 @@
 import axios from "axios"
 import { useGlobalContext } from "../Context/GlobalContextProvider"
-import calenderIcon from "../../public/calendar.png"
-import commentIcon from "../../public/comment.png"
-import dollarIcon from "../../public/dollar.png"
-import deleteIcon from "../../public/delete.png"
+import calenderIcon from "/calendar.png"
+import commentIcon from "/comment.png"
+import dollarIcon from "/dollar.png"
+import deleteIcon from "/delete.png"
 
 export function ExpenseContainer({ expenses, setExpenses }) {
   let date = expenses.date.split("T")[0].split("-").reverse().join("-")

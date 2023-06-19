@@ -34,7 +34,7 @@ const UserLogin = async (req, res) => {
 
     if (passwordMatch) {
       const token = jwt.sign({ id: userExist._id }, "secret");
-      return res.json({ token, userID: userExist._id });
+      return res.json({ token, userID: userExist._id, userName: username });
     }
 
     return res.status(400).json({ message: "Password does not match" });

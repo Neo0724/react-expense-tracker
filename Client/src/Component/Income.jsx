@@ -18,7 +18,8 @@ export default function Income() {
       <div className="incomeLowerContainer">
         <Form type="income" />
         <div className="incomeTransactionContainer">
-          {income.length === 0 ? <div className='empty'>Empty</div> : null}
+          <div className="listOfIncome">List of Income: </div>
+          {!income.length ? <div className='empty'>Empty ...</div> : null}
           {income.map(income => {
             const randomID = crypto.randomUUID()
             return <IncomeContainer income={income} setIncome={setIncome} key={randomID} />

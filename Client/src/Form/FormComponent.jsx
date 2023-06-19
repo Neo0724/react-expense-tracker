@@ -3,9 +3,10 @@ import ReactDatePicker from "react-datepicker"
 import "react-datepicker/dist/react-datepicker.css";
 import axios from "axios";
 import { useGlobalContext } from "../Context/GlobalContextProvider";
+import { useCookies } from "react-cookie"
 
 export default function FormComponent({ type }) {
-    const { fetchIncome, fetchExpenses, BASE_URL} = useGlobalContext()
+    const { fetchIncome, fetchExpenses, BASE_URL, setClose } = useGlobalContext()
     const [ data, setData ] = useState({
         title: "",
         amount: "",
@@ -14,6 +15,7 @@ export default function FormComponent({ type }) {
         description: "",
         userOwner: ""
     })
+    const [ cookies, setCookies ] = useCookies(["access_token"])
 
     const addUserOwner = async () => {
         return new Promise((resolve, reject) => {
@@ -57,7 +59,6 @@ export default function FormComponent({ type }) {
     }
 
     const handleDateChange = (date) => {
-        console.log(date.toISOString())
         setData(prev => { 
             return {...prev, date: date}
         })
@@ -66,6 +67,10 @@ export default function FormComponent({ type }) {
     const handleSubmit = async (e) => {
         e.preventDefault()
         try {
+            if (!cookies.access_token) {
+                setClose(prev => !prev)
+                return 
+            }
             const updatedData = await addUserOwner()
             console.log(updatedData)
             type === "income" ? await axios.post(`${BASE_URL}/income/add-income`, {...updatedData}) : await axios.post("http://localhost:3000/expense/add-expense", {...updatedData})
@@ -88,9 +93,8 @@ export default function FormComponent({ type }) {
             selected={data.date} 
             onChange={(date) => handleDateChange(date)} placeholderText="Select a date..." 
             startDate={data.date}
-            className="optionInput"
         />
-        <select required value={data.category} onChange={(e) => handleChange(e, "category")}>
+        <select required value={data.category} onChange={(e) => handleChange(e, "category")} placeholder="Select an option">
             <option value="" disabled>Select an option</option>
             <option value="salary" >Salary</option>
             <option value="freelancing" >Freelancing</option>
@@ -99,7 +103,7 @@ export default function FormComponent({ type }) {
             <option value="bank" >Bank Transfer</option>
             <option value="other" >Other</option>
         </select>
-        <textarea cols="30" rows="6" className="descriptionInput" value={data.description} onChange={(e) => handleChange(e, "description")}></textarea>
+        <textarea cols="30" rows="6" placeholder="Enter description" className="descriptionInput" value={data.description} onChange={(e) => handleChange(e, "description")}></textarea>
         <button className="submitBtn" type="submit">submit</button>
     </form>
   )

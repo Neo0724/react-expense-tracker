@@ -9,6 +9,7 @@ export default function ViewTransaction() {
         <div className="viewIncomeContainer">
             <div className="viewTransactionTitle">All Income Transaction</div>
             <div className="viewIncomeDetailsContainer">
+                {!income.length ? <div className="empty">Empty ...</div> : null}
                 {income.map(income => {
                     const randomID = crypto.randomUUID()
                     return <IncomeContainer income={income} key={randomID}/>
@@ -18,6 +19,7 @@ export default function ViewTransaction() {
         <div className="viewExpensesContainer">
             <div className="viewTransactionTitle">All Expenses Transaction</div>
             <div className="viewExpensesDetailsContainer">
+                {!expenses.length ? <div className="empty">Empty ...</div> : null}
                 {expenses.map(expenses => {
                     const randomID = crypto.randomUUID()
                     return <ExpenseContainer expenses={expenses} key={randomID}/>

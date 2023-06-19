@@ -6,12 +6,14 @@ import Login from "./Component/Login"
 import Expenses from "./Component/Expenses"
 import Income from "./Component/Income"
 import ViewTransaction from "./Component/ViewTransaction"
+import PopUp from "./PopUp"
 
 function App() {
 
   return (
     <BrowserRouter> 
       <Navbar />
+      <PopUp />
       <Routes>
         <Route path="/expenseTracker/dashboard" element={<Dashboard />}></Route>
         <Route path="/expenseTracker/view transaction" element={<ViewTransaction />}></Route>

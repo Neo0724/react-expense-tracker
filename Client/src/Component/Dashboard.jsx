@@ -15,10 +15,10 @@ export default function Dashboard() {
       <div className="amountAndHistoryContainer">
         <div className="amountContainer">
           <div className="expenseAndIncomeDashboard">
-            <div className="totalExpensesDashboard">Total Expenses: $ {getTotalExpenses()}</div>
-            <div className="totalIncomeDashboard">Total Income: $ {getTotalIncome()}</div>
+            <div className="totalExpensesDashboard" style={{ color: "red"}}>Total Expenses:  ${getTotalExpenses()}</div>
+            <div className="totalIncomeDashboard" style={{ color: "green"}}>Total Income:  ${getTotalIncome()}</div>
           </div>
-          <div className="totalBalanceDashboard" >Total Balance: <span style={style}>$ {getBalance()}</span></div>
+          <div className="totalBalanceDashboard" style={style}>Total Balance: ${getBalance()}</div>
         </div>
         <div className="historyContainer">
           <div className="historyContainerTitle">Recent History: </div>

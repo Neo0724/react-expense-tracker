@@ -10,6 +10,10 @@ export default function NavbarComponent({ id, name, icon, active, setNavbar }) {
     display: active ? "" : "none",
   }
 
+  const opacity = {
+    opacity: active ? 1 : 0.7
+  }
+
   const handleClick = () => {
     setNavbar(prev => {
       let newItem = prev.map(item => item.id === id ? {...item, active: true} : {...item, active: false})
@@ -20,7 +24,7 @@ export default function NavbarComponent({ id, name, icon, active, setNavbar }) {
   }
 
   return (
-    <div className="navbarComponentContainer" onClick={handleClick}>
+    <div className="navbarComponentContainer" onClick={handleClick} style={opacity}>
       <div className="verticalLine" style={style}></div>
       <img src={icon} alt="Dashboard" className="navbarComponentIcons" />
       <div className="dashboardTitle">{name}</div>

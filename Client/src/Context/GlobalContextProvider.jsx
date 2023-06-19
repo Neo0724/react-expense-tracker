@@ -2,6 +2,7 @@ import React, { useEffect } from 'react'
 import { useContext, useState } from 'react'
 import axios from 'axios'
 import { navbarItems } from '../Component/navbarItems'
+import { useCookies } from 'react-cookie'
 
 const GlobalContext = React.createContext()
 
@@ -14,6 +15,8 @@ export const GlobalContextProvider = ({ children }) => {
 
     const userOwner = localStorage.getItem("User ID")
 
+    const [ cookies, setCookies ] = useCookies(["access_token"])
+
     const [ navbar, setNavbar ] = useState(() => {
       const exist = localStorage.getItem("Navbar")
       if (exist) {
@@ -23,12 +26,18 @@ export const GlobalContextProvider = ({ children }) => {
       return navbarItems
     })
 
+    const [ close, setClose ] = useState(true)
+
     useEffect(() => {
       localStorage.setItem("Navbar", JSON.stringify(navbar))
     }, [navbar])
 
     const fetchExpenses = async () => {
         try {
+            if (!userOwner) {
+                setExpenses([])
+                return
+            }
             const response = await axios.get(`${BASE_URL}/expense/get-expense/${userOwner}`)
             setExpenses(response.data)
         } catch (err) {
@@ -38,6 +47,10 @@ export const GlobalContextProvider = ({ children }) => {
 
     const fetchIncome = async () => {
         try {
+            if (!userOwner) {
+                setIncome([])
+                return
+            }
             const res = await axios.get(`${BASE_URL}/income/get-income/${userOwner}`)
             setIncome(res.data)
         } catch (err) {
@@ -89,7 +102,7 @@ export const GlobalContextProvider = ({ children }) => {
 
 
     return (
-        <GlobalContext.Provider value={{ expenses, income, setExpenses, setIncome, fetchExpenses, fetchIncome, BASE_URL, setNavbar, navbar, getTotalExpenses, getTotalIncome, getBalance, getHistory }}>
+        <GlobalContext.Provider value={{ expenses, income, setExpenses, setIncome, fetchExpenses, fetchIncome, BASE_URL, setNavbar, navbar, getTotalExpenses, getTotalIncome, getBalance, getHistory, setClose, close }}>
             { children }
         </GlobalContext.Provider>
     )

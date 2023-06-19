@@ -1,13 +1,9 @@
 import { useNavigate } from 'react-router'
 import { useCookies } from 'react-cookie'
-import { useState, useEffect } from 'react'
-import dashboardIcon from "/public/dashboard.png"
-import expenseIcon from "/public/expense.png"
-import profitIcon from "/public/profits.png"
-import viewTransactionIcon from "/public/transaction.png"
 import NavbarComponent from "./Component/NavbarComponent"
-import { navbarItems } from './Component/navbarItems'
 import { useGlobalContext } from './Context/GlobalContextProvider'
+import loginIcon from '../public/login.png'
+import signoutIcon from "../public/signout.png"
 
 export default function Navbar() {
     const [ cookies, setCookies ] = useCookies(["access_token"]) 
@@ -15,6 +11,13 @@ export default function Navbar() {
     const navigate = useNavigate()
 
     const { navbar, setNavbar } = useGlobalContext()
+
+    const username = localStorage.getItem("Username")
+
+    const style = {
+      marginLeft: username ? "" : "auto",
+      marginRight: username ? "" : "auto"
+    }
 
     const removeNavbarItem = async () => {
       return new Promise((resolve, reject) => {
@@ -29,21 +32,31 @@ export default function Navbar() {
     }
 
     const handleSignOut = async () => {
+        if (!username) return
         localStorage.removeItem("Navbar")
-        const defaultNavbar = await removeNavbarItem()
-        console.log(defaultNavbar)
+        await removeNavbarItem()
         setCookies("access_token", "")
         localStorage.removeItem("User ID")
+        localStorage.removeItem("Username")
         navigate("/expenseTracker/login")
     }
+
+    const handleLogin = () => {
+      if (username) return
+      navigate("/expenseTracker/login")
+    }
+
   return (
     <div className="navbarContainer">
-        <div className="register" onClick={() => navigate("/expenseTracker/register")}>Register</div>
+        <div className="loginNavbarContainer">
+            <img className="login" style={style}src={loginIcon} alt="loginIcon" onClick={handleLogin}></img>
+            {username ? <div className='userName'>{username}</div> : null}
+        </div>
         {navbar.map(item => {
           let randomID = crypto.randomUUID()
           return <NavbarComponent id={item.id} name={item.name} icon={item.icon} active={item.active} setNavbar={setNavbar} key={randomID}/>
         })}
-        <div className="signOut" onClick={handleSignOut}>Sign Out</div>
+        { username ? <img className="signOut" src={signoutIcon} alt='signoutIcon' onClick={handleSignOut}></img> : null }
     </div>
   )
 }
