@@ -84,8 +84,9 @@ export const GlobalContextProvider = ({ children }) => {
 
     const getHistory = () => {
         const history = ([...income, ...expenses]).sort((a,b) => new Date(b.date) - new Date(a.date))
-        return history.splice(0, history.length -1)
+        return history.splice(0, 3)
     }
+
 
     return (
         <GlobalContext.Provider value={{ expenses, income, setExpenses, setIncome, fetchExpenses, fetchIncome, BASE_URL, setNavbar, navbar, getTotalExpenses, getTotalIncome, getBalance, getHistory }}>

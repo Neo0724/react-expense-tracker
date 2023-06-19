@@ -21,7 +21,8 @@ export default function Dashboard() {
           <div className="totalBalanceDashboard" >Total Balance: <span style={style}>$ {getBalance()}</span></div>
         </div>
         <div className="historyContainer">
-          <div className="historyContainerTitle">Recent History: </div> 
+          <div className="historyContainerTitle">Recent History: </div>
+          {!getHistory().length ? <div className="empty">Empty</div> : null}
           {getHistory().map(item => {
             const randomID = crypto.randomUUID()
             return <HistoryContainer history={item} key={randomID}/>
