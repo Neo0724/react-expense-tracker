@@ -26,6 +26,15 @@ export default function Chart() {
 
     const allDate = [...incomeDate, ...expensesDate]
 
+    const handleResize = () => {
+        console.log("Resized")
+    }
+
+    const options = {
+        maintainAspectRatio: false,
+        responsive: true
+    }
+
     const data = {
         labels: income.length === 0 && expenses.length === 0 ? [] : allDate,
 
@@ -40,14 +49,14 @@ export default function Chart() {
                 data: expenses.length === 0 ? [] : expensesAmount,
                 backgroundColor: "red"
             }
-        ]
+        ],
     };
 
     allDate.sort((a, b) => new Date(a) - new Date(b))
 
     return (
         <div className="chartContainer">
-            <Line data={data} className='chart' />
+            <Line data={data} options={options}/>
         </div>
     );
 }
