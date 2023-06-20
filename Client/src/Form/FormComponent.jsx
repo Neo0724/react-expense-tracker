@@ -72,9 +72,7 @@ export default function FormComponent({ type }) {
                 return 
             }
             const updatedData = await addUserOwner()
-            console.log(updatedData)
             type === "income" ? await axios.post(`${BASE_URL}/income/add-income`, {...updatedData}) : await axios.post("http://localhost:3000/expense/add-expense", {...updatedData})
-            alert("Success")
             type === "income" ? fetchIncome() : fetchExpenses() 
         } catch (err) {
             console.log(err)
@@ -103,7 +101,7 @@ export default function FormComponent({ type }) {
             <option value="bank" >Bank Transfer</option>
             <option value="other" >Other</option>
         </select>
-        <textarea cols="30" rows="6" placeholder="Enter description" className="descriptionInput" value={data.description} onChange={(e) => handleChange(e, "description")}></textarea>
+        <textarea cols="30" rows="6" maxLength="70" placeholder="Enter description" className="descriptionInput" value={data.description} onChange={(e) => handleChange(e, "description")}></textarea>
         <button className="submitBtn" type="submit">submit</button>
     </form>
   )

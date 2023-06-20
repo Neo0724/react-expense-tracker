@@ -26,8 +26,10 @@ export default function NavbarComponent({ id, name, icon, active, setNavbar }) {
   return (
     <div className="navbarComponentContainer" onClick={handleClick} style={opacity}>
       <div className="verticalLine" style={style}></div>
-      <img src={icon} alt="Dashboard" className="navbarComponentIcons" />
-      <div className="dashboardTitle">{name}</div>
+      <div className="navbarComponentTitleAndIcon">
+        <img src={icon} alt="Dashboard" className="navbarComponentIcons" />
+        <div className="dashboardTitle">{ name === "View Transaction" ? "Transactions" : name }</div>
+      </div>
     </div>
   )
 }

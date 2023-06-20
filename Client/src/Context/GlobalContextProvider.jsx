@@ -16,6 +16,10 @@ export const GlobalContextProvider = ({ children }) => {
     const userOwner = localStorage.getItem("User ID")
 
     const [ cookies, setCookies ] = useCookies(["access_token"])
+    
+    const [ close, setClose ] = useState(true)
+
+    const [ loginErr, setLoginErr ] = useState({ text: "", error: false })
 
     const [ navbar, setNavbar ] = useState(() => {
       const exist = localStorage.getItem("Navbar")
@@ -25,8 +29,6 @@ export const GlobalContextProvider = ({ children }) => {
 
       return navbarItems
     })
-
-    const [ close, setClose ] = useState(true)
 
     useEffect(() => {
       localStorage.setItem("Navbar", JSON.stringify(navbar))
@@ -102,7 +104,7 @@ export const GlobalContextProvider = ({ children }) => {
 
 
     return (
-        <GlobalContext.Provider value={{ expenses, income, setExpenses, setIncome, fetchExpenses, fetchIncome, BASE_URL, setNavbar, navbar, getTotalExpenses, getTotalIncome, getBalance, getHistory, setClose, close }}>
+        <GlobalContext.Provider value={{ expenses, income, setExpenses, setIncome, fetchExpenses, fetchIncome, BASE_URL, setNavbar, navbar, getTotalExpenses, getTotalIncome, getBalance, getHistory, setClose, close, setLoginErr, loginErr }}>
             { children }
         </GlobalContext.Provider>
     )

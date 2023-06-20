@@ -14,7 +14,6 @@ export function ExpenseContainer({ expenses, setExpenses }) {
     try {
       await axios.delete(`${BASE_URL}/expense/delete-expense/${expenses._id}`)
       fetchExpenses()
-      alert("Deleted successful")
     } catch (err) {
       console.log(err)
     }
@@ -58,7 +57,6 @@ export function IncomeContainer({ income, setIncome }) {
   const handleDelete = async () => {
     try {
       await axios.delete(`${BASE_URL}/income/delete-income/${income._id}`)
-      alert("Deleted successful")
       fetchIncome()
     } catch (err) {
       console.log(err)

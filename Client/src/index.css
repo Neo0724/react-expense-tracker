@@ -9,15 +9,10 @@ body {
   flex-direction: column;
   border: 3px solid rgb(0, 0, 0, .2);
   border-radius: 5px;
-  position: fixed;
-  top: 20px;
-  left: 20px;
-  bottom: 20px;
-  right: 0;
-  margin-right: 10px;
-  width: 220px;
+  width: 240px;
   gap: 10px;
   padding: 10px;
+  height: 95vh;
 }
 
 .expenses {
@@ -238,7 +233,7 @@ button:hover {
 
 .incomeUpperContainer,
 .expenseUpperContainer {
-  width: 100%;
+  overflow: scroll;
 }
 
 .description {
@@ -255,6 +250,12 @@ input {
   height: 30px;
   border-radius: 5px;
   border: 1px solid rgb(0, 0, 0, .2);
+}
+
+input,
+select,
+textarea {
+  padding-left: 8px
 }
 
 select {
@@ -345,7 +346,89 @@ textarea {
   .detailsLowerContainer {
     gap: 10px;
   }
+
+  #root {
+    flex-direction: column;
+  }
+
+  .navbarContainer {
+    flex-direction: row;
+    width: auto;
+    overflow: auto;
+    height: 60px;
+  }
+
+  .navbarComponentContainer {
+    width: 150px;
+  }
+
+  .userName {
+    margin-top: auto;
+    margin-bottom: auto;
+    text-align: center;
+  }
+
+  .navbarComponentTitleAndIcon {
+    flex-direction: column;
+    width: auto;
+  }
   
+  .dashboardTitle {
+    font-size: 13px;
+    width: auto;
+  }
+
+  .loginNavbarContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    margin-right: -10px;
+    margin-left: 0;
+    min-width: 80px;
+    margin-right: 2px;
+    margin-top: auto;
+    margin-bottom: auto;
+  }
+
+  .signOut {
+    margin-top: auto;
+    margin-bottom: auto;
+  }
+
+  .expenseUpperContainer {
+    height: 80vh;
+  }
+  
+  .upperContainer {
+    overflow: scroll;
+  }
+
+  .authContainer {
+    width: auto;
+  }
+
+  .userName {
+    font-size: small;
+    width: 100%;
+  }
+
+  .login {
+    width: 30px;
+    height: 30px;
+    margin-top: -5px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .totalBalanceDashboard {
+    width: 100%;
+  }
+  
+}
+
+.navbarComponentTitleAndIcon {
+  display: flex;
+  gap: 10px;
 }
 
 .submitBtn {
@@ -358,7 +441,6 @@ textarea {
 }
 
 .amountContainer {
-  width: 60%;
   margin-top: 30px;
 }
 
@@ -371,8 +453,19 @@ textarea {
 .totalBalanceDashboard {
   border: 2px solid rgb(0, 0, 0, .2);
   border-radius: 5px;
-  padding: 26px;
+  min-width: auto;
+  width: 100%;
+  height: 70px;
   text-align: center;
+}
+
+.totalBalanceDashboard {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.totalBalanceDashboard {
+  align-self: center;
 }
 
 .historyAndExpenseContainer,
@@ -409,6 +502,9 @@ textarea {
   font-weight: bold;
   flex: 1;
   font-size: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .totalBalanceDashboard {
@@ -457,7 +553,7 @@ textarea {
 
 .viewExpensesDetailsContainer::-webkit-scrollbar, 
 .viewIncomeDetailsContainer::-webkit-scrollbar {
-  overflow: hidden;
+  display: none;
   /* Hide the scrollbar for Webkit (Chrome, Safari, etc.) */
 }
 
@@ -564,10 +660,46 @@ button {
   border: 3px solid rgb(0, 0, 0, .2);
   border-radius: 5px;
   padding: 10px;
-  margin-left: 270px;
   margin-top: 10px;
   margin-bottom: 10px;
   height: 93vh;
 }
+
+.dashboardContainer {
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+.loginErrorContainer {
+  border: 1px solid red;
+  background-color: rgba(255, 0, 0, 0.123);
+  border-radius: 5px;
+  display: flex;
+  width: 300px;
+  height: 150px;
+  position: fixed;
+  bottom: -80vh;
+  left: 50%;
+  transform: translate(0, 0);
+  align-items: center;
+  justify-content: center;
+  transition: bottom 250ms ease-in;
+}
+
+#loginErrTrue {
+  bottom: 100px;
+  transition: bottom 250ms ease-in;
+}
+
+
+@media only screen and (max-width: 800px) {
+  .loginErrorContainer {
+    left: 50%;
+    transform: translate(-50%, 0);
+  };
+}
+
+
+
 
 

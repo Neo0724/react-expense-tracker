@@ -10,7 +10,7 @@ export default function Login() {
 
   const [cookie, setCookie] = useCookies(["access_token"])
 
-  const { fetchIncome, fetchExpenses, setNavbar, navbar } = useGlobalContext()
+  const { fetchIncome, fetchExpenses, setNavbar, navbar, setLoginErr } = useGlobalContext()
 
   const navigate = useNavigate()
 
@@ -46,11 +46,11 @@ export default function Login() {
       setCookie("access_token", res.data.token)
       localStorage.setItem("User ID", res.data.userID)
       localStorage.setItem("Username", res.data.userName)
-      alert("Login Success")
       await handleNavbar()
       navigate("/expenseTracker/dashboard")
     } catch (err) {
-      alert(err)
+      const status = err.request.status
+      status === 404 ? setLoginErr({ text: "User not found", error: true }) : setLoginErr({ text: "Password is incorrect", error: true })
     }
 
   }
