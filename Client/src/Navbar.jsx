@@ -36,12 +36,12 @@ export default function Navbar() {
         await removeNavbarItem()
         setCookies("access_token", "")
         localStorage.clear()
-        navigate("/expenseTracker/login")
+        navigate("intermediateExpenseTrackerFrontend/login")
     }
 
     const handleLogin = () => {
       if (username) return
-      navigate("/expenseTracker/login")
+      navigate("intermediateExpenseTrackerFrontend/login")
     }
 
   return (

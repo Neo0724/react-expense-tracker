@@ -24,9 +24,8 @@ export default function Register() {
     e.preventDefault()
 
     try {
-      await axios.post("http://localhost:3000/auth/register", { username: data.username, password: data.password })
-      alert("Register Success")
-      navigate("/expenseTracker/login")
+      await axios.post("https://mern-expense-tracker-213j.onrender.com/auth/register", { username: data.username, password: data.password })
+      navigate("/intermediateExpenseTrackerFrontend/login")
     } catch (err) {
       alert(err)
     }

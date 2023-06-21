@@ -7,7 +7,7 @@ import { useCookies } from 'react-cookie'
 const GlobalContext = React.createContext()
 
 export const GlobalContextProvider = ({ children }) => {
-    const BASE_URL = "http://localhost:3000"
+    const BASE_URL = "https://mern-expense-tracker-213j.onrender.com"
 
     const [expenses, setExpenses] = useState([])
 
@@ -30,9 +30,64 @@ export const GlobalContextProvider = ({ children }) => {
       return navbarItems
     })
 
+    const pathname = window.location.pathname.split("/")[2];
+
+    useEffect(() => {
+        switch(pathname) {
+            case "dashboard" || "":
+                setNavbar(prev => {
+                    let newNavbar = prev.map(prev => {
+                        if (prev.id === 1) {
+                            return {...prev, active: true}
+                        } return {...prev, active: false}
+                    })
+                    return newNavbar
+                }) 
+                return;
+
+            case "view%20transaction":
+                setNavbar(prev => {
+                    let newNavbar = prev.map(prev => {
+                        if (prev.id === 2) {
+                            return {...prev, active: true}
+                        } return {...prev, active: false}
+                    })
+                    return newNavbar
+                }) 
+                return;
+
+            case "income":
+                setNavbar(prev => {
+                    let newNavbar = prev.map(prev => {
+                        if (prev.id === 3) {
+                            return {...prev, active: true}
+                        } return {...prev, active: false}
+                    })
+                    return newNavbar
+                }) 
+                return;
+
+            case "expenses":
+                setNavbar(prev => {
+                    let newNavbar = prev.map(prev => {
+                        if (prev.id === 4) {
+                            return {...prev, active: true}
+                        } return {...prev, active: false}
+                    })
+                    return newNavbar
+                }) 
+                return;
+            
+            default:
+                return
+
+        }
+
+    }, [pathname])
+
     useEffect(() => {
       localStorage.setItem("Navbar", JSON.stringify(navbar))
-    }, [navbar])
+    }, [navbar.active])
 
     const fetchExpenses = async () => {
         try {

@@ -1,6 +1,7 @@
 const UserModel = require("../Models/UserSchema.js");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+require("dotenv").config();
 
 const UserRegister = async (req, res) => {
   const { username, password } = req.body;
@@ -33,7 +34,7 @@ const UserLogin = async (req, res) => {
   const passwordMatch = await bcrypt.compare(password, userExist.password);
 
   if (passwordMatch) {
-    const token = jwt.sign({ id: userExist._id }, "secret");
+    const token = jwt.sign({ id: userExist._id }, process.env.JWT_SECRET);
     return res.json({ token, userID: userExist._id, userName: username });
   }
 
@@ -43,7 +44,7 @@ const UserLogin = async (req, res) => {
 const VerifyToken = (req, res, next) => {
   const token = req.headers["authorization"];
   if (token) {
-    jwt.verify(token, "secret", (err) => {
+    jwt.verify(token, process.env.JWT_SECRET, (err) => {
       if (err) return res.sendStatus(403);
       next();
     });

@@ -25,7 +25,7 @@ export function ExpenseContainer({ expenses, setExpenses }) {
   return (
     <div className="incomeAndExpenseContainer">
         <div className="upperContainer">
-          <img src={`../../public/${expenses.category}.png`} alt="" className="categoryIcon" />
+          <img src={`${expenses.category}.png`} alt="" className="categoryIcon" />
           <div className="details">
             <div className="detailsUpperContainer">
               <div className="redDot"></div>
@@ -53,7 +53,7 @@ export function ExpenseContainer({ expenses, setExpenses }) {
 }
 
 export function IncomeContainer({ income, setIncome }) {
-  let date = income.date.split("T")[0].split("-").reverse().join("-")
+  const date = income.date.split("T")[0].split("-").reverse().join("-")
 
   const { fetchIncome, BASE_URL } = useGlobalContext()
 
@@ -68,10 +68,11 @@ export function IncomeContainer({ income, setIncome }) {
     }
   }
 
+
   return (
     <div className="incomeAndExpenseContainer">
         <div className="upperContainer">
-          <img src={`/${income.category}.png`} alt="" className="categoryIcon" />
+          <img src={`${income.category}.png`} alt="" className="categoryIcon" />
           <div className="details">
             <div className="detailsUpperContainer">
               <div className="greenDot"></div>

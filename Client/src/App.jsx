@@ -17,12 +17,13 @@ function App() {
       <PopUp />
       <LoginError />
       <Routes>
-        <Route path="/expenseTracker/dashboard" element={<Dashboard />}></Route>
-        <Route path="/expenseTracker/view transaction" element={<ViewTransaction />}></Route>
-        <Route path="/expenseTracker/income" element={<Income />}></Route>
-        <Route path="/expenseTracker/expenses" element={<Expenses />}></Route>
-        <Route path="/expenseTracker/register" element={<Register />}></Route>
-        <Route path="/expenseTracker/login" element={<Login />}></Route>
+        <Route path="intermediateExpenseTrackerFrontend/" element={<Dashboard />}></Route>
+        <Route path="intermediateExpenseTrackerFrontend/dashboard" element={<Dashboard />}></Route>
+        <Route path="intermediateExpenseTrackerFrontend/view transaction" element={<ViewTransaction />}></Route>
+        <Route path="intermediateExpenseTrackerFrontend/income" element={<Income />}></Route>
+        <Route path="intermediateExpenseTrackerFrontend/expenses" element={<Expenses />}></Route>
+        <Route path="intermediateExpenseTrackerFrontend/register" element={<Register />}></Route>
+        <Route path="intermediateExpenseTrackerFrontend/login" element={<Login />}></Route>
       </Routes>
     </BrowserRouter>
   )

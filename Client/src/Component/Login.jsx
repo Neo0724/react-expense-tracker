@@ -42,12 +42,12 @@ export default function Login() {
     e.preventDefault()
 
     try {
-      const res = await axios.post("http://localhost:3000/auth/login", { username: data.username, password: data.password })
+      const res = await axios.post("https://mern-expense-tracker-213j.onrender.com/auth/login", { username: data.username, password: data.password })
       setCookie("access_token", res.data.token)
       localStorage.setItem("User ID", res.data.userID)
       localStorage.setItem("Username", res.data.userName)
       await handleNavbar()
-      navigate("/expenseTracker/dashboard")
+      navigate("/intermediateExpenseTrackerFrontend/dashboard")
     } catch (err) {
       const status = err.request.status
       status === 404 ? setLoginErr({ text: "User not found", error: true }) : setLoginErr({ text: "Password is incorrect", error: true })
@@ -61,7 +61,7 @@ export default function Login() {
       <input type="password" className="usernameInput" placeholder="Enter your password ..." value={data.password} onChange={handlePasswordChange} required={true}/>
       <div className="horizontalLine"></div>
       <button className="submitBtn" type="submit">login</button>
-      <span>Do not have an account? <Link to="/expenseTracker/register">Register now</Link></span>
+      <span>Do not have an account? <Link to="/intermediateExpenseTrackerFrontend/register">Register now</Link></span>
     </form> 
   )
 }
