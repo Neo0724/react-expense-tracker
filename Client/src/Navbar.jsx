@@ -2,8 +2,8 @@ import { useNavigate } from 'react-router'
 import { useCookies } from 'react-cookie'
 import NavbarComponent from "./Component/NavbarComponent"
 import { useGlobalContext } from './Context/GlobalContextProvider'
-import loginIcon from '../public/login.png'
-import signoutIcon from "../public/signout.png"
+import loginIcon from '/login.png'
+import signoutIcon from "/signout.png"
 
 export default function Navbar() {
     const [ cookies, setCookies ] = useCookies(["access_token"]) 
@@ -33,11 +33,9 @@ export default function Navbar() {
 
     const handleSignOut = async () => {
         if (!username) return
-        localStorage.removeItem("Navbar")
         await removeNavbarItem()
         setCookies("access_token", "")
-        localStorage.removeItem("User ID")
-        localStorage.removeItem("Username")
+        localStorage.clear()
         navigate("/expenseTracker/login")
     }
 
@@ -49,7 +47,7 @@ export default function Navbar() {
   return (
     <div className="navbarContainer">
         <div className="loginNavbarContainer">
-            <img className="login" style={style}src={loginIcon} alt="loginIcon" onClick={handleLogin}></img>
+            <img className="login" style={style }src={loginIcon} alt="loginIcon" onClick={handleLogin}></img>
             {username ? <div className='userName'>{username}</div> : null}
         </div>
         {navbar.map(item => {

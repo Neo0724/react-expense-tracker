@@ -23,6 +23,7 @@ export default function NavbarComponent({ id, name, icon, active, setNavbar }) {
     navigate(`/expenseTracker/${name.toLowerCase()}`)
   }
 
+
   return (
     <div className="navbarComponentContainer" onClick={handleClick} style={opacity}>
       <div className="verticalLine" style={style}></div>

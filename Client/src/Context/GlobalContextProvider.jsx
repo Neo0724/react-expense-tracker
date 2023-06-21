@@ -40,7 +40,7 @@ export const GlobalContextProvider = ({ children }) => {
                 setExpenses([])
                 return
             }
-            const response = await axios.get(`${BASE_URL}/expense/get-expense/${userOwner}`)
+            const response = await axios.get(`${BASE_URL}/expense/get-expense/${userOwner}`, { headers: { authorization: cookies.access_token } })
             setExpenses(response.data)
         } catch (err) {
             console.log(err)
@@ -53,7 +53,7 @@ export const GlobalContextProvider = ({ children }) => {
                 setIncome([])
                 return
             }
-            const res = await axios.get(`${BASE_URL}/income/get-income/${userOwner}`)
+            const res = await axios.get(`${BASE_URL}/income/get-income/${userOwner}`, { headers: { authorization: cookies.access_token } })
             setIncome(res.data)
         } catch (err) {
             console.log(err)

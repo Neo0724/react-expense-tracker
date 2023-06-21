@@ -72,13 +72,43 @@ export default function FormComponent({ type }) {
                 return 
             }
             const updatedData = await addUserOwner()
-            type === "income" ? await axios.post(`${BASE_URL}/income/add-income`, {...updatedData}) : await axios.post("http://localhost:3000/expense/add-expense", {...updatedData})
+            type === "income" ? await axios.post(`${BASE_URL}/income/add-income`, {...updatedData}, {headers: { authorization: cookies.access_token}}) : await axios.post("http://localhost:3000/expense/add-expense", {...updatedData}, {headers: { authorization: cookies.access_token}})
             type === "income" ? fetchIncome() : fetchExpenses() 
         } catch (err) {
             console.log(err)
         }
 
 
+    }
+
+    const IncomeSelect = () => {
+        return (
+            <select required value={data.category} onChange={(e) => handleChange(e, "category")} placeholder="Select an option">
+                <option value="" disabled>Select an option</option>
+                <option value="salary" >Salary</option>
+                <option value="foodandbeverage" >Food And Beverage</option>
+                <option value="freelancing" >Freelancing</option>
+                <option value="investment" >Investment</option>
+                <option value="scholarship" >Scholarship</option>
+                <option value="bank" >Bank Transfer</option>
+                <option value="other" >Other</option>
+            </select>
+            )
+    }
+
+    const ExpensesSelect = () => {
+        return (
+            <select required value={data.category} onChange={(e) => handleChange(e, "category")} placeholder="Select an option">
+                <option value="" disabled>Select an option</option>
+                <option value="accomodation" >Accomodation</option>
+                <option value="foodandbeverage" >Food And Beverage</option>
+                <option value="medical" >Medical</option>
+                <option value="scholarship" >Scholarship</option>
+                <option value="transport" >Trasnsport Fee</option>
+                <option value="stationary" >Stationary</option>
+                <option value="other" >Other</option>
+            </select>
+        )
     }
 
   return (
@@ -92,15 +122,7 @@ export default function FormComponent({ type }) {
             onChange={(date) => handleDateChange(date)} placeholderText="Select a date..." 
             startDate={data.date}
         />
-        <select required value={data.category} onChange={(e) => handleChange(e, "category")} placeholder="Select an option">
-            <option value="" disabled>Select an option</option>
-            <option value="salary" >Salary</option>
-            <option value="freelancing" >Freelancing</option>
-            <option value="investment" >Investment</option>
-            <option value="scholarship" >Scholarship</option>
-            <option value="bank" >Bank Transfer</option>
-            <option value="other" >Other</option>
-        </select>
+        { type === "income" ? <IncomeSelect /> : <ExpensesSelect />}
         <textarea cols="30" rows="6" maxLength="70" placeholder="Enter description" className="descriptionInput" value={data.description} onChange={(e) => handleChange(e, "description")}></textarea>
         <button className="submitBtn" type="submit">submit</button>
     </form>
