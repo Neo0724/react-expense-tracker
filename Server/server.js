@@ -6,7 +6,9 @@ const UserRouter = require("./Routes/user.js")
 const IncomeRouter = require("./Routes/income.js")
 const ExpenseRouter = require("./Routes/expense.js")
 
-app.use(cors())
+app.use(cors({
+  origin:["http://localhost:3000"]
+}))
 app.use(express.json())
 
 try {
