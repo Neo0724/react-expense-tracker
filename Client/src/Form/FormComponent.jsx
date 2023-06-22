@@ -86,7 +86,6 @@ export default function FormComponent({ type }) {
             <select required value={data.category} onChange={(e) => handleChange(e, "category")} placeholder="Select an option">
                 <option value="" disabled>Select an option</option>
                 <option value="salary" >Salary</option>
-                <option value="foodandbeverage" >Food And Beverage</option>
                 <option value="freelancing" >Freelancing</option>
                 <option value="investment" >Investment</option>
                 <option value="scholarship" >Scholarship</option>
