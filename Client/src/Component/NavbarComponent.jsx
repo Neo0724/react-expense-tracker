@@ -23,13 +23,12 @@ export default function NavbarComponent({ id, name, icon, active, setNavbar }) {
     navigate(`/intermediateExpenseTrackerFrontend/${name.toLowerCase()}`)
   }
 
-  const updatedIcon = icon.split('/')[1]
 
   return (
     <div className="navbarComponentContainer" onClick={handleClick} style={opacity}>
       <div className="verticalLine" style={style}></div>
       <div className="navbarComponentTitleAndIcon">
-        <img src={updatedIcon} alt="Dashboard" className="navbarComponentIcons" />
+        <img src={icon} alt="Dashboard" className="navbarComponentIcons" />
         <div className="dashboardTitle">{ name === "View Transaction" ? "Transactions" : name }</div>
       </div>
     </div>

@@ -47,7 +47,7 @@ export default function Navbar() {
   return (
     <div className="navbarContainer">
         <div className="loginNavbarContainer">
-            <img className="login" style={style }src={loginIcon} alt="loginIcon" onClick={handleLogin}></img>
+            <img className="login" style={style} src={loginIcon} alt="loginIcon" onClick={handleLogin}></img>
             {username ? <div className='userName'>{username}</div> : null}
         </div>
         {navbar.map(item => {

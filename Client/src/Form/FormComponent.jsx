@@ -72,7 +72,7 @@ export default function FormComponent({ type }) {
                 return 
             }
             const updatedData = await addUserOwner()
-            type === "income" ? await axios.post(`${BASE_URL}/income/add-income`, {...updatedData}, {headers: { authorization: cookies.access_token}}) : await axios.post("http://localhost:3000/expense/add-expense", {...updatedData}, {headers: { authorization: cookies.access_token}})
+            type === "income" ? await axios.post(`${BASE_URL}/income/add-income`, {...updatedData}, {headers: { authorization: cookies.access_token}}) : await axios.post(`${BASE_URL}/expense/add-expense`, {...updatedData}, {headers: { authorization: cookies.access_token}})
             type === "income" ? fetchIncome() : fetchExpenses() 
         } catch (err) {
             console.log(err)
