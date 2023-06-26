@@ -33,6 +33,7 @@ body {
   margin-bottom: 30px;
   gap: 20px;
   margin-top: 10px;
+  justify-content: center;
 }
 
 .userName {
@@ -43,6 +44,7 @@ body {
   width: 64px;
   height: 64px;
   transition: opacity 250ms;
+  justify-self: center;
 }
 
 .login:hover,
