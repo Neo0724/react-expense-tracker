@@ -25,7 +25,7 @@ export default function Register() {
 
     try {
       await axios.post("https://mern-expense-tracker-213j.onrender.com/auth/register", { username: data.username, password: data.password })
-      navigate("/intermediateExpenseTrackerFrontend/login")
+      navigate("/intermediateExpenseTracker/login")
     } catch (err) {
       alert(err)
     }

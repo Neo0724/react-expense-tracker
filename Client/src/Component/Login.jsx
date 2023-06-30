@@ -47,7 +47,7 @@ export default function Login() {
       localStorage.setItem("User ID", res.data.userID)
       localStorage.setItem("Username", res.data.userName)
       await handleNavbar()
-      navigate("/intermediateExpenseTrackerFrontend/dashboard")
+      navigate("/intermediateExpenseTracker/dashboard")
     } catch (err) {
       const status = err.request.status
       status === 404 ? setLoginErr({ text: "User not found", error: true }) : setLoginErr({ text: "Password is incorrect", error: true })
@@ -61,7 +61,7 @@ export default function Login() {
       <input type="password" className="usernameInput" placeholder="Enter your password ..." value={data.password} onChange={handlePasswordChange} required={true}/>
       <div className="horizontalLine"></div>
       <button className="submitBtn" type="submit">login</button>
-      <span>Do not have an account? <Link to="/intermediateExpenseTrackerFrontend/register">Register now</Link></span>
+      <span>Do not have an account? <Link to="/intermediateExpenseTracker/register">Register now</Link></span>
     </form> 
   )
 }

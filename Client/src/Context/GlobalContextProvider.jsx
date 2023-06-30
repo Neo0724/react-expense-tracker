@@ -150,7 +150,8 @@ export const GlobalContextProvider = ({ children }) => {
     useEffect(() => {
         fetchExpenses()
         fetchIncome()
-    },[userOwner])
+        console.log("Done fetch")
+    },[cookies.access_token])
 
     const getHistory = () => {
         const history = ([...income, ...expenses]).sort((a,b) => new Date(b.date) - new Date(a.date))

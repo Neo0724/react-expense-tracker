@@ -20,7 +20,7 @@ export default function NavbarComponent({ id, name, icon, active, setNavbar }) {
       return newItem
     })
 
-    navigate(`/intermediateExpenseTrackerFrontend/${name.toLowerCase()}`)
+    navigate(`/intermediateExpenseTracker/${name.toLowerCase()}`)
   }
 
 

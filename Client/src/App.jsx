@@ -1,4 +1,4 @@
-import {  BrowserRouter, Routes, Route  } from "react-router-dom"
+import {  HashRouter, Routes, Route  } from "react-router-dom"
 import Dashboard from "./Component/Dashboard"
 import Register from "./Component/Register"
 import Navbar from "./Navbar"
@@ -12,20 +12,20 @@ import LoginError from "./LoginError"
 function App() {
 
   return (
-    <BrowserRouter> 
+    <HashRouter> 
       <Navbar />
       <PopUp />
       <LoginError />
       <Routes>
-        <Route path="intermediateExpenseTrackerFrontend/" element={<Dashboard />}></Route>
-        <Route path="intermediateExpenseTrackerFrontend/dashboard" element={<Dashboard />}></Route>
-        <Route path="intermediateExpenseTrackerFrontend/view transaction" element={<ViewTransaction />}></Route>
-        <Route path="intermediateExpenseTrackerFrontend/income" element={<Income />}></Route>
-        <Route path="intermediateExpenseTrackerFrontend/expenses" element={<Expenses />}></Route>
-        <Route path="intermediateExpenseTrackerFrontend/register" element={<Register />}></Route>
-        <Route path="intermediateExpenseTrackerFrontend/login" element={<Login />}></Route>
+        <Route path="intermediateExpenseTracker/" element={<Dashboard />}></Route>
+        <Route path="intermediateExpenseTracker/dashboard" element={<Dashboard />}></Route>
+        <Route path="intermediateExpenseTracker/view transaction" element={<ViewTransaction />}></Route>
+        <Route path="intermediateExpenseTracker/income" element={<Income />}></Route>
+        <Route path="intermediateExpenseTracker/expenses" element={<Expenses />}></Route>
+        <Route path="intermediateExpenseTracker/register" element={<Register />}></Route>
+        <Route path="intermediateExpenseTracker/login" element={<Login />}></Route>
       </Routes>
-    </BrowserRouter>
+    </HashRouter>
   )
 }
 
