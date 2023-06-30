@@ -17,7 +17,7 @@ function App() {
       <PopUp />
       <LoginError />
       <Routes>
-        <Route path="intermediateExpenseTracker/" element={<Dashboard />}></Route>
+        <Route path="/" element={<Dashboard />}></Route>
         <Route path="intermediateExpenseTracker/dashboard" element={<Dashboard />}></Route>
         <Route path="intermediateExpenseTracker/view transaction" element={<ViewTransaction />}></Route>
         <Route path="intermediateExpenseTracker/income" element={<Income />}></Route>
