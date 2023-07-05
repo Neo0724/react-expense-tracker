@@ -15,8 +15,9 @@ export default function FormComponent({ type }) {
         description: "",
         userOwner: ""
     })
-    const [ cookies, setCookies ] = useCookies(["access_token"])
 
+    const [ cookies, setCookies ] = useCookies(["access_token"])
+    console.log(data)
     const addUserOwner = async () => {
         return new Promise((resolve, reject) => {
             const userOwner = localStorage.getItem("User ID")
@@ -42,7 +43,14 @@ export default function FormComponent({ type }) {
             
             case "category":
                 setData(prev => {
-                    return {...prev, category: e.target.value}
+                    let category = e.target.value
+                    category === "foodandbeverage" ? category = "Food and Beverage" : category
+
+                    if (e.target.value === "other") { 
+                        return {...prev, category: e.target.value, title: ""}
+                    } else {
+                        return {...prev, category: e.target.value, title: category.charAt(0).toUpperCase() + category.slice(1)}
+                    }
                 })
                 return
             
@@ -83,7 +91,7 @@ export default function FormComponent({ type }) {
 
     const IncomeSelect = () => {
         return (
-            <select required value={data.category} onChange={(e) => handleChange(e, "category")} placeholder="Select an option">
+            <select required value={data.category} onChange={(e) => handleChange(e, "category")} placeholder="Select a category">
                 <option value="" disabled>Select an option</option>
                 <option value="salary" >Salary</option>
                 <option value="freelancing" >Freelancing</option>
@@ -97,7 +105,7 @@ export default function FormComponent({ type }) {
 
     const ExpensesSelect = () => {
         return (
-            <select required value={data.category} onChange={(e) => handleChange(e, "category")} placeholder="Select an option">
+            <select required value={data.category} onChange={(e) => handleChange(e, "category")} placeholder="Select a category">
                 <option value="" disabled>Select an option</option>
                 <option value="accomodation" >Accomodation</option>
                 <option value="foodandbeverage" >Food And Beverage</option>
@@ -112,7 +120,6 @@ export default function FormComponent({ type }) {
 
   return (
     <form action="POST" className="formContainer" onSubmit={(e) => handleSubmit(e)}>
-        <input type="text" className="titleInput" placeholder="Enter the title..." required value={data.title} onChange={(e) => handleChange(e, "title")}/>
         <input type="text" className="amountInput" placeholder="Enter the amount..." required value={data.amount} onChange={(e) => handleChange(e, "amount")}/>
         <ReactDatePicker 
             className="dateInput" 
@@ -122,6 +129,7 @@ export default function FormComponent({ type }) {
             startDate={data.date}
         />
         { type === "income" ? <IncomeSelect /> : <ExpensesSelect />}
+        { data.category === "other" ? <input type="text" className="titleInput" placeholder="Enter the title..." required value={data.title} onChange={(e) => handleChange(e, "title")}/> : null }
         <textarea cols="30" rows="6" maxLength="70" placeholder="Enter description" className="descriptionInput" value={data.description} onChange={(e) => handleChange(e, "description")}></textarea>
         <button className="submitBtn" type="submit">submit</button>
     </form>
