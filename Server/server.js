@@ -9,7 +9,7 @@ require("dotenv").config();
 
 app.use(
   cors({
-    origin: ["http://127.0.0.1:5173", "https://neo0724.github.io"],
+    origin: ["http://127.0.0.1:5173", "https://neo0724.github.io", "http://localhost:5173"],
   })
 );
 
