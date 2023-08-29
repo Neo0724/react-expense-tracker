@@ -24,7 +24,7 @@ try {
   console.log(err);
 }
 
-app.get("/", (req, res) => {
+app.get("/", (req, res) => {c
   res.setHeader("Access-Control-Allow-Credentials", "true");
   res.json({ message: "Api running" });
 });
