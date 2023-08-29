@@ -90,7 +90,7 @@ export const GlobalContextProvider = ({ children }) => {
     }
 
     const getBalance = () => {
-        return getTotalIncome() - getTotalExpenses()
+        return (getTotalIncome() - getTotalExpenses()).toFixed(2)
     }
 
     useEffect(() => {
