@@ -35,7 +35,7 @@ export default function ViewTransaction() {
 
         return (
             <select placeholder="1" value={ category === "income" ? transactionMonth.income : transactionMonth.expense } onChange={(e) => changeMonth(e, category)} className="monthSelector">
-                <option value="all">All</option>
+                <option value="all">all</option>
                 <option value="01">1</option>
                 <option value="02">2</option>
                 <option value="03">3</option>
