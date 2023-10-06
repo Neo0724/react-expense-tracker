@@ -9,7 +9,12 @@ require("dotenv").config();
 
 app.use(
   cors({
-    origin: ["http://127.0.0.1:5173", "https://neo0724.github.io", "http://localhost:5173"],
+    origin: [
+      "http://127.0.0.1:5173",
+      "https://neo0724.github.io",
+      "http://localhost:5173",
+      "https://expense-tracker-intermediate.netlify.",
+    ],
   })
 );
 
@@ -24,7 +29,8 @@ try {
   console.log(err);
 }
 
-app.get("/", (req, res) => {c
+app.get("/", (req, res) => {
+  c;
   res.setHeader("Access-Control-Allow-Credentials", "true");
   res.json({ message: "Api running" });
 });
@@ -37,4 +43,4 @@ app.listen(port, () => {
   console.log(`Running on port ${port}`);
 });
 
-console.log(process.env.JWT_SECRET)
+console.log(process.env.JWT_SECRET);
