@@ -1,3 +1,4 @@
+/* eslint-disable no-case-declarations */
 import React, { useEffect } from 'react'
 import { useContext, useState } from 'react'
 import axios from 'axios'
@@ -20,6 +21,27 @@ export const GlobalContextProvider = ({ children }) => {
     const [ close, setClose ] = useState(true)
 
     const [ loginErr, setLoginErr ] = useState({ text: "", error: false })
+
+    const [ dashboardMonth, setDashboardMonth ] = useState("all")
+
+    const [ transactionMonth, setTransactionMonth ] = useState({ income: "all", expense: "all"})
+
+    const dictForMonth = {
+        "all" : "Every Months",
+        "01" : "January",
+        "02" : "February",
+        "03" : "March",
+        "04" : "April",
+        "05" : "May",
+        "06" : "June",
+        "07" : "July",
+        "08" : "August",
+        "09" : "September",
+        "10" : "October",
+        "11" : "November",
+        "12" : "December",
+
+  }
 
     const [ navbar, setNavbar ] = useState(() => {
       const exist = localStorage.getItem("Navbar")
@@ -68,11 +90,21 @@ export const GlobalContextProvider = ({ children }) => {
 
         let totalIncome = 0
 
-        income.map(item => {
-            totalIncome += item.amount
+        if (dashboardMonth === "all") {
+            income.map(item => {
+                totalIncome += item.amount
+            })
+
+            return totalIncome.toFixed(2)
+        }
+
+        income.forEach(item => {
+            if ( item.date.split("T")[0].split("-").reverse().join("-").split("-")[1].toString() === dashboardMonth ) {
+                totalIncome += item.amount
+            }
         })
 
-        return totalIncome
+        return totalIncome.toFixed(2)
     }
 
     const getTotalExpenses = () => {
@@ -82,15 +114,27 @@ export const GlobalContextProvider = ({ children }) => {
 
         let totalExpenses = 0
 
-        expenses.map(item => {
-            totalExpenses += item.amount
+        if (dashboardMonth === "all") {
+            expenses.map(item => {
+                totalExpenses += item.amount
+            })
+
+            return totalExpenses.toFixed(2)
+        }
+
+        expenses.forEach(item => {
+            if ( item.date.split("T")[0].split("-").reverse().join("-").split("-")[1].toString() === dashboardMonth ) {
+                totalExpenses += item.amount
+            }
         })
 
-        return totalExpenses
+        return totalExpenses.toFixed(2)
+
+        
     }
 
     const getBalance = () => {
-        return (getTotalIncome() - getTotalExpenses()).toFixed(2)
+        return (getTotalIncome(dashboardMonth) - getTotalExpenses(dashboardMonth)).toFixed(2)
     }
 
     useEffect(() => {
@@ -99,14 +143,30 @@ export const GlobalContextProvider = ({ children }) => {
         console.log("Done fetch")
     },[cookies.access_token])
 
-    const getHistory = () => {
-        const history = ([...income, ...expenses]).sort((a,b) => new Date(b.date) - new Date(a.date))
+    const getSelectedMonthHistoryTransaction= () => {
+        let selectedMonthIncome = income.filter(item => {
+            if ( dashboardMonth === "all") {
+                return item
+            } else {
+                return item.date.split("T")[0].split("-").reverse().join("-").split("-")[1].toString() === dashboardMonth
+            }
+
+        })
+
+        let selectedMonthExpense = expenses.filter(item => {
+            if ( dashboardMonth === "all") {
+                return item
+            } else {
+                return item.date.split("T")[0].split("-").reverse().join("-").split("-")[1].toString() === dashboardMonth
+            }
+        })
+        const history = ([...selectedMonthIncome, ...selectedMonthExpense]).sort((a,b) => new Date(b.date) - new Date(a.date))
         return history.splice(0, 3)
     }
 
 
     return (
-        <GlobalContext.Provider value={{ expenses, income, setExpenses, setIncome, fetchExpenses, fetchIncome, BASE_URL, setNavbar, navbar, getTotalExpenses, getTotalIncome, getBalance, getHistory, setClose, close, setLoginErr, loginErr }}>
+        <GlobalContext.Provider value={{ expenses, income, setExpenses, setIncome, fetchExpenses, fetchIncome, BASE_URL, setNavbar, navbar, getTotalExpenses, getTotalIncome, getBalance, getSelectedMonthHistoryTransaction, setClose, close, setLoginErr, loginErr, dashboardMonth, setDashboardMonth, transactionMonth, setTransactionMonth, dictForMonth }}>
             { children }
         </GlobalContext.Provider>
     )

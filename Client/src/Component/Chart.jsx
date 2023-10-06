@@ -8,18 +8,28 @@ ChartJs.register(
 )
 
 export default function Chart() {
-    const { income, expenses } = useGlobalContext();
+    const { income, expenses, month } = useGlobalContext();
 
-    const incomeAmount = income.map(item => item.amount);
+    let filteredIncome = income.filter(item => {
+        if ( month === "all") return item 
+        return item.date.split("T")[0].split("-").reverse().join("-").split("-")[1].toString() === month
+    })
 
-    const expensesAmount = expenses.map(item => item.amount);
+    let filteredExpense = expenses.filter(item => {
+        if ( month === "all") return item 
+        return item.date.split("T")[0].split("-").reverse().join("-").split("-")[1].toString() === month
+    })
 
-    const incomeDate = income.map(item => {
+    const incomeAmount = filteredIncome.map(item => item.amount);
+
+    const expensesAmount = filteredExpense.map(item => item.amount);
+
+    const incomeDate = filteredIncome.map(item => {
         const formattedDate =  item.date.split("T")[0].split("-").reverse().join("-");
         return formattedDate;
     });
 
-    const expensesDate = expenses.map(item => {
+    const expensesDate = filteredExpense.map(item => {
         const formattedDate =  item.date.split("T")[0].split("-").reverse().join("-");
         return formattedDate;
     });
@@ -36,17 +46,17 @@ export default function Chart() {
     }
 
     const data = {
-        labels: income.length === 0 && expenses.length === 0 ? [] : allDate,
+        labels: filteredIncome.length === 0 && filteredExpense.length === 0 ? [] : allDate,
 
         datasets: [
             {
                 label: "Income",
-                data: income.length === 0 ? [] : incomeAmount,
+                data: filteredIncome.length === 0 ? [] : incomeAmount,
                 backgroundColor: "green"
             },
             {
                 label: "Expenses",
-                data: expenses.length === 0 ? [] : expensesAmount,
+                data: filteredExpense.length === 0 ? [] : expensesAmount,
                 backgroundColor: "red"
             }
         ],

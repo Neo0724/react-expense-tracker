@@ -722,6 +722,16 @@ button {
   }
 }
 
+.monthSelector {
+  height: auto;
+  transition: opacity 250ms;
+}
+
+.monthSelector:hover {
+  cursor: pointer;
+  opacity: .7;
+}
+
 
 
 
