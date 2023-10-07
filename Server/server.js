@@ -13,7 +13,7 @@ app.use(
       "http://127.0.0.1:5173",
       "https://neo0724.github.io",
       "http://localhost:5173",
-      "https://expense-tracker-intermediate.netlify.app",
+      "https://neo0724-expense-tracker.netlify.app",
     ],
   })
 );
