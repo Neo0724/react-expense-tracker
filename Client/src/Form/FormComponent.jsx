@@ -17,7 +17,6 @@ export default function FormComponent({ type }) {
     })
 
     const [ cookies, setCookies ] = useCookies(["access_token"])
-    console.log(data)
     const addUserOwner = async () => {
         return new Promise((resolve, reject) => {
             const userOwner = localStorage.getItem("User ID")

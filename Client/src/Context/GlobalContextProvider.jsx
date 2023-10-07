@@ -140,7 +140,6 @@ export const GlobalContextProvider = ({ children }) => {
     useEffect(() => {
         fetchExpenses()
         fetchIncome()
-        console.log("Done fetch")
     },[cookies.access_token])
 
     const getSelectedMonthHistoryTransaction= () => {

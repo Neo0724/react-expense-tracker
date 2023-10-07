@@ -41,6 +41,15 @@ export default function Navbar() {
 
     const handleLogin = () => {
       if (cookies.access_token) return
+
+      setNavbar(prev => {
+        let updatedNav = prev.map(item => {
+          return { ...item, active: false}
+        })
+
+        return updatedNav
+      })
+      
       navigate("intermediateExpenseTracker/login")
     }
 
