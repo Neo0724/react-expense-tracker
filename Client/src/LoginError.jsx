@@ -1,25 +1,25 @@
-import React, { useState } from 'react'
-import { useGlobalContext } from './Context/GlobalContextProvider'
+import { useGlobalContext } from "./Context/useGlobalContext";
 
 export default function LoginError() {
+  const { loginErr, setLoginErr } = useGlobalContext();
 
-    const { loginErr, setLoginErr } = useGlobalContext()
+  const timeOut = () => {
+    setTimeout(() => {
+      setLoginErr({ text: "", error: false });
+    }, 3000);
+  };
 
-    const timeOut = () => {
-        setTimeout(() => {
-            setLoginErr({ text: "", error: false})
-        }, 3000)
-    }
-
-    if (loginErr.error) {
-        timeOut()
-        clearTimeout(timeOut)
-    }
-
+  if (loginErr.error) {
+    timeOut();
+    clearTimeout(timeOut);
+  }
 
   return (
-    <div className="loginErrorContainer" id={ loginErr.error ? "loginErrTrue" : null}>
-        <div className="errorText">{loginErr.text}</div>
+    <div
+      className="loginErrorContainer"
+      id={loginErr.error ? "loginErrTrue" : null}
+    >
+      <div className="errorText">{loginErr.text}</div>
     </div>
-  )
+  );
 }
