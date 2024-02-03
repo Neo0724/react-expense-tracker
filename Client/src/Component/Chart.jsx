@@ -134,10 +134,12 @@ export default function Chart() {
   const expensesAmount = filteredExpensesByMonth().map((item) => item[1]);
 
   const allDate =
-    dashboardMonth === "all" ? 
-    filteredExpensesByMonth().map(item => item[0])
-    :
-    [...filteredExpensesByMonth().map(item => item[0]), ...filteredIncomeByMonth().map(item => item[0])]
+    dashboardMonth === "all"
+      ? filteredExpensesByMonth().map((item) => item[0])
+      : [
+          ...filteredExpensesByMonth().map((item) => item[0]),
+          ...filteredIncomeByMonth().map((item) => item[0]),
+        ];
 
   const options = {
     maintainAspectRatio: false,

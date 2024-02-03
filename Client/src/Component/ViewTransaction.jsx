@@ -35,7 +35,6 @@ export default function ViewTransaction() {
   });
 
   const changeMonth = (e, category) => {
-    console.log(category);
     setTransactionMonth((prev) => {
       if (category === "income") {
         return { ...prev, income: e.target.value };

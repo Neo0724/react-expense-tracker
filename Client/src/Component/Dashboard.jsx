@@ -4,8 +4,8 @@ import { HistoryContainer } from "./IncomeAndExpenseContainer";
 
 export default function Dashboard() {
   const {
-    getTotalExpenses,
-    getTotalIncome,
+    getTotalExpensesByMonth,
+    getTotalIncomeByMonth,
     getBalance,
     getSelectedMonthHistoryTransaction,
     dashboardMonth,
@@ -56,10 +56,10 @@ export default function Dashboard() {
         <div className="amountContainer">
           <div className="expenseAndIncomeDashboard">
             <div className="totalExpensesDashboard" style={{ color: "red" }}>
-              Total Expenses: ${getTotalExpenses(dashboardMonth)}
+              Total Expenses: ${getTotalExpensesByMonth(dashboardMonth)}
             </div>
             <div className="totalIncomeDashboard" style={{ color: "green" }}>
-              Total Income: ${getTotalIncome(dashboardMonth)}
+              Total Income: ${getTotalIncomeByMonth(dashboardMonth)}
             </div>
           </div>
           <div className="totalBalanceDashboard" style={style}>

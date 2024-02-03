@@ -3,12 +3,12 @@ import { useGlobalContext } from "../Context/useGlobalContext";
 import { IncomeContainer } from "./IncomeAndExpenseContainer";
 
 export default function Income() {
-  const { income, setIncome, getTotalIncome } = useGlobalContext();
+  const { income, setIncome, getAllIncome } = useGlobalContext();
 
   return (
     <div className="incomeUpperContainer">
       <div className="incomeTitle">Income</div>
-      <div className="totalIncome">Total Income: $ {getTotalIncome()}</div>
+      <div className="totalIncome">Total Income: $ {getAllIncome()}</div>
       <div className="incomeLowerContainer">
         <Form type="income" />
         <div className="incomeTransactionContainer">

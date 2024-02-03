@@ -3,12 +3,14 @@ import { useGlobalContext } from "../Context/useGlobalContext";
 import { ExpenseContainer } from "./IncomeAndExpenseContainer";
 
 export default function Expenses() {
-  const { expenses, setExpenses, getTotalExpenses } = useGlobalContext();
+  const { expenses, setExpenses, getAllExpenses } = useGlobalContext();
 
   return (
     <div className="expenseUpperContainer">
       <div className="expenseTitle">Expenses</div>
-      <div className="totalExpense">Total Expense: $ {getTotalExpenses()}</div>
+      <div className="totalExpense">
+        Total Expense: $ {getAllExpenses()}
+      </div>
       <div className="expenseLowerContainer">
         <Form type="expense" />
         <div className="expenseTransactionContainer">

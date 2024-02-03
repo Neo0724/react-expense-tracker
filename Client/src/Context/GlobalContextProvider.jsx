@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/prop-types */
 /* eslint-disable no-case-declarations */
 import React, { useEffect } from "react";
 import { useState } from "react";
@@ -31,7 +33,7 @@ export const GlobalContextProvider = ({ children }) => {
   });
 
   const dictForMonth = {
-    "all": "Every Months",
+    all: "Every Months",
     "01": "January",
     "02": "February",
     "03": "March",
@@ -41,9 +43,9 @@ export const GlobalContextProvider = ({ children }) => {
     "07": "July",
     "08": "August",
     "09": "September",
-    "10": "October",
-    "11": "November",
-    "12": "December",
+    10: "October",
+    11: "November",
+    12: "December",
   };
 
   const [navbar, setNavbar] = useState(() => {
@@ -59,7 +61,7 @@ export const GlobalContextProvider = ({ children }) => {
     localStorage.setItem("Navbar", JSON.stringify(navbar));
   }, [navbar]);
 
-  const getTotalIncome = () => {
+  const getTotalIncomeByMonth = () => {
     if (income.length === 0) {
       return 0;
     }
@@ -91,7 +93,31 @@ export const GlobalContextProvider = ({ children }) => {
     return totalIncome.toFixed(2);
   };
 
-  const getTotalExpenses = () => {
+  const getAllExpenses = () => {
+    if (expenses.length === 0) return 0;
+
+    let totalExpenses = 0;
+
+    expenses.forEach((expense) => {
+      totalExpenses += expense.amount;
+    });
+
+    return totalExpenses.toFixed(2);
+  };
+
+  const getAllIncome = () => {
+    if (income.length === 0) return 0;
+
+    let totalIncome = 0;
+
+    income.forEach((income) => {
+      totalIncome += income.amount;
+    });
+
+    return totalIncome.toFixed(2);
+  };
+
+  const getTotalExpensesByMonth = () => {
     if (expenses.length === 0) {
       return 0;
     }
@@ -125,7 +151,8 @@ export const GlobalContextProvider = ({ children }) => {
 
   const getBalance = () => {
     return (
-      getTotalIncome(dashboardMonth) - getTotalExpenses(dashboardMonth)
+      getTotalIncomeByMonth(dashboardMonth) -
+      getTotalExpensesByMonth(dashboardMonth)
     ).toFixed(2);
   };
 
@@ -216,8 +243,8 @@ export const GlobalContextProvider = ({ children }) => {
         BASE_URL,
         setNavbar,
         navbar,
-        getTotalExpenses,
-        getTotalIncome,
+        getTotalExpensesByMonth,
+        getTotalIncomeByMonth,
         getBalance,
         getSelectedMonthHistoryTransaction,
         setClose,
@@ -229,11 +256,11 @@ export const GlobalContextProvider = ({ children }) => {
         transactionMonth,
         setTransactionMonth,
         dictForMonth,
+        getAllIncome,
+        getAllExpenses,
       }}
     >
       {children}
     </GlobalContext.Provider>
   );
 };
-
-
