@@ -21,15 +21,19 @@ ChartJs.register(
 );
 
 export default function Chart() {
-  const { income, expenses, dashboardMonth, dictForMonth } = useGlobalContext();
+  const { income, expenses, dashboardMonth, dictForMonth, dashboardYear } =
+    useGlobalContext();
 
   const filteredIncomeByMonth = () => {
     let dateHash = {};
-    if (dashboardMonth === "all") {
+
+    // Show all
+    if (dashboardMonth === "all" && dashboardYear === "all") {
       income.forEach((item) => {
         const date = item.date.split("T")[0].split("-").reverse();
 
         if (Object.prototype.hasOwnProperty.call(dateHash, date[1])) {
+          console.log(date);
           dateHash[date[1]][1] += item.amount;
         } else {
           dateHash[date[1]] = [date[1], 0];
@@ -38,6 +42,7 @@ export default function Chart() {
       });
 
       let dateArr = Object.values(dateHash);
+      console.log(dateArr);
       dateArr.sort((a, b) => {
         const dateA = parseInt(a[0]);
         const dateB = parseInt(b[0]);
@@ -47,7 +52,9 @@ export default function Chart() {
       dateArr.forEach((item) => (item[0] = dictForMonth[item[0]]));
 
       return dateArr;
-    } else {
+    }
+    // Show specific month
+    else if (dashboardMonth !== "all" && dashboardYear === "all") {
       let filteredIncome = income.filter((item) => {
         return (
           item.date
@@ -63,6 +70,7 @@ export default function Chart() {
       filteredIncome.forEach((item) => {
         const formattedDate = item.date.split("T")[0].split("-").join("-");
         if (Object.prototype.hasOwnProperty.call(dateHash, formattedDate)) {
+          console.log(dateHash);
           dateHash[formattedDate][1] += item.amount;
         } else {
           dateHash[formattedDate] = [formattedDate, 0];
@@ -74,11 +82,41 @@ export default function Chart() {
       dateArr.sort((a, b) => new Date(a) - new Date(b));
       return dateArr;
     }
+    // Show specific month and year
+    else {
+      let filteredIncome = income.filter((item) => {
+        return (
+          item.date
+            .split("T")[0]
+            .split("-")
+            .reverse()
+            .join("-")
+            .split("-")[1]
+            .toString() === dashboardMonth &&
+          item.date.split("T")[0].split("-")[0].toString() === dashboardYear
+        );
+      });
+
+      filteredIncome.forEach((item) => {
+        const formattedDate = item.date.split("T")[0].split("-").join("-");
+        if (Object.prototype.hasOwnProperty.call(dateHash, formattedDate)) {
+          dateHash[formattedDate][1] += item.amount;
+        } else {
+          dateHash[formattedDate] = [formattedDate, 0];
+          dateHash[formattedDate][1] += item.amount;
+        }
+      });
+
+      let dateArr = Object.values(dateHash);
+      console.log(dateArr);
+      dateArr.sort((a, b) => new Date(a) - new Date(b));
+      return dateArr;
+    }
   };
 
   const filteredExpensesByMonth = () => {
     let dateHash = {};
-    if (dashboardMonth === "all") {
+    if (dashboardMonth === "all" && dashboardYear === "all") {
       expenses.forEach((item) => {
         const date = item.date.split("T")[0].split("-").reverse();
 
@@ -100,7 +138,7 @@ export default function Chart() {
       dateArr.forEach((item) => (item[0] = dictForMonth[item[0]]));
 
       return dateArr;
-    } else {
+    } else if (dashboardMonth !== "all" && dashboardYear === "all") {
       let filteredExpenses = expenses.filter((item) => {
         return (
           item.date
@@ -110,6 +148,34 @@ export default function Chart() {
             .join("-")
             .split("-")[1]
             .toString() === dashboardMonth
+        );
+      });
+
+      filteredExpenses.forEach((item) => {
+        const formattedDate = item.date.split("T")[0].split("-").join("-");
+        if (Object.prototype.hasOwnProperty.call(dateHash, formattedDate)) {
+          dateHash[formattedDate][1] += item.amount;
+        } else {
+          dateHash[formattedDate] = [formattedDate, 0];
+          dateHash[formattedDate][1] += item.amount;
+        }
+      });
+
+      let dateArr = Object.values(dateHash);
+      console.log(dateArr)
+      dateArr.sort((a, b) => new Date(a) - new Date(b));
+      return dateArr;
+    } else {
+      let filteredExpenses = expenses.filter((item) => {
+        return (
+          item.date
+            .split("T")[0]
+            .split("-")
+            .reverse()
+            .join("-")
+            .split("-")[1]
+            .toString() === dashboardMonth &&
+          item.date.split("T")[0].split("-")[0].toString() === dashboardYear
         );
       });
 

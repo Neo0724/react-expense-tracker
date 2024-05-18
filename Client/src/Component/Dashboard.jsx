@@ -4,13 +4,15 @@ import { HistoryContainer } from "./IncomeAndExpenseContainer";
 
 export default function Dashboard() {
   const {
-    getTotalExpensesByMonth,
-    getTotalIncomeByMonth,
+    getTotalExpensesByMonthAndYear,
+    getTotalIncomeByMonthAndYear,
     getBalance,
     getSelectedMonthHistoryTransaction,
     dashboardMonth,
     setDashboardMonth,
     dictForMonth,
+    dashboardYear,
+    setDashboardYear
   } = useGlobalContext();
 
   const style = {
@@ -19,6 +21,10 @@ export default function Dashboard() {
 
   const changeMonth = (e) => {
     setDashboardMonth(e.target.value);
+  };
+
+  const changeYear = (e) => {
+    setDashboardYear(e.target.value);
   };
 
   const MonthSelect = () => {
@@ -46,20 +52,39 @@ export default function Dashboard() {
     );
   };
 
+  const YearSelect = () => {
+    return (
+      <select
+        placeholder="2023"
+        value={dashboardYear}
+        onChange={(e) => changeYear(e)}
+        className="monthSelector"
+      >
+        <option value="all">All</option>
+        <option value="2023">2023</option>
+        <option value="2024">2024</option>
+        <option value="2025">2025</option>
+        <option value="2026">2026</option>
+        <option value="2027">2027</option>
+      </select>
+    );
+  }
+ 
+
   return (
     <div className="dashboardContainer">
       <div className="overview">
-        Month: <MonthSelect />
+        Month: <MonthSelect /> | Year: <YearSelect />
       </div>
       <Chart />
       <div className="amountAndHistoryContainer">
         <div className="amountContainer">
           <div className="expenseAndIncomeDashboard">
             <div className="totalExpensesDashboard" style={{ color: "red" }}>
-              Total Expenses: ${getTotalExpensesByMonth(dashboardMonth)}
+              Total Expenses: ${getTotalExpensesByMonthAndYear(dashboardMonth)}
             </div>
             <div className="totalIncomeDashboard" style={{ color: "green" }}>
-              Total Income: ${getTotalIncomeByMonth(dashboardMonth)}
+              Total Income: ${getTotalIncomeByMonthAndYear(dashboardMonth)}
             </div>
           </div>
           <div className="totalBalanceDashboard" style={style}>

@@ -3,11 +3,38 @@ import { ExpenseContainer } from "./IncomeAndExpenseContainer";
 import { IncomeContainer } from "./IncomeAndExpenseContainer";
 
 export default function ViewTransaction() {
-  const { income, expenses, transactionMonth, setTransactionMonth } =
-    useGlobalContext();
+  const {
+    income,
+    expenses,
+    transactionMonth,
+    setTransactionMonth,
+    transactionYear,
+    setTransactionYear,
+  } = useGlobalContext();
 
   let selectedDateExpense = expenses.filter((item) => {
-    if (transactionMonth.expense === "all") return item;
+    if (transactionMonth.expense === "all" && transactionYear.expense === "all") {
+      return item;
+    }
+
+    if (transactionMonth.expense === "all" && transactionYear.expense !== "all") {
+      return (
+        item.date.split("T")[0].split("-")[0].toString() ===
+        transactionYear.expense
+      );
+    }
+
+    if(transactionMonth.expense !== "all" && transactionYear.expense === "all") {
+      return (
+        item.date
+          .split("T")[0]
+          .split("-")
+          .reverse()
+          .join("-")
+          .split("-")[1]
+          .toString() === transactionMonth.expense
+      )
+    }
 
     return (
       item.date
@@ -16,12 +43,35 @@ export default function ViewTransaction() {
         .reverse()
         .join("-")
         .split("-")[1]
-        .toString() === transactionMonth.expense
+        .toString() === transactionMonth.expense &&
+      item.date.split("T")[0].split("-")[0].toString() ===
+        transactionYear.expense
     );
   });
 
   let selectedDateIncome = income.filter((item) => {
-    if (transactionMonth.income === "all") return item;
+    if (transactionMonth.income === "all" && transactionYear.income === "all") {
+      return item;
+    }
+
+    if (transactionMonth.income === "all" && transactionYear.income !== "all") {
+      return (
+        item.date.split("T")[0].split("-")[0].toString() ===
+        transactionYear.income
+      );
+    }
+
+    if(transactionMonth.income !== "all" && transactionYear.income === "all") {
+      return (
+        item.date
+          .split("T")[0]
+          .split("-")
+          .reverse()
+          .join("-")
+          .split("-")[1]
+          .toString() === transactionMonth.income
+      )
+    }
 
     return (
       item.date
@@ -30,12 +80,24 @@ export default function ViewTransaction() {
         .reverse()
         .join("-")
         .split("-")[1]
-        .toString() === transactionMonth.income
+        .toString() === transactionMonth.income &&
+      item.date.split("T")[0].split("-")[0].toString() ===
+        transactionYear.income
     );
   });
 
   const changeMonth = (e, category) => {
     setTransactionMonth((prev) => {
+      if (category === "income") {
+        return { ...prev, income: e.target.value };
+      } else {
+        return { ...prev, expense: e.target.value };
+      }
+    });
+  };
+
+  const changeYear = (e, category) => {
+    setTransactionYear((prev) => {
       if (category === "income") {
         return { ...prev, income: e.target.value };
       } else {
@@ -73,11 +135,34 @@ export default function ViewTransaction() {
     );
   };
 
+  const YearSelect = ({ category }) => {
+    return (
+      <select
+        placeholder="2023"
+        value={
+          category === "income"
+            ? transactionYear.income
+            : transactionYear.expense
+        }
+        onChange={(e) => changeYear(e, category)}
+        className="monthSelector"
+      >
+        <option value="all">all</option>
+        <option value="2023">2023</option>
+        <option value="2024">2024</option>
+        <option value="2025">2025</option>
+        <option value="2026">2026</option>
+        <option value="2027">2027</option>
+      </select>
+    );
+  };
+
   return (
     <div className="viewTransactionContainer">
       <div className="viewIncomeContainer">
         <div className="viewTransactionTitle">
-          Income Transactions on : <MonthSelect category="income" />
+          Income Transactions on : Month: <MonthSelect category="income" /> |
+          Year: <YearSelect category="income" />
         </div>
         <div className="viewIncomeDetailsContainer">
           {!selectedDateIncome.length ? (
@@ -91,7 +176,8 @@ export default function ViewTransaction() {
       </div>
       <div className="viewExpensesContainer">
         <div className="viewTransactionTitle">
-          Expense Transactions on : <MonthSelect category="expense" />
+          Expense Transactions on : Month: <MonthSelect category="expense" /> |
+          Year: <YearSelect category="expense" />
         </div>
         <div className="viewExpensesDetailsContainer">
           {!selectedDateExpense.length ? (

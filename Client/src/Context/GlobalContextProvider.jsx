@@ -27,7 +27,14 @@ export const GlobalContextProvider = ({ children }) => {
 
   const [dashboardMonth, setDashboardMonth] = useState("all");
 
+  const [dashboardYear, setDashboardYear] = useState("all");
+
   const [transactionMonth, setTransactionMonth] = useState({
+    income: "all",
+    expense: "all",
+  });
+
+  const [transactionYear, setTransactionYear] = useState({
     income: "all",
     expense: "all",
   });
@@ -61,34 +68,64 @@ export const GlobalContextProvider = ({ children }) => {
     localStorage.setItem("Navbar", JSON.stringify(navbar));
   }, [navbar]);
 
-  const getTotalIncomeByMonth = () => {
+  const getTotalIncomeByMonthAndYear = () => {
     if (income.length === 0) {
       return 0;
     }
 
     let totalIncome = 0;
 
-    if (dashboardMonth === "all") {
+    // Show all
+    if (dashboardMonth === "all" && dashboardYear === "all") {
       income.map((item) => {
         totalIncome += item.amount;
       });
-
-      return totalIncome.toFixed(2);
+    } 
+    // Show specific year
+    else if (dashboardMonth === "all" && dashboardYear !== "all") {
+      income.forEach((item) => {
+        if (
+          item.date.split("T")[0].split("-")[0].toString() ===
+          dashboardYear
+        ) {
+          totalIncome += item.amount;
+        }
+      });
+    } 
+    // Show specific month
+    else if (dashboardMonth !== "all" && dashboardYear === "all") {
+      income.forEach((item) => {
+        if (
+          item.date
+            .split("T")[0]
+            .split("-")
+            .reverse()
+            .join("-")
+            .split("-")[1]
+            .toString() === dashboardMonth
+        ) {
+          totalIncome += item.amount;
+        }
+      });
+    } 
+    // Show specific year and month
+    else {
+      income.forEach((item) => {
+        if (
+          item.date
+            .split("T")[0]
+            .split("-")
+            .reverse()
+            .join("-")
+            .split("-")[1]
+            .toString() === dashboardMonth &&
+          item.date.split("T")[0].split("-")[0].toString() ===
+            dashboardYear
+        ) {
+          totalIncome += item.amount;
+        }
+      });
     }
-
-    income.forEach((item) => {
-      if (
-        item.date
-          .split("T")[0]
-          .split("-")
-          .reverse()
-          .join("-")
-          .split("-")[1]
-          .toString() === dashboardMonth
-      ) {
-        totalIncome += item.amount;
-      }
-    });
 
     return totalIncome.toFixed(2);
   };
@@ -117,42 +154,72 @@ export const GlobalContextProvider = ({ children }) => {
     return totalIncome.toFixed(2);
   };
 
-  const getTotalExpensesByMonth = () => {
+  const getTotalExpensesByMonthAndYear = () => {
     if (expenses.length === 0) {
       return 0;
     }
 
     let totalExpenses = 0;
 
-    if (dashboardMonth === "all") {
+    // Show all
+    if (dashboardMonth === "all" && dashboardYear === "all") {
       expenses.map((item) => {
         totalExpenses += item.amount;
       });
-
-      return totalExpenses.toFixed(2);
+    } 
+    // Show specific year
+    else if (dashboardMonth === "all" && dashboardYear !== "all") {
+      expenses.forEach((item) => {
+        if (
+          item.date.split("T")[0].split("-")[0].toString() ===
+          dashboardYear
+        ) {
+          totalExpenses += item.amount;
+        }
+      });
+    } 
+    // Show specific month
+    else if (dashboardMonth !== "all" && dashboardYear === "all") {
+      expenses.forEach((item) => {
+        if (
+          item.date
+            .split("T")[0]
+            .split("-")
+            .reverse()
+            .join("-")
+            .split("-")[1]
+            .toString() === dashboardMonth
+        ) {
+          totalExpenses += item.amount;
+        }
+      });
+    } 
+    // Show specific year and month
+    else {
+      expenses.forEach((item) => {
+        if (
+          item.date
+            .split("T")[0]
+            .split("-")
+            .reverse()
+            .join("-")
+            .split("-")[1]
+            .toString() === dashboardMonth &&
+          item.date.split("T")[0].split("-")[0].toString() ===
+            dashboardYear
+        ) {
+          totalExpenses += item.amount;
+        }
+      });
     }
-
-    expenses.forEach((item) => {
-      if (
-        item.date
-          .split("T")[0]
-          .split("-")
-          .reverse()
-          .join("-")
-          .split("-")[1]
-          .toString() === dashboardMonth
-      ) {
-        totalExpenses += item.amount;
-      }
-    });
 
     return totalExpenses.toFixed(2);
   };
 
   const getBalance = () => {
     return (
-      getTotalIncomeByMonth(dashboardMonth) -
-      getTotalExpensesByMonth(dashboardMonth)
+      getTotalIncomeByMonthAndYear(dashboardMonth) -
+      getTotalExpensesByMonthAndYear(dashboardMonth)
     ).toFixed(2);
   };
 
@@ -243,8 +310,8 @@ export const GlobalContextProvider = ({ children }) => {
         BASE_URL,
         setNavbar,
         navbar,
-        getTotalExpensesByMonth,
-        getTotalIncomeByMonth,
+        getTotalExpensesByMonthAndYear,
+        getTotalIncomeByMonthAndYear,
         getBalance,
         getSelectedMonthHistoryTransaction,
         setClose,
@@ -258,6 +325,10 @@ export const GlobalContextProvider = ({ children }) => {
         dictForMonth,
         getAllIncome,
         getAllExpenses,
+        transactionYear,
+        setTransactionYear,
+        dashboardYear,
+        setDashboardYear,
       }}
     >
       {children}
