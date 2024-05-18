@@ -33,6 +33,36 @@ export default function Chart() {
         const date = item.date.split("T")[0].split("-").reverse();
 
         if (Object.prototype.hasOwnProperty.call(dateHash, date[1])) {
+          dateHash[date[1]][1] += item.amount;
+        } else {
+          dateHash[date[1]] = [date[1], 0];
+          dateHash[date[1]][1] += item.amount;
+        }
+      });
+
+      let dateArr = Object.values(dateHash);
+      dateArr.sort((a, b) => {
+        const dateA = parseInt(a[0]);
+        const dateB = parseInt(b[0]);
+
+        return dateA - dateB;
+      });
+      dateArr.forEach((item) => (item[0] = dictForMonth[item[0]]));
+
+      return dateArr;
+    }
+
+    // Show specific year
+    else if (dashboardMonth === "all" && dashboardYear !== "all") {
+      let filteredIncome = income.filter((item) => {
+        return (
+          item.date.split("T")[0].split("-")[0].toString() === dashboardYear
+        );
+      });
+      filteredIncome.forEach((item) => {
+        const date = item.date.split("T")[0].split("-").reverse();
+
+        if (Object.prototype.hasOwnProperty.call(dateHash, date[1])) {
           console.log(date);
           dateHash[date[1]][1] += item.amount;
         } else {
@@ -42,15 +72,15 @@ export default function Chart() {
       });
 
       let dateArr = Object.values(dateHash);
-      console.log(dateArr);
       dateArr.sort((a, b) => {
         const dateA = parseInt(a[0]);
         const dateB = parseInt(b[0]);
-
+        
         return dateA - dateB;
       });
       dateArr.forEach((item) => (item[0] = dictForMonth[item[0]]));
-
+      
+      console.log(dateArr);
       return dateArr;
     }
     // Show specific month
@@ -116,6 +146,8 @@ export default function Chart() {
 
   const filteredExpensesByMonth = () => {
     let dateHash = {};
+
+    // Show all
     if (dashboardMonth === "all" && dashboardYear === "all") {
       expenses.forEach((item) => {
         const date = item.date.split("T")[0].split("-").reverse();
@@ -138,7 +170,9 @@ export default function Chart() {
       dateArr.forEach((item) => (item[0] = dictForMonth[item[0]]));
 
       return dateArr;
-    } else if (dashboardMonth !== "all" && dashboardYear === "all") {
+    } 
+    // Show specific month
+    else if (dashboardMonth !== "all" && dashboardYear === "all") {
       let filteredExpenses = expenses.filter((item) => {
         return (
           item.date
@@ -162,10 +196,41 @@ export default function Chart() {
       });
 
       let dateArr = Object.values(dateHash);
-      console.log(dateArr)
+      console.log(dateArr);
       dateArr.sort((a, b) => new Date(a) - new Date(b));
       return dateArr;
-    } else {
+    } 
+    // Show specific year
+    else if(dashboardMonth === "all" && dashboardYear !== "all") {
+      let filteredExpenses = expenses.filter((item) => {
+        return (
+          item.date.split("T")[0].split("-")[0].toString() === dashboardYear
+        );
+      });
+
+      filteredExpenses.forEach((item) => {
+        const date = item.date.split("T")[0].split("-").reverse();
+
+        if (Object.prototype.hasOwnProperty.call(dateHash, date[1])) {
+          dateHash[date[1]][1] += item.amount;
+        } else {
+          dateHash[date[1]] = [date[1], 0];
+          dateHash[date[1]][1] += item.amount;
+        }
+      });
+      let dateArr = Object.values(dateHash);
+      dateArr.sort((a, b) => {
+        const dateA = parseInt(a[0]);
+        const dateB = parseInt(b[0]);
+
+        return dateA - dateB;
+      });
+
+      dateArr.forEach((item) => (item[0] = dictForMonth[item[0]]));
+      console.log(dateArr)
+      return dateArr;
+    }
+    else {
       let filteredExpenses = expenses.filter((item) => {
         return (
           item.date
