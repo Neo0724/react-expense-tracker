@@ -13,18 +13,27 @@ export default function ViewTransaction() {
   } = useGlobalContext();
 
   let selectedDateExpense = expenses.filter((item) => {
-    if (transactionMonth.expense === "all" && transactionYear.expense === "all") {
+    if (
+      transactionMonth.expense === "all" &&
+      transactionYear.expense === "all"
+    ) {
       return item;
     }
 
-    if (transactionMonth.expense === "all" && transactionYear.expense !== "all") {
+    if (
+      transactionMonth.expense === "all" &&
+      transactionYear.expense !== "all"
+    ) {
       return (
         item.date.split("T")[0].split("-")[0].toString() ===
         transactionYear.expense
       );
     }
 
-    if(transactionMonth.expense !== "all" && transactionYear.expense === "all") {
+    if (
+      transactionMonth.expense !== "all" &&
+      transactionYear.expense === "all"
+    ) {
       return (
         item.date
           .split("T")[0]
@@ -33,7 +42,7 @@ export default function ViewTransaction() {
           .join("-")
           .split("-")[1]
           .toString() === transactionMonth.expense
-      )
+      );
     }
 
     return (
@@ -61,7 +70,7 @@ export default function ViewTransaction() {
       );
     }
 
-    if(transactionMonth.income !== "all" && transactionYear.income === "all") {
+    if (transactionMonth.income !== "all" && transactionYear.income === "all") {
       return (
         item.date
           .split("T")[0]
@@ -70,7 +79,7 @@ export default function ViewTransaction() {
           .join("-")
           .split("-")[1]
           .toString() === transactionMonth.income
-      )
+      );
     }
 
     return (

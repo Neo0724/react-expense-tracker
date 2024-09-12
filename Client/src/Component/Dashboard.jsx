@@ -12,6 +12,7 @@ export default function Dashboard() {
     setDashboardMonth,
     dictForMonth,
     dashboardYear,
+    history,
     setDashboardYear
   } = useGlobalContext();
 
@@ -26,7 +27,7 @@ export default function Dashboard() {
   const changeYear = (e) => {
     setDashboardYear(e.target.value);
   };
-
+  
   const MonthSelect = () => {
     return (
       <select
@@ -81,27 +82,28 @@ export default function Dashboard() {
         <div className="amountContainer">
           <div className="expenseAndIncomeDashboard">
             <div className="totalExpensesDashboard" style={{ color: "red" }}>
-              Total Expenses: ${getTotalExpensesByMonthAndYear(dashboardMonth)}
+              Total Expenses: ${getTotalExpensesByMonthAndYear()}
             </div>
             <div className="totalIncomeDashboard" style={{ color: "green" }}>
-              Total Income: ${getTotalIncomeByMonthAndYear(dashboardMonth)}
+              Total Income: ${getTotalIncomeByMonthAndYear()}
             </div>
           </div>
           <div className="totalBalanceDashboard" style={style}>
-            Total Balance: ${getBalance(dashboardMonth)}
+            Total Balance: ${getBalance()}
           </div>
         </div>
         <div className="historyContainer">
           <div className="historyContainerTitle">
             Transaction History on {dictForMonth[dashboardMonth]}:{" "}
           </div>
-          {!getSelectedMonthHistoryTransaction(dashboardMonth).length ? (
-            <div className="empty">Empty</div>
-          ) : null}
-          {getSelectedMonthHistoryTransaction(dashboardMonth).map((item) => {
-            const randomID = crypto.randomUUID();
-            return <HistoryContainer history={item} key={randomID} />;
-          })}
+      {
+          history.length === 0 ? 
+              <div className="empty">Empty</div> :
+              history.map((item) => {
+                  const randomID = crypto.randomUUID();
+                  return (<HistoryContainer history={item} key={randomID} />);
+              })
+      }
         </div>
       </div>
     </div>
