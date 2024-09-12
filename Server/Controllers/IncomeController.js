@@ -36,6 +36,34 @@ const getIncome = async (req, res) => {
   }
 };
 
+const getIncomeByMonthAndYear = async (req,res) => {
+    try{
+        const { id, month, year } = req.params;
+        
+        let regExp = null;
+
+        if(month === "all" && year === "all") {
+            regExp = new RegExp("\\d{4}");
+
+        } else if (month !== "all" && year === "all") {
+            regExp = new RegExp(`\\d{4}-${month}`);
+
+        } else if (month === "all" && year !== "all") {
+            regExp = new RegExp(`${year}-0?\\d{1,2}`);
+
+        } else {
+            regExp = new RegExp(`${year}-${month}`);
+        } 
+
+        const Income = await IncomeSchema.find({ userOwner: id, date: regExp });
+
+        res.status(200).json(Income);
+
+    } catch (err) {
+        res.status(500).json({ message: "Server Error" });
+    } 
+
+} 
 const deleteIncome = async (req,res) => {
     const { id } = req.params
     try {
@@ -51,3 +79,4 @@ const deleteIncome = async (req,res) => {
 exports.addIncome = addIncome;
 exports.getIncome = getIncome;
 exports.deleteIncome = deleteIncome;
+exports.getIncomeByMonthAndYear = getIncomeByMonthAndYear;
