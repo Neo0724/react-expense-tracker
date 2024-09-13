@@ -44,7 +44,7 @@ export const GlobalContextProvider = ({ children }) => {
   });
 
     const dictForMonth = new Map();
-    dictForMonth.set("all", "Every Months");
+    dictForMonth.set("all", "every month");
     dictForMonth.set("01", "January");
     dictForMonth.set("02", "February");
     dictForMonth.set("03", "March");
@@ -54,9 +54,9 @@ export const GlobalContextProvider = ({ children }) => {
     dictForMonth.set("07", "July");
     dictForMonth.set("08", "August");
     dictForMonth.set("09", "September");
-    dictForMonth.set(10, "October");
-    dictForMonth.set(11, "November");
-    dictForMonth.set(12, "December");
+    dictForMonth.set("10", "October");
+    dictForMonth.set("11", "November");
+    dictForMonth.set("12", "December");
 
 
   const [navbar, setNavbar] = useState(() => {
@@ -141,6 +141,7 @@ export const GlobalContextProvider = ({ children }) => {
         setExpenses([]);
         return;
       }
+
       const response = await axios.get(
         `${BASE_URL}/expense/get-expense/${userOwner}/${dashboardMonth.toString()}/${dashboardYear.toString()}`,
         { headers: { authorization: cookies.access_token } }
