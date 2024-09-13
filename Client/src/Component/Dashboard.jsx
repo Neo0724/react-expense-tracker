@@ -7,7 +7,6 @@ export default function Dashboard() {
     getTotalExpensesByMonthAndYear,
     getTotalIncomeByMonthAndYear,
     getBalance,
-    getSelectedMonthHistoryTransaction,
     dashboardMonth,
     setDashboardMonth,
     dictForMonth,
