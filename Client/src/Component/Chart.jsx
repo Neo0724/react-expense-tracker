@@ -22,50 +22,134 @@ ChartJs.register(
 
 export default function Chart() {
     const { income, expenses, dashboardMonth, dictForMonth, dashboardYear } = useGlobalContext();       
-    
 
-    // TODO Need to fix where for all month and all year, the graph is showing everyday instead of the sum of each month
+    // TODO Need to fix where for all month or all year, there is undefined 
     const filteredIncomeByMonth = () => {
-        let dateHash = new Map();
 
-        income.forEach((item) => {
-            const formattedDate = item.date.split("T")[0].split("-").join("-");
-            if (Object.prototype.hasOwnProperty.call(dateHash, formattedDate)) {
-                console.log(dateHash);
-                dateHash[formattedDate][1] += item.amount;
-            } else {
-                dateHash[formattedDate] = [formattedDate, 0];
-                dateHash[formattedDate][1] += item.amount;
-            }
-        });
+        // Show all or specific year and all month
+        // Map = { 08: [08, 100] }
+        if (dashboardMonth === "all" ) {
+            let dateHash = new Map();
+            income.forEach((item) => {
+                const date = item.date.split("T")[0].split("-").reverse();
 
-        let dateArr = Object.values(dateHash);
-        dateArr.sort((a, b) => new Date(a) - new Date(b));
-        return dateArr;
+                if (dateHash.has(date[1])) {
+                    dateHash.set(date[1], [date[1], (dateHash.get(date[1])[1] + item.amount)]);
+                } else {
+                    dateHash.set(date[1],[date[1], item.amount]);
+                }
+            });
+
+            let dateArr = [];
+
+            for(let item of dateHash) {
+                dateArr.push(item);
+            } 
+
+            dateArr.sort((a, b) => {
+                const dateA = parseInt(a[0]);
+                const dateB = parseInt(b[0]);
+
+                return dateA - dateB;
+            });
+
+            dateArr.forEach((item) => {
+                item[0] = dictForMonth.get(item[0])
+            });
+
+            return dateArr;
+
+        } 
+        // Show specific month
+        //  Map = { "2024-07-24", ["2024-07-24", 154.5] }
+        else {
+            let dateHash = new Map();
+            income.forEach((item) => {
+                const formattedDate = item.date.split("T")[0].split("-").join("-");
+
+                if (dateHash.has(formattedDate)) {
+                    dateHash.set(formattedDate, [formattedDate, (dateHash.get(formattedDate)[1] + item.amount)]);
+                } else {
+                    dateHash.set(formattedDate, [formattedDate, item.amount]);
+                }
+            });
+            
+            let dateArr = [];
+
+            for(let item of dateHash) {
+                dateArr.push(item);
+            } 
+            dateArr.sort((a, b) => new Date(a) - new Date(b));
+            return dateArr;
+        }
+
     }
 
+
     const filteredExpensesByMonth = () => {
-        let dateHash = new Map();
 
-        expenses.forEach((item) => {
-            const formattedDate = item.date.split("T")[0].split("-").join("-");
-            if (Object.prototype.hasOwnProperty.call(dateHash, formattedDate)) {
-                dateHash[formattedDate][1] += item.amount;
-            } else {
-                dateHash[formattedDate] = [formattedDate, 0];
-                dateHash[formattedDate][1] += item.amount;
-            }
-        });
+        // Show all or specific year and all month
+        // Map = { 08: [08, 100] }
+        if (dashboardMonth === "all") {
+            let dateHash = new Map();
+            expenses.forEach((item) => {
+                const date = item.date.split("T")[0].split("-").reverse();
 
-        let dateArr = Object.values(dateHash);
-        console.log(dateArr);
-        dateArr.sort((a, b) => new Date(a) - new Date(b));
-        return dateArr;
+                if (dateHash.has(date[1])) {
+                    dateHash.set(date[1], [date[1], (dateHash.get(date[1])[1] + item.amount)]);
+                } else {
+                    dateHash.set(date[1],[date[1], item.amount]);
+                }
+            });
+
+            let dateArr = [];
+
+            for(let item of dateHash) {
+                dateArr.push(item);
+            } 
+
+            dateArr.sort((a, b) => {
+                const dateA = parseInt(a[0]);
+                const dateB = parseInt(b[0]);
+
+                return dateA - dateB;
+            });
+
+            dateArr.forEach((item) => {
+                item[0] = dictForMonth.get(item[0])
+            });
+
+            return dateArr;
+
+        } 
+        // Show specific month
+        //  Map = { "2024-07-24", ["2024-07-24", 154.5] }
+        else {
+            let dateHash = new Map();
+            expenses.forEach((item) => {
+                const formattedDate = item.date.split("T")[0].split("-").join("-");
+
+                if (dateHash.has(formattedDate)) {
+                    dateHash.set(formattedDate, [formattedDate, (dateHash.get(formattedDate)[1] + item.amount)]);
+                } else {
+                    dateHash.set(formattedDate, [formattedDate, item.amount]);
+                }
+            });
+            
+            let dateArr = [];
+
+            for(let item of dateHash) {
+                dateArr.push(item);
+            } 
+            dateArr.sort((a, b) => new Date(a) - new Date(b));
+            return dateArr;
+        }
+
     };
 
-    const incomeAmount = filteredIncomeByMonth().map((item) => item[1]);
+    const incomeAmount = filteredIncomeByMonth().map((item) => item[1][1]);
 
-    const expensesAmount = filteredExpensesByMonth().map((item) => item[1]);
+    const expensesAmount = filteredExpensesByMonth().map((item) => item[1][1]);
 
     const allDate =
         dashboardMonth === "all"
@@ -74,12 +158,12 @@ export default function Chart() {
             ...filteredExpensesByMonth().map((item) => item[0]),
             ...filteredIncomeByMonth().map((item) => item[0]),
         ];
-
     const options = {
         maintainAspectRatio: false,
         responsive: true,
     };
 
+    console.log(incomeAmount)
     const data = {
         labels:
         filteredExpensesByMonth().length === 0 &&
