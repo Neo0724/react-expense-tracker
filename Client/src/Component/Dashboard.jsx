@@ -94,7 +94,16 @@ export default function Dashboard() {
         </div>
         <div className="historyContainer">
           <div className="historyContainerTitle">
-            Transaction History on {dictForMonth[dashboardMonth]}:{" "}
+            Transaction History on {
+                dashboardYear === "all" && dashboardMonth === "all" ?
+                "every month and every year"
+                :
+                dashboardYear === "all" && dashboardMonth !== "all" ?
+                dictForMonth.get(dashboardMonth) + " , every year"
+                :
+                dictForMonth.get(dashboardMonth) + " , " + dashboardYear 
+
+            }:{" "}
           </div>
       {
           history.length === 0 ? 
