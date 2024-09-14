@@ -25,17 +25,6 @@ const addExpense = async (req, res) => {
   }
 };
 
-const getExpense = async (req, res) => {
-  try {
-    const { id } = req.params
-    const Expense = await ExpenseSchema.find({ userOwner: id });
-
-    res.status(200).json(Expense);
-  } catch (err) {
-    res.status(500).json({ message: "Server Error" });
-  }
-};
-
 
 const getExpenseByMonthAndYear = async (req,res) => {
     try{

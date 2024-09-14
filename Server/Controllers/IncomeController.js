@@ -25,16 +25,6 @@ const addIncome = async (req, res) => {
   }
 };
 
-const getIncome = async (req, res) => {
-  try {
-    const { id } = req.params
-    const income = await IncomeSchema.find({ userOwner: id });
-
-    res.status(200).json(income);
-  } catch (err) {
-    res.status(500).json({ message: "Server Error" });
-  }
-};
 
 const getIncomeByMonthAndYear = async (req,res) => {
     try{
