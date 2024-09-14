@@ -124,7 +124,6 @@ const deleteExpense = async (req, res) => {
 
 
 exports.addExpense = addExpense;
-exports.getExpense = getExpense;
 exports.deleteExpense = deleteExpense;
 exports.getExpenseByMonthAndYear = getExpenseByMonthAndYear;
 exports.getHistoryByMonthAndYear =  getHistoryByMonthAndYear;

@@ -67,6 +67,5 @@ const deleteIncome = async (req,res) => {
 }
 
 exports.addIncome = addIncome;
-exports.getIncome = getIncome;
 exports.deleteIncome = deleteIncome;
 exports.getIncomeByMonthAndYear = getIncomeByMonthAndYear;
