@@ -29,23 +29,28 @@ export default function Expenses() {
      <div className="expenseUpperContainer">
       <div className="expenseTitle">Expenses</div>
       <div className="totalExpense">
-        Total Expense: $ {totalExpenses}
+        Total Expense: $ {parseFloat(totalExpenses).toFixed(2)}
       </div>
       <div className="expenseLowerContainer">
-        <Form type="expense" />
+        <Form type="expense" setExpenses={setExpenses} setTotalExpenses={setTotalExpenses} />
         <div className="expenseTransactionContainer">
           <div className="listOfExpenses">List of Expenses: </div>
-          {!expenses.length ? <div className="empty">Empty ...</div> : null}
-          {expenses.map((expenses) => {
-            const randomID = crypto.randomUUID();
-            return (
-              <ExpenseContainer
-                expenses={expenses}
-                setExpenses={setExpenses}
-                key={randomID}
-              />
-            );
-          })}
+      {!expenses || expenses.length === 0 ? 
+          <div className="empty">Empty ...</div> 
+          : 
+          expenses.map((expense) => {
+              const randomID = crypto.randomUUID();
+              return (
+                  <ExpenseContainer
+                  expense={expense}
+                  setExpenses={setExpenses}
+                  setTotalExpenses={setTotalExpenses}
+                  key={randomID}
+                  />
+              );
+          })
+      }
+          
         </div>
       </div>
     </div>

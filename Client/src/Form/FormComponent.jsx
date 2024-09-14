@@ -5,8 +5,8 @@ import axios from "axios";
 import { useGlobalContext } from "../Context/useGlobalContext";
 import { useCookies } from "react-cookie";
 
-export default function FormComponent({ type }) {
-  const { fetchIncome, fetchExpenses, BASE_URL, setClose } = useGlobalContext();
+export default function FormComponent({ type, setIncome, setExpenses, setTotalIncome, setTotalExpenses  }) {
+  const { BASE_URL, setClose, fetchIncome, fetchExpenses, getTotalExpensesByMonthAndYear, getTotalIncomeByMonthAndYear } = useGlobalContext();
   const [data, setData] = useState({
     title: "",
     amount: "",
@@ -16,7 +16,7 @@ export default function FormComponent({ type }) {
     userOwner: "",
   });
 
-  const [cookies, setCookies] = useCookies(["access_token"]);
+  const [cookies, _] = useCookies(["access_token"]);
   const addUserOwner = async () => {
     return new Promise((resolve, reject) => {
       const userOwner = localStorage.getItem("User ID");
@@ -95,7 +95,21 @@ export default function FormComponent({ type }) {
             { ...updatedData },
             { headers: { authorization: cookies.access_token } }
           );
-      type === "income" ? fetchIncome() : fetchExpenses();
+
+        if(type === "income") {
+            const updatedIncome = await fetchIncome("all", "all");
+            setIncome(updatedIncome)
+            setTotalIncome((_) => {
+                return getTotalIncomeByMonthAndYear(updatedIncome);
+            });
+        } else {
+            const updatedExpenses = await fetchExpenses("all", "all");
+            setExpenses(updatedExpenses)
+            setTotalExpenses((_) => {
+                return getTotalExpensesByMonthAndYear(updatedExpenses);
+            });
+        }
+
     } catch (err) {
       console.log(err);
     }

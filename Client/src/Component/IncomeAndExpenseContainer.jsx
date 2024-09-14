@@ -6,19 +6,32 @@ import dollarIcon from "/dollar.png";
 import deleteIcon from "/delete.png";
 import { useCookies } from "react-cookie";
 
-export function ExpenseContainer({ expenses }) {
-  let date = expenses.date.split("T")[0].split("-").reverse().join("-");
+export function ExpenseContainer({ expense, setExpenses, setTotalExpenses }) {
 
-  const { fetchExpenses, BASE_URL } = useGlobalContext();
+  let date = expense ? expense.date.split("T")[0].split("-").reverse().join("-") : "";
+
+  const { BASE_URL } = useGlobalContext();
 
   const [cookies, _] = useCookies(["access_token"]);
 
   const handleDelete = async () => {
     try {
-      await axios.delete(`${BASE_URL}/expense/delete-expense/${expenses._id}`, {
+      await axios.delete(`${BASE_URL}/expense/delete-expense/${expense._id}`, {
         headers: { authorization: cookies.access_token },
       });
-      fetchExpenses();
+
+      setExpenses((prev) => {  
+        return (
+            prev.filter((item) => {
+                return item._id !== expense._id;
+            })
+        )
+      })
+
+      setTotalExpenses((prev) => {
+        return prev - expense.amount;
+      });
+
     } catch (err) {
       console.log(err);
     }
@@ -27,16 +40,16 @@ export function ExpenseContainer({ expenses }) {
   return (
     <div className="incomeAndExpenseContainer">
       <div className="upperContainer">
-        <img src={`${expenses.category}.png`} alt="" className="categoryIcon" />
+        <img src={`${expense.category}.png`} alt="" className="categoryIcon" />
         <div className="details">
           <div className="detailsUpperContainer">
             <div className="redDot"></div>
-            <div className="title">{expenses.title}</div>
+            <div className="title">{expense.title}</div>
           </div>
           <div className="detailsLowerContainer">
             <div className="amount">
               <img src={dollarIcon} alt="dollarIcon" className="dollarIcon" />
-              <div className="amountText">{expenses.amount}</div>
+              <div className="amountText">{expense.amount}</div>
             </div>
             <div className="date">
               <img
@@ -52,7 +65,7 @@ export function ExpenseContainer({ expenses }) {
                 alt="commentIcon"
                 className="commentIcon"
               />
-              <div className="descriptionText">{expenses.description}</div>
+              <div className="descriptionText">{expense.description}</div>
             </div>
           </div>
         </div>
@@ -67,65 +80,76 @@ export function ExpenseContainer({ expenses }) {
   );
 }
 
-export function IncomeContainer({ income }) {
-  const date = income.date.split("T")[0].split("-").reverse().join("-");
+export function IncomeContainer({ income, setIncome, setTotalIncome }) {
+    const date = income.date.split("T")[0].split("-").reverse().join("-");
 
-  const { fetchIncome, BASE_URL } = useGlobalContext();
+    const { BASE_URL } = useGlobalContext();
 
-  const [cookies, _] = useCookies(["access_token"]);
+    const [cookies, _] = useCookies(["access_token"]);
 
-  const handleDelete = async () => {
-    try {
-      await axios.delete(`${BASE_URL}/income/delete-income/${income._id}`, {
-        headers: { authorization: cookies.access_token },
-      });
-      fetchIncome();
-    } catch (err) {
-      console.log(err);
-    }
-  };
+    const handleDelete = async () => {
+        try {
+            await axios.delete(`${BASE_URL}/income/delete-income/${income._id}`, {
+                headers: { authorization: cookies.access_token },
+            });
 
-  return (
-    <div className="incomeAndExpenseContainer">
-      <div className="upperContainer">
+            setIncome((prev) => {  
+                let filteredIncome = prev.filter((item) => {
+                    return item._id !== income._id;
+                })
+
+                return filteredIncome;
+            })
+
+            setTotalIncome((prev) => {
+                return prev - income.amount;
+            });
+        } catch (err) {
+            console.log(err);
+        }
+    };
+
+    return (
+        <div className="incomeAndExpenseContainer">
+        <div className="upperContainer">
         <img src={`${income.category}.png`} alt="" className="categoryIcon" />
         <div className="details">
-          <div className="detailsUpperContainer">
-            <div className="greenDot"></div>
-            <div className="title">{income.title}</div>
-          </div>
-          <div className="detailsLowerContainer">
-            <div className="amount">
-              <img src={dollarIcon} alt="dollarIcon" className="dollarIcon" />
-              <div className="amountText">{income.amount}</div>
-            </div>
-            <div className="date">
-              <img
-                src={calenderIcon}
-                alt="calenderIcon"
-                className="calenderIcon"
-              />
-              <div className="dateText">{date}</div>
-            </div>
-            <div className="description">
-              <img
-                src={commentIcon}
-                alt="commentIcon"
-                className="commentIcon"
-              />
-              <div className="descriptionText">{income.description}</div>
-            </div>
-          </div>
+        <div className="detailsUpperContainer">
+        <div className="greenDot"></div>
+        <div className="title">{income.title}</div>
+        </div>
+        <div className="detailsLowerContainer">
+        <div className="amount">
+        <img src={dollarIcon} alt="dollarIcon" className="dollarIcon" />
+        <div className="amountText">{income.amount}</div>
+        </div>
+        <div className="date">
+        <img
+        src={calenderIcon}
+        alt="calenderIcon"
+        className="calenderIcon"
+        />
+        <div className="dateText">{date}</div>
+        </div>
+        <div className="description">
+        <img
+        src={commentIcon}
+        alt="commentIcon"
+        className="commentIcon"
+        />
+        <div className="descriptionText">{income.description}</div>
+        </div>
+        </div>
         </div>
         <img
-          src={deleteIcon}
-          alt="deleteIcon"
-          className="deleteIcon"
-          onClick={handleDelete}
+        src={deleteIcon}
+        alt="deleteIcon"
+        className="deleteIcon"
+        onClick={handleDelete}
         />
-      </div>
-    </div>
-  );
+        </div>
+        </div>
+    );
 }
 
 export function HistoryContainer({ history }) {

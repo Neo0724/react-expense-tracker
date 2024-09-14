@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 export default function Income() {
     const {
         getTotalIncomeByMonthAndYear,
-        fetchIncome
+        fetchIncome,
     } = useGlobalContext();
 
 
@@ -16,10 +16,15 @@ export default function Income() {
 
     useEffect(() => {
         const updateIncome = async () => {
-            const fetchedIncome = await fetchIncome("all", "all");
+            try {
+                const fetchedIncome = await fetchIncome("all", "all");
 
-            setIncome(fetchedIncome);
-            setTotalIncome(getTotalIncomeByMonthAndYear(fetchedIncome));
+                setIncome(fetchedIncome);
+                setTotalIncome(getTotalIncomeByMonthAndYear(fetchedIncome));
+
+            } catch (err){
+                console.log(err);
+            }
         };
 
         updateIncome();
@@ -28,22 +33,26 @@ export default function Income() {
   return (
     <div className="incomeUpperContainer">
       <div className="incomeTitle">Income</div>
-      <div className="totalIncome">Total Income: $ {totalIncome}</div>
+      <div className="totalIncome">Total Income: $ {parseFloat(totalIncome).toFixed(2)}</div>
       <div className="incomeLowerContainer">
-        <Form type="income" />
+        <Form type="income" setIncome={setIncome} setTotalIncome={setTotalIncome} />
         <div className="incomeTransactionContainer">
           <div className="listOfIncome">List of Income: </div>
-          {!income.length ? <div className="empty">Empty ...</div> : null}
-          {income.map((income) => {
-            const randomID = crypto.randomUUID();
-            return (
-              <IncomeContainer
-                income={income}
-                setIncome={setIncome}
-                key={randomID}
-              />
-            );
-          })}
+      {!income || income.length === 0 ? 
+          <div className="empty">Empty ...</div> 
+          : 
+          income.map((item) => {
+              const randomID = crypto.randomUUID();
+              return (
+                  <IncomeContainer
+                  income={item}
+                  setIncome={setIncome}
+                  setTotalIncome={setTotalIncome}
+                  key={randomID}
+                  />
+              );
+          })
+      }
         </div>
       </div>
     </div>

@@ -126,8 +126,8 @@ export default function ViewTransaction() {
         <div className="viewIncomeDetailsContainer">
         {!income || income.length === 0 ? (
             <div className="empty">Empty ...</div>
-        ) : null}
-        {income.map((income) => {
+        ) : 
+            income.map((income) => {
             const randomID = crypto.randomUUID();
             return <IncomeContainer income={income} key={randomID} />;
         })}
@@ -141,12 +141,11 @@ export default function ViewTransaction() {
         <div className="viewExpensesDetailsContainer">
         {!expenses || expenses.length === 0 ? (
             <div className="empty">Empty ...</div>
-        ) : null}
-        {expenses.map((expenses) => {
+        ) : expenses.map((expense) => {
             const randomID = crypto.randomUUID();
             return (
                 <ExpenseContainer
-                expenses={expenses}
+                expense={expense}
                 key={randomID}
                 />
             );
