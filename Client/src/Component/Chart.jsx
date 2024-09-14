@@ -20,8 +20,8 @@ ChartJs.register(
     Legend
 );
 
-export default function Chart() {
-    const { income, expenses, dashboardMonth, dictForMonth, dashboardYear } = useGlobalContext();       
+export default function Chart({ income, expenses, dashboardMonth, dashboardYear }) {
+    const { dictForMonth } = useGlobalContext();       
 
     // TODO Need to fix where for all month or all year, there is undefined 
     const filteredIncomeByMonth = () => {
@@ -163,7 +163,6 @@ export default function Chart() {
         responsive: true,
     };
 
-    console.log(incomeAmount)
     const data = {
         labels:
         filteredExpensesByMonth().length === 0 &&

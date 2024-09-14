@@ -149,13 +149,17 @@ button:hover {
   display: flex;
   gap: 10px;
   margin-top: 20px;
+  height: 93vh;
+  overflow: scroll;
 }
 
 .incomeTransactionContainer,
 .expenseTransactionContainer {
+  height: 93vh;
   display: flex;
   flex-direction: column;
   flex: 3;
+  overflow: scroll;
 }
 
 .upperContainer {

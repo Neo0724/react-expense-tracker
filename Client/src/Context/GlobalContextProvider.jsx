@@ -1,25 +1,18 @@
 /* eslint-disable no-unused-vars */
     /* eslint-disable react/prop-types */
     /* eslint-disable no-case-declarations */
-import React, { useEffect } from "react";
+import React, { useEffect, useCallback } from "react";
 import { useState } from "react";
 import axios from "axios";
 import { navbarItems } from "../Component/navbarItems";
 import { useCookies } from "react-cookie";
-import { useCallback } from "react";
 
 export const GlobalContext = React.createContext();
 
 export const GlobalContextProvider = ({ children }) => {
+    // const BASE_URL = import.meta.env.VITE_BACKEND_URL;
+    
     const BASE_URL = "http://localhost:3000";
-
-    // online url =  "https://mern-expense-tracker-213j.onrender.com"
-
-    const [expenses, setExpenses] = useState([]);
-
-    const [income, setIncome] = useState([]);
-
-    const [history, setHistory] = useState([]);
 
     const userOwner = localStorage.getItem("User ID");
 
@@ -29,21 +22,9 @@ export const GlobalContextProvider = ({ children }) => {
 
     const [loginErr, setLoginErr] = useState({ text: "", error: false });
 
-    const [dashboardMonth, setDashboardMonth] = useState("all");
-
-    const [dashboardYear, setDashboardYear] = useState("all");
-
-    const [transactionMonth, setTransactionMonth] = useState({
-        income: "all",
-        expense: "all",
-    });
-
-    const [transactionYear, setTransactionYear] = useState({
-        income: "all",
-        expense: "all",
-    });
 
     const dictForMonth = new Map();
+
     dictForMonth.set("all", "every month");
     dictForMonth.set("01", "January");
     dictForMonth.set("02", "February");
@@ -72,18 +53,24 @@ export const GlobalContextProvider = ({ children }) => {
         localStorage.setItem("Navbar", JSON.stringify(navbar));
     }, [navbar]);
 
-    // TODO Implement get transactionYear and transactionMonth income and expenses
 
-    const getIncomeTransactionsByYearAndMonth = async () => {
+    const getTotalExpensesByMonthAndYear = (expenses) => {
+        if (!expenses || expenses.length === 0) {
+            return 0;
+        }
 
-    }
+        let totalExpenses = 0;
 
-    const getExpensesTransactionsByYearAndMonth = async () => {
+        expenses.forEach((item) => {
+            totalExpenses += item.amount;
+        })
 
-    }
+        return totalExpenses.toFixed(2);
+    };
 
-    const getTotalIncomeByMonthAndYear = () => {
-        if (income.length === 0) {
+
+    const getTotalIncomeByMonthAndYear = (income) => {
+        if (!income || income.length === 0) {
             return 0;
         }
 
@@ -98,113 +85,69 @@ export const GlobalContextProvider = ({ children }) => {
 
     };
 
-    const getAllExpenses = () => {
-        if (expenses.length === 0) {
-            return 0;
-        }
-
-        let totalExpenses = 0;
-
-        expenses.forEach((expense) => {
-            totalExpenses += expense.amount;
-        });
-
-        return totalExpenses.toFixed(2);
-    };
-
-    const getAllIncome = () => {
-        if (income.length === 0) return 0;
-
-        let totalIncome = 0;
-
-        income.forEach((income) => {
-            totalIncome += income.amount;
-        });
-
-        return totalIncome.toFixed(2);
-    };
-
-    const getTotalExpensesByMonthAndYear = () => {
-        if (expenses.length === 0) {
-            return 0;
-        }
-
-        let totalExpenses = 0;
-
-        expenses.forEach((item) => {
-            totalExpenses += item.amount;
-        })
-
-        return totalExpenses.toFixed(2);
-    };
-
-    const getBalance = () => {
+    const getBalance = (totalExpenses, totalIncome) => {
         return (
-            getTotalIncomeByMonthAndYear() -
-            getTotalExpensesByMonthAndYear()
+            totalIncome -
+            totalExpenses 
         ).toFixed(2);
     };
 
-    const fetchExpenses = useCallback(async () => {
+    const fetchExpenses = useCallback(async (month, year) => {
         try {
             if (!userOwner) {
-                setExpenses([]);
-                return;
+                return [];
             }
 
             const response = await axios.get(
-                `${BASE_URL}/expense/get-expense/${userOwner}/${dashboardMonth.toString()}/${dashboardYear.toString()}`,
+                `${BASE_URL}/expense/get-expense/${userOwner}/${month.toString()}/${year.toString()}`,
                 { headers: { authorization: cookies.access_token } }
             );
-            setExpenses(response.data);
+
+            return response.data;
+
         } catch (err) {
             console.log(err);
         }
-    }, [userOwner, cookies.access_token, dashboardMonth, dashboardYear]);
+    });
 
-    const fetchIncome = useCallback(async () => {
+    const fetchIncome = useCallback(async (month, year) => {
         try {
             if (!userOwner) {
-                setIncome([]);
-                return;
+                return [];
             }
 
-            const res = await axios.get(
-                `${BASE_URL}/income/get-income/${userOwner}/${dashboardMonth.toString()}/${dashboardYear.toString()}`,
+            const response = await axios.get(
+                `${BASE_URL}/income/get-income/${userOwner}/${month.toString()}/${year.toString()}`,
                 { headers: { authorization: cookies.access_token } }
             );
-            setIncome(res.data);
+
+            return response.data;
+
         } catch (err) {
             console.log(err);
         }
-    }, [userOwner, cookies.access_token, dashboardMonth, dashboardYear]);
+    });
 
-    const getSelectedMonthHistoryTransaction = useCallback(async () => {
+    const getHistory = async (month, year) => {
         try {
             const res = await axios.get(
-                `${BASE_URL}/expense/get-history/${userOwner}/${dashboardMonth.toString()}/${dashboardYear.toString()}`,
+                `${BASE_URL}/expense/get-history/${userOwner}/${month.toString()}/${year.toString()}`,
                 { headers: { authorization: cookies.access_token } }
             );
-            setHistory(res.data);
+
+            return res.data;
+
         } catch (err) {
             console.log(err)
+            return [];
         }
-    }, [userOwner, cookies.access_token, dashboardMonth, dashboardYear]);
+    };
 
-    useEffect(() => {
-        getSelectedMonthHistoryTransaction();
-        fetchIncome();
-        fetchExpenses();
-    }, [cookies.access_token, userOwner, fetchExpenses, fetchIncome, getSelectedMonthHistoryTransaction, dashboardMonth, dashboardYear]);
 
     return (
         <GlobalContext.Provider
         value={{
-            expenses,
-                income,
-                setExpenses,
-                setIncome,
-                fetchExpenses,
+            fetchExpenses,
                 fetchIncome,
                 BASE_URL,
                 setNavbar,
@@ -212,25 +155,13 @@ export const GlobalContextProvider = ({ children }) => {
                 getTotalExpensesByMonthAndYear,
                 getTotalIncomeByMonthAndYear,
                 getBalance,
-                getSelectedMonthHistoryTransaction,
+                getHistory,
                 setClose,
                 close,
                 setLoginErr,
                 loginErr,
-                dashboardMonth,
-                setDashboardMonth,
-                transactionMonth,
-                setTransactionMonth,
                 dictForMonth,
-                getAllIncome,
-                getAllExpenses,
-                transactionYear,
-                setTransactionYear,
-                dashboardYear,
-                setDashboardYear,
-                history,
-                getIncomeTransactionsByYearAndMonth,
-                getExpensesTransactionsByYearAndMonth
+                cookies
         }}
         >
         {children}
