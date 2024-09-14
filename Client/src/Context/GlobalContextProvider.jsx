@@ -10,8 +10,7 @@ import { useCookies } from "react-cookie";
 export const GlobalContext = React.createContext();
 
 export const GlobalContextProvider = ({ children }) => {
-    // const BASE_URL = import.meta.env.VITE_BACKEND_URL;
-    const BASE_URL = "http://localhost:3000";
+    const BASE_URL = import.meta.env.VITE_BACKEND_URL;
     const userOwner = localStorage.getItem("User ID");
 
     const [cookies, _] = useCookies(["access_token"]);
