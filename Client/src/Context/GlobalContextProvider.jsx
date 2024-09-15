@@ -11,6 +11,7 @@ export const GlobalContext = React.createContext();
 
 export const GlobalContextProvider = ({ children }) => {
     const BASE_URL = import.meta.env.VITE_BACKEND_URL;
+
     const userOwner = localStorage.getItem("User ID");
 
     const [cookies, _] = useCookies(["access_token"]);
@@ -56,13 +57,7 @@ export const GlobalContextProvider = ({ children }) => {
             return 0;
         }
 
-        let totalExpenses = 0;
-
-        expenses.forEach((item) => {
-            totalExpenses += item.amount;
-        })
-
-        return totalExpenses.toFixed(2);
+        return expenses.reduce((acc, expense) => acc + expense.amount, 0);
     };
 
 
@@ -71,15 +66,7 @@ export const GlobalContextProvider = ({ children }) => {
             return 0;
         }
 
-        let totalIncome = 0;
-
-        income.forEach((item) => {
-            totalIncome += item.amount;
-        })
-
-        return totalIncome.toFixed(2);
-
-
+        return income.reduce((acc, item) => acc + item.amount, 0);
     };
 
     const getBalance = (totalExpenses, totalIncome) => {

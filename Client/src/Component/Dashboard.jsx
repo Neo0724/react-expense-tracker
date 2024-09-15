@@ -15,7 +15,6 @@ export default function Dashboard() {
     } = useGlobalContext();
 
 
-
     const [dashboardMonth, setDashboardMonth] = useState("all");
 
     const [dashboardYear, setDashboardYear] = useState("all");
@@ -54,7 +53,7 @@ export default function Dashboard() {
     const changeYear = (e) => {
         const selectedYear = e.target.value;
         setDashboardYear(selectedYear);
-        
+
         updateIncomeAndExpenses(dashboardMonth, selectedYear);
     };
 
@@ -63,7 +62,7 @@ export default function Dashboard() {
     };
 
     useEffect(() => {
-       updateIncomeAndExpenses(dashboardMonth, dashboardYear); 
+        updateIncomeAndExpenses(dashboardMonth, dashboardYear); 
 
     }, [])
 
@@ -121,14 +120,14 @@ export default function Dashboard() {
         <div className="amountContainer">
         <div className="expenseAndIncomeDashboard">
         <div className="totalExpensesDashboard" style={{ color: "red" }}>
-        Total Expenses: ${totalExpensesAmount}
+        Total Expenses: ${totalExpensesAmount.toFixed(2)}
         </div>
         <div className="totalIncomeDashboard" style={{ color: "green" }}>
-        Total Income: ${totalIncomeAmount}
+        Total Income: ${totalIncomeAmount.toFixed(2)}
         </div>
         </div>
         <div className="totalBalanceDashboard" style={style}>
-        Total Balance: ${getBalance(totalExpensesAmount, totalIncomeAmount)}
+        Total Balance: ${getBalance(totalExpensesAmount, totalIncomeAmount).toFixed(2)}
         </div>
         </div>
         <div className="historyContainer">
