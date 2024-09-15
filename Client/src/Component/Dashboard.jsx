@@ -120,14 +120,14 @@ export default function Dashboard() {
         <div className="amountContainer">
         <div className="expenseAndIncomeDashboard">
         <div className="totalExpensesDashboard" style={{ color: "red" }}>
-        Total Expenses: ${totalExpensesAmount.toFixed(2)}
+        Total Expenses: ${totalExpensesAmount}
         </div>
         <div className="totalIncomeDashboard" style={{ color: "green" }}>
-        Total Income: ${totalIncomeAmount.toFixed(2)}
+        Total Income: ${totalIncomeAmount}
         </div>
         </div>
         <div className="totalBalanceDashboard" style={style}>
-        Total Balance: ${getBalance(totalExpensesAmount, totalIncomeAmount).toFixed(2)}
+        Total Balance: ${getBalance(totalExpensesAmount, totalIncomeAmount)}
         </div>
         </div>
         <div className="historyContainer">

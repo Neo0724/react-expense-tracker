@@ -57,7 +57,7 @@ export const GlobalContextProvider = ({ children }) => {
             return 0;
         }
 
-        return expenses.reduce((acc, expense) => acc + expense.amount, 0);
+        return expenses.reduce((acc, expense) => acc + expense.amount, 0).toFixed(2);
     };
 
 
@@ -66,7 +66,7 @@ export const GlobalContextProvider = ({ children }) => {
             return 0;
         }
 
-        return income.reduce((acc, item) => acc + item.amount, 0);
+        return income.reduce((acc, item) => acc + item.amount, 0).toFixed(2);
     };
 
     const getBalance = (totalExpenses, totalIncome) => {
