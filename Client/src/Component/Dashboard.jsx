@@ -29,16 +29,23 @@ export default function Dashboard() {
   const [totalIncomeAmount, setTotalIncomeAmount] = useState(0);
 
   const updateIncomeAndExpenses = useCallback(async (month, year) => {
-    const fetchedExpenses = await fetchExpenses(month, year);
-    const fetchedIncome = await fetchIncome(month, year);
-    const fetchedHistory = await getHistory(month, year);
+      try {
 
-    setTotalExpensesAmount(getTotalExpensesByMonthAndYear(fetchedExpenses));
-    setTotalIncomeAmount(getTotalIncomeByMonthAndYear(fetchedIncome));
-    setHistoryTransaction(fetchedHistory);
+          const [ fetchedExpenses, fetchedIncome, fetchedHistory ] = await Promise.all([
+              fetchExpenses(month, year),
+              fetchIncome(month, year),
+              getHistory(month, year)
+          ])
 
-    setExpenses(fetchedExpenses);
-    setIncome(fetchedIncome);
+          setTotalExpensesAmount(getTotalExpensesByMonthAndYear(fetchedExpenses));
+          setTotalIncomeAmount(getTotalIncomeByMonthAndYear(fetchedIncome));
+          setHistoryTransaction(fetchedHistory);
+
+          setExpenses(fetchedExpenses);
+          setIncome(fetchedIncome);
+      } catch (err) {
+        console.log(err)
+      }
   }, []);
 
   const changeMonth = (e) => {
