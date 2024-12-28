@@ -174,7 +174,6 @@ export default function ViewTransaction() {
             <option value="accomodation">Accomodation</option>
             <option value="foodandbeverage">Food And Beverage</option>
             <option value="medical">Medical</option>
-            <option value="scholarship">Scholarship</option>
             <option value="transport">Trasnsport Fee</option>
             <option value="stationary">Stationary</option>
             <option value="other">Other</option>
