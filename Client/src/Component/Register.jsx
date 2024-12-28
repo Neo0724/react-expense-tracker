@@ -2,8 +2,11 @@ import axios from "axios";
 import { useNavigate } from "react-router";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useGlobalContext } from "../Context/useGlobalContext";
 
 export default function Register() {
+  const { BASE_URL } = useGlobalContext();
+
   const [data, setData] = useState({ username: "", password: "" });
 
   const navigate = useNavigate();
@@ -27,10 +30,10 @@ export default function Register() {
     e.preventDefault();
 
     try {
-      await axios.post(
-        "https://mern-expense-tracker-213j.onrender.com/auth/register",
-        { username: data.username, password: data.password }
-      );
+      await axios.post(`${BASE_URL}/auth/register`, {
+        username: data.username,
+        password: data.password,
+      });
       navigate("/intermediateExpenseTracker/login");
     } catch (err) {
       alert(err);

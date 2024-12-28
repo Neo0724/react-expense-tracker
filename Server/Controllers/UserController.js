@@ -4,55 +4,55 @@ const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
 const UserRegister = async (req, res) => {
-    const { username, password } = req.body;
+  const { username, password } = req.body;
 
-    const existed = await UserModel.findOne({ username: username });
+  const existed = await UserModel.findOne({ username: username });
 
-    if (existed) {
-        return res.status(400).json(existed);
-    }
+  if (existed) {
+    return res.status(400).json(existed);
+  }
 
-    try {
-        const hashedPassword = await bcrypt.hash(password, 10);
-        const user = await UserModel.create({ username, password: hashedPassword });
-        await user.save();
-        res.json({ message: "Register Success" });
-    } catch (err) {
-        console.log(err);
-    }
+  try {
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const user = await UserModel.create({ username, password: hashedPassword });
+    await user.save();
+    res.json({ message: "Register Success" });
+  } catch (err) {
+    console.log(err);
+  }
 };
 
 const UserLogin = async (req, res) => {
-    const { username, password } = req.body;
+  const { username, password } = req.body;
 
-    const userExist = await UserModel.findOne({ username });
+  const userExist = await UserModel.findOne({ username });
 
-    if (!userExist) {
-        return res.status(404).json({ message: "User not found" });
-    }
+  if (!userExist) {
+    return res.status(404).json({ message: "User not found" });
+  }
 
-    const passwordMatch = await bcrypt.compare(password, userExist.password);
+  const passwordMatch = await bcrypt.compare(password, userExist.password);
 
-    if (passwordMatch) {
-        const token = jwt.sign({ id: userExist._id }, process.env.JWT_SECRET);
-        return res.json({ token, userID: userExist._id, userName: username });
-    }
+  if (passwordMatch) {
+    const token = jwt.sign({ id: userExist._id }, process.env.JWT_SECRET);
+    return res.json({ token, userID: userExist._id, userName: username });
+  }
 
-    return res.status(400).json({ message: "Password does not match" });
+  return res.status(400).json({ message: "Password does not match" });
 };
 
 const VerifyToken = (req, res, next) => {
-    const token = req.headers["authorization"];
-    if (token) {
-        jwt.verify(token, process.env.JWT_SECRET, (err) => {
-            if (err) return res.sendStatus(403);
-            next();
-        });
-    } else {
-        res.sendStatus(401)
-    }
+  const token = req.headers["authorization"];
+  if (token) {
+    jwt.verify(token, process.env.JWT_SECRET, (err) => {
+      if (err) return res.sendStatus(403);
+      next();
+    });
+  } else {
+    res.sendStatus(401);
+  }
 };
 
-exports.VerifyToken = VerifyToken
+exports.VerifyToken = VerifyToken;
 exports.UserRegister = UserRegister;
 exports.UserLogin = UserLogin;

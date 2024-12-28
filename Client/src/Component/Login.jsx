@@ -6,6 +6,8 @@ import { Link } from "react-router-dom";
 import { useGlobalContext } from "../Context/useGlobalContext";
 
 export default function Login() {
+  const { BASE_URL } = useGlobalContext();
+
   const [data, setData] = useState({ username: "", password: "" });
 
   const [isLoading, setIsLoading] = useState(false);
@@ -45,10 +47,10 @@ export default function Login() {
     e.preventDefault();
 
     try {
-      const res = await axios.post(
-        "https://mern-expense-tracker-213j.onrender.com/auth/login",
-        { username: data.username, password: data.password }
-      );
+      const res = await axios.post(`${BASE_URL}/auth/login`, {
+        username: data.username,
+        password: data.password,
+      });
       setCookie("access_token", res.data.token);
       localStorage.setItem("User ID", res.data.userID);
       localStorage.setItem("Username", res.data.userName);

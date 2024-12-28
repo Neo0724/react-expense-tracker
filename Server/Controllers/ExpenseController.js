@@ -1,8 +1,9 @@
 const ExpenseSchema = require("../Models/ExpenseSchema");
-const moment = require('moment-timezone')
+const moment = require("moment-timezone");
 
 const addExpense = async (req, res) => {
-  const { title, amount, date, category, description, type, userOwner } = req.body;
+  const { title, amount, date, category, description, type, userOwner } =
+    req.body;
 
   const newDate = moment.utc(date).tz("Asia/Shanghai").format();
 
@@ -14,7 +15,7 @@ const addExpense = async (req, res) => {
       category,
       description,
       userOwner,
-      type
+      type,
     });
 
     await Expense.save();
@@ -25,93 +26,89 @@ const addExpense = async (req, res) => {
   }
 };
 
+const getExpenseByMonthAndYear = async (req, res) => {
+  try {
+    const { id, month, year, type } = req.params;
 
-const getExpenseByMonthAndYear = async (req,res) => {
-    try{
-        const { id, month, year } = req.params;
+    let regExp = null;
 
-        let regExp = null;
+    if (month === "all" && year === "all") {
+      regExp = new RegExp("\\d{4}");
+    } else if (month !== "all" && year === "all") {
+      regExp = new RegExp(`\\d{4}-${month}`);
+    } else if (month === "all" && year !== "all") {
+      regExp = new RegExp(`${year}-0?\\d{1,2}`);
+    } else {
+      regExp = new RegExp(`${year}-${month}`);
+    }
 
+    let Expense = null;
 
-        if(month === "all" && year === "all") {
-            regExp = new RegExp("\\d{4}");
+    if (type === "all") {
+      Expense = await ExpenseSchema.find({ userOwner: id, date: regExp });
+    } else {
+      Expense = await ExpenseSchema.find({
+        userOwner: id,
+        date: regExp,
+        category: type,
+      });
+    }
 
-        } else if (month !== "all" && year === "all") {
-            regExp = new RegExp(`\\d{4}-${month}`);
-
-        } else if (month === "all" && year !== "all") {
-            regExp = new RegExp(`${year}-0?\\d{1,2}`);
-
-        } else {
-            regExp = new RegExp(`${year}-${month}`);
-        } 
-
-        const Expense = await ExpenseSchema.find({ userOwner: id, date: regExp });
-
-        res.status(200).json(Expense);
-
-    } catch {
-        res.status(500).json({ message: "Server Error" });
-    };
-} 
+    res.status(200).json(Expense);
+  } catch {
+    res.status(500).json({ message: "Server Error" });
+  }
+};
 
 const getHistoryByMonthAndYear = async (req, res) => {
-    try {
-        const { id, month, year } = req.params;
+  try {
+    const { id, month, year } = req.params;
 
-        let regExp = null;
+    let regExp = null;
 
-
-        if(month === "all" && year === "all") {
-            regExp = new RegExp("\\d{4}");
-
-        } else if (month !== "all" && year === "all") {
-            regExp = new RegExp(`\\d{4}-${month}`);
-
-        } else if (month === "all" && year !== "all") {
-            regExp = new RegExp(`${year}-0?\\d{1,2}`);
-
-        } else {
-            regExp = new RegExp(`${year}-${month}`);
-        } 
-
-        const Expense = await ExpenseSchema.aggregate([
-            {
-                $unionWith: { coll: "incomes" }
-            },
-            {
-                $addFields: {
-                    // Convert ObjectId to string
-                    userOwnerStr: { $toString: "$userOwner" }  
-                }
-            },
-            {
-                $match: {
-                    userOwnerStr: id,
-                    date: regExp
-                }
-            },
-            {
-                $sort: { date: -1 }
-            },
-            {
-                $limit: 3
-            }
-        ]);
-
-
-        res.status(200).json(Expense);
-
-
-    } catch {
-        res.status(500).json({ message: "Server Error" });
+    if (month === "all" && year === "all") {
+      regExp = new RegExp("\\d{4}");
+    } else if (month !== "all" && year === "all") {
+      regExp = new RegExp(`\\d{4}-${month}`);
+    } else if (month === "all" && year !== "all") {
+      regExp = new RegExp(`${year}-0?\\d{1,2}`);
+    } else {
+      regExp = new RegExp(`${year}-${month}`);
     }
-} 
 
+    const Expense = await ExpenseSchema.aggregate([
+      {
+        $unionWith: { coll: "incomes" },
+      },
+      {
+        $addFields: {
+          // Convert ObjectId to string
+          userOwnerStr: { $toString: "$userOwner" },
+        },
+      },
+      {
+        $match: {
+          userOwnerStr: id,
+          date: regExp,
+        },
+      },
+      {
+        $sort: { date: -1 },
+      },
+      {
+        $limit: 3,
+      },
+    ]);
+
+    res.status(200).json(Expense);
+  } catch {
+    res.status(500).json({ message: "Server Error" });
+  }
+};
 
 const deleteExpense = async (req, res) => {
   const { id } = req.params;
-  
+
   try {
     await ExpenseSchema.findByIdAndDelete(id);
 
@@ -121,10 +118,7 @@ const deleteExpense = async (req, res) => {
   }
 };
 
-
-
 exports.addExpense = addExpense;
 exports.deleteExpense = deleteExpense;
 exports.getExpenseByMonthAndYear = getExpenseByMonthAndYear;
-exports.getHistoryByMonthAndYear =  getHistoryByMonthAndYear;
-
+exports.getHistoryByMonthAndYear = getHistoryByMonthAndYear;

@@ -16,26 +16,31 @@ export default function ViewTransaction() {
     expense: "all",
   });
 
+  const [transactionType, setTransactionType] = useState({
+    income: "all",
+    expense: "all",
+  });
+
   const [expenses, setExpenses] = useState([]);
 
   const [income, setIncome] = useState([]);
 
   const updateIncome = useCallback(
-    async (month, year) => {
-      const fetchedIncome = await fetchIncome(month, year);
+    async (month, year, type) => {
+      const fetchedIncome = await fetchIncome(month, year, type);
 
       setIncome(fetchedIncome);
     },
-    [fetchIncome]
+    [fetchIncome],
   );
 
   const updateExpenses = useCallback(
-    async (month, year) => {
-      const fetchedExpenses = await fetchExpenses(month, year);
+    async (month, year, type) => {
+      const fetchedExpenses = await fetchExpenses(month, year, type);
 
       setExpenses(fetchedExpenses);
     },
-    [fetchExpenses]
+    [fetchExpenses],
   );
 
   const changeMonth = (e, category) => {
@@ -56,13 +61,40 @@ export default function ViewTransaction() {
     }));
   };
 
-  useEffect(() => {
-    updateIncome(transactionMonth.income, transactionYear.income);
-  }, [transactionMonth.income, transactionYear.income, updateIncome]);
+  const changeTransactionType = (e, category) => {
+    const selectedTransactionType = e.target.value;
+
+    setTransactionType((prev) => ({
+      ...prev,
+      [category]: selectedTransactionType,
+    }));
+  };
 
   useEffect(() => {
-    updateExpenses(transactionMonth.expense, transactionYear.expense);
-  }, [transactionMonth.expense, transactionYear.expense, updateExpenses]);
+    updateIncome(
+      transactionMonth.income,
+      transactionYear.income,
+      transactionType.income,
+    );
+  }, [
+    transactionMonth.income,
+    transactionYear.income,
+    transactionType.income,
+    updateIncome,
+  ]);
+
+  useEffect(() => {
+    updateExpenses(
+      transactionMonth.expense,
+      transactionYear.expense,
+      transactionType.expense,
+    );
+  }, [
+    transactionMonth.expense,
+    transactionYear.expense,
+    transactionType.expense,
+    updateExpenses,
+  ]);
 
   const MonthSelect = ({ category }) => {
     return (
@@ -115,12 +147,56 @@ export default function ViewTransaction() {
     );
   };
 
+  const TransactionTypeSelect = ({ category }) => {
+    return (
+      <select
+        placeholder="all"
+        value={
+          category === "income"
+            ? transactionType.income
+            : transactionType.expense
+        }
+        onChange={(e) => changeTransactionType(e, category)}
+        className="monthSelector"
+      >
+        <option value="all">all</option>
+        {category === "income" ? (
+          <>
+            <option value="salary">Salary</option>
+            <option value="investment">Investment</option>
+            <option value="freelancing">Freelancing</option>
+            <option value="scholarship">Scholarship</option>
+            <option value="bank">Bank Transfer</option>
+            <option value="other">Other</option>
+          </>
+        ) : (
+          <>
+            <option value="accomodation">Accomodation</option>
+            <option value="foodandbeverage">Food And Beverage</option>
+            <option value="medical">Medical</option>
+            <option value="scholarship">Scholarship</option>
+            <option value="transport">Trasnsport Fee</option>
+            <option value="stationary">Stationary</option>
+            <option value="other">Other</option>
+          </>
+        )}
+      </select>
+    );
+  };
+
   return (
     <div className="viewTransactionContainer">
       <div className="viewIncomeContainer">
         <div className="viewTransactionTitle">
-          Income Transactions on : Month: <MonthSelect category="income" /> |
+          Income Transactions on : Month: <MonthSelect category="income" />
+          <span className="verticalDot" style={{ color: "green" }}>
+            &#x2022;
+          </span>
           Year: <YearSelect category="income" />
+          <span className="verticalDot" style={{ color: "green" }}>
+            &#x2022;
+          </span>
+          Transaction Type: <TransactionTypeSelect category="income" />
         </div>
         <div className="viewIncomeDetailsContainer">
           {!income || income.length === 0 ? (
@@ -135,8 +211,15 @@ export default function ViewTransaction() {
       </div>
       <div className="viewExpensesContainer">
         <div className="viewTransactionTitle">
-          Expense Transactions on : Month: <MonthSelect category="expense" /> |
+          Expense Transactions on : Month: <MonthSelect category="expense" />
+          <span className="verticalDot" style={{ color: "red" }}>
+            &#x2022;
+          </span>
           Year: <YearSelect category="expense" />
+          <span className="verticalDot" style={{ color: "red" }}>
+            &#x2022;
+          </span>
+          Transaction Type: <TransactionTypeSelect category="expense" />
         </div>
         <div className="viewExpensesDetailsContainer">
           {!expenses || expenses.length === 0 ? (

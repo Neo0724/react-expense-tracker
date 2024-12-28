@@ -29,23 +29,23 @@ export default function Dashboard() {
   const [totalIncomeAmount, setTotalIncomeAmount] = useState(0);
 
   const updateIncomeAndExpenses = useCallback(async (month, year) => {
-      try {
+    try {
+      const [fetchedExpenses, fetchedIncome, fetchedHistory] =
+        await Promise.all([
+          fetchExpenses(month, year, "all"),
+          fetchIncome(month, year, "all"),
+          getHistory(month, year),
+        ]);
 
-          const [ fetchedExpenses, fetchedIncome, fetchedHistory ] = await Promise.all([
-              fetchExpenses(month, year),
-              fetchIncome(month, year),
-              getHistory(month, year)
-          ])
+      setTotalExpensesAmount(getTotalExpensesByMonthAndYear(fetchedExpenses));
+      setTotalIncomeAmount(getTotalIncomeByMonthAndYear(fetchedIncome));
+      setHistoryTransaction(fetchedHistory);
 
-          setTotalExpensesAmount(getTotalExpensesByMonthAndYear(fetchedExpenses));
-          setTotalIncomeAmount(getTotalIncomeByMonthAndYear(fetchedIncome));
-          setHistoryTransaction(fetchedHistory);
-
-          setExpenses(fetchedExpenses);
-          setIncome(fetchedIncome);
-      } catch (err) {
-        console.log(err)
-      }
+      setExpenses(fetchedExpenses);
+      setIncome(fetchedIncome);
+    } catch (err) {
+      console.log(err);
+    }
   }, []);
 
   const changeMonth = (e) => {
@@ -145,8 +145,8 @@ export default function Dashboard() {
             {dashboardYear === "all" && dashboardMonth === "all"
               ? "every month and every year"
               : dashboardYear === "all" && dashboardMonth !== "all"
-              ? dictForMonth.get(dashboardMonth) + " , every year"
-              : dictForMonth.get(dashboardMonth) + " , " + dashboardYear}
+                ? dictForMonth.get(dashboardMonth) + " , every year"
+                : dictForMonth.get(dashboardMonth) + " , " + dashboardYear}
             :{" "}
           </div>
           {!historyTransaction || historyTransaction.length === 0 ? (

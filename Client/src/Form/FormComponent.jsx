@@ -5,8 +5,21 @@ import axios from "axios";
 import { useGlobalContext } from "../Context/useGlobalContext";
 import { useCookies } from "react-cookie";
 
-export default function FormComponent({ type, setIncome, setExpenses, setTotalIncome, setTotalExpenses  }) {
-  const { BASE_URL, setClose, fetchIncome, fetchExpenses, getTotalExpensesByMonthAndYear, getTotalIncomeByMonthAndYear } = useGlobalContext();
+export default function FormComponent({
+  type,
+  setIncome,
+  setExpenses,
+  setTotalIncome,
+  setTotalExpenses,
+}) {
+  const {
+    BASE_URL,
+    setClose,
+    fetchIncome,
+    fetchExpenses,
+    getTotalExpensesByMonthAndYear,
+    getTotalIncomeByMonthAndYear,
+  } = useGlobalContext();
   const [data, setData] = useState({
     title: "",
     amount: "",
@@ -86,30 +99,29 @@ export default function FormComponent({ type, setIncome, setExpenses, setTotalIn
       const updatedData = await addUserOwner();
       type === "income"
         ? await axios.post(
-            `${BASE_URL}/income/add-income`,
-            { ...updatedData },
-            { headers: { authorization: cookies.access_token } }
-          )
+          `${BASE_URL}/income/add-income`,
+          { ...updatedData },
+          { headers: { authorization: cookies.access_token } },
+        )
         : await axios.post(
-            `${BASE_URL}/expense/add-expense`,
-            { ...updatedData },
-            { headers: { authorization: cookies.access_token } }
-          );
+          `${BASE_URL}/expense/add-expense`,
+          { ...updatedData },
+          { headers: { authorization: cookies.access_token } },
+        );
 
-        if(type === "income") {
-            const updatedIncome = await fetchIncome("all", "all");
-            setIncome(updatedIncome)
-            setTotalIncome((_) => {
-                return getTotalIncomeByMonthAndYear(updatedIncome);
-            });
-        } else {
-            const updatedExpenses = await fetchExpenses("all", "all");
-            setExpenses(updatedExpenses)
-            setTotalExpenses((_) => {
-                return getTotalExpensesByMonthAndYear(updatedExpenses);
-            });
-        }
-
+      if (type === "income") {
+        const updatedIncome = await fetchIncome("all", "all", "all");
+        setIncome(updatedIncome);
+        setTotalIncome((_) => {
+          return getTotalIncomeByMonthAndYear(updatedIncome);
+        });
+      } else {
+        const updatedExpenses = await fetchExpenses("all", "all", "all");
+        setExpenses(updatedExpenses);
+        setTotalExpenses((_) => {
+          return getTotalExpensesByMonthAndYear(updatedExpenses);
+        });
+      }
     } catch (err) {
       console.log(err);
     }
@@ -150,7 +162,6 @@ export default function FormComponent({ type, setIncome, setExpenses, setTotalIn
         <option value="accomodation">Accomodation</option>
         <option value="foodandbeverage">Food And Beverage</option>
         <option value="medical">Medical</option>
-        <option value="scholarship">Scholarship</option>
         <option value="transport">Trasnsport Fee</option>
         <option value="stationary">Stationary</option>
         <option value="other">Other</option>
