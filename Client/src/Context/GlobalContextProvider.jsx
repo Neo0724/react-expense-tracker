@@ -7,7 +7,7 @@ import { useCookies } from "react-cookie";
 export const GlobalContext = React.createContext();
 
 export const GlobalContextProvider = ({ children }) => {
-  const BASE_URL = import.meta.env.VITE_LOCAL_URL;
+  const BASE_URL = import.meta.env.VITE_BACKEND_URL;
 
   const userOwner = localStorage.getItem("User ID");
 
@@ -76,7 +76,7 @@ export const GlobalContextProvider = ({ children }) => {
 
       const response = await axios.get(
         `${BASE_URL}/expense/get-expense/${userOwner}/${month.toString()}/${year.toString()}/${type}`,
-        { headers: { authorization: cookies.access_token } },
+        { headers: { authorization: cookies.access_token } }
       );
 
       return response.data;
@@ -93,7 +93,7 @@ export const GlobalContextProvider = ({ children }) => {
 
       const response = await axios.get(
         `${BASE_URL}/income/get-income/${userOwner}/${month.toString()}/${year.toString()}/${type}`,
-        { headers: { authorization: cookies.access_token } },
+        { headers: { authorization: cookies.access_token } }
       );
 
       return response.data;
@@ -106,7 +106,7 @@ export const GlobalContextProvider = ({ children }) => {
     try {
       const res = await axios.get(
         `${BASE_URL}/expense/get-history/${userOwner}/${month.toString()}/${year.toString()}`,
-        { headers: { authorization: cookies.access_token } },
+        { headers: { authorization: cookies.access_token } }
       );
 
       return res.data;
