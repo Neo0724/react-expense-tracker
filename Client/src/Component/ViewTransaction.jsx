@@ -187,15 +187,20 @@ export default function ViewTransaction() {
     <div className="viewTransactionContainer">
       <div className="viewIncomeContainer">
         <div className="viewTransactionTitle">
-          Income Transactions on : Month: <MonthSelect category="income" />
-          <span className="verticalDot" style={{ color: "green" }}>
-            &#x2022;
-          </span>
-          Year: <YearSelect category="income" />
-          <span className="verticalDot" style={{ color: "green" }}>
-            &#x2022;
-          </span>
-          Transaction Type: <TransactionTypeSelect category="income" />
+          Income Transactions on :
+          <div className="viewTransactionDateAndType">
+            Month: <MonthSelect category="income" />
+            <span className="verticalDot" style={{ color: "green" }}>
+              &#x2022;
+            </span>
+            Year: <YearSelect category="income" />
+            <span className="verticalDot" style={{ color: "green" }}>
+              &#x2022;
+            </span>
+            <span>
+              Category : <TransactionTypeSelect category="income" />
+            </span>
+          </div>
         </div>
         <div className="viewIncomeDetailsContainer">
           {!income || income.length === 0 ? (
@@ -210,15 +215,20 @@ export default function ViewTransaction() {
       </div>
       <div className="viewExpensesContainer">
         <div className="viewTransactionTitle">
-          Expense Transactions on : Month: <MonthSelect category="expense" />
-          <span className="verticalDot" style={{ color: "red" }}>
-            &#x2022;
-          </span>
-          Year: <YearSelect category="expense" />
-          <span className="verticalDot" style={{ color: "red" }}>
-            &#x2022;
-          </span>
-          Transaction Type: <TransactionTypeSelect category="expense" />
+          Expense Transactions on :
+          <div className="viewTransactionDateAndType">
+            Month: <MonthSelect category="expense" />
+            <span className="verticalDot" style={{ color: "red" }}>
+              &#x2022;
+            </span>
+            Year: <YearSelect category="expense" />
+            <span className="verticalDot" style={{ color: "red" }}>
+              &#x2022;
+            </span>
+            <span>
+              Category : <TransactionTypeSelect category="expense" />
+            </span>
+          </div>
         </div>
         <div className="viewExpensesDetailsContainer">
           {!expenses || expenses.length === 0 ? (
