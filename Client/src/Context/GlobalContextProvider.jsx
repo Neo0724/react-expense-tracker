@@ -6,11 +6,13 @@ import { useCookies } from "react-cookie";
 
 export const GlobalContext = React.createContext();
 
+// eslint-disable-next-line react/prop-types
 export const GlobalContextProvider = ({ children }) => {
-  const BASE_URL = import.meta.env.VITE_BACKEND_URL;
+  const BASE_URL = import.meta.env.VITE_LOCAL_URL;
 
   const userOwner = localStorage.getItem("User ID");
 
+  // eslint-disable-next-line no-unused-vars
   const [cookies, _] = useCookies(["access_token"]);
 
   const [close, setClose] = useState(true);
@@ -68,39 +70,45 @@ export const GlobalContextProvider = ({ children }) => {
     return (totalIncome - totalExpenses).toFixed(2);
   };
 
-  const fetchExpenses = useCallback(async (month, year, type) => {
-    try {
-      if (!userOwner) {
-        return [];
+  const fetchExpenses = useCallback(
+    async (month, year, type) => {
+      try {
+        if (!userOwner) {
+          return [];
+        }
+
+        const response = await axios.get(
+          `${BASE_URL}/expense/get-expense/${userOwner}/${month.toString()}/${year.toString()}/${type}`,
+          { headers: { authorization: cookies.access_token } }
+        );
+
+        return response.data;
+      } catch (err) {
+        console.log(err);
       }
+    },
+    [BASE_URL, cookies.access_token, userOwner]
+  );
 
-      const response = await axios.get(
-        `${BASE_URL}/expense/get-expense/${userOwner}/${month.toString()}/${year.toString()}/${type}`,
-        { headers: { authorization: cookies.access_token } }
-      );
+  const fetchIncome = useCallback(
+    async (month, year, type) => {
+      try {
+        if (!userOwner) {
+          return [];
+        }
 
-      return response.data;
-    } catch (err) {
-      console.log(err);
-    }
-  });
+        const response = await axios.get(
+          `${BASE_URL}/income/get-income/${userOwner}/${month.toString()}/${year.toString()}/${type}`,
+          { headers: { authorization: cookies.access_token } }
+        );
 
-  const fetchIncome = useCallback(async (month, year, type) => {
-    try {
-      if (!userOwner) {
-        return [];
+        return response.data;
+      } catch (err) {
+        console.log(err);
       }
-
-      const response = await axios.get(
-        `${BASE_URL}/income/get-income/${userOwner}/${month.toString()}/${year.toString()}/${type}`,
-        { headers: { authorization: cookies.access_token } }
-      );
-
-      return response.data;
-    } catch (err) {
-      console.log(err);
-    }
-  });
+    },
+    [BASE_URL, cookies.access_token, userOwner]
+  );
 
   const getHistory = async (month, year) => {
     try {
