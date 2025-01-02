@@ -8,7 +8,7 @@ export const GlobalContext = React.createContext();
 
 // eslint-disable-next-line react/prop-types
 export const GlobalContextProvider = ({ children }) => {
-  const BASE_URL = import.meta.env.VITE_LOCAL_URL;
+  const BASE_URL = import.meta.env.VITE_BACKEND_URL;
 
   const userOwner = localStorage.getItem("User ID");
 
