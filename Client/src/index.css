@@ -622,9 +622,7 @@ button {
   background-color: transparent;
   border: 2px solid blue;
   color: blue;
-  transition:
-    background-color 250ms,
-    color 250ms;
+  transition: background-color 250ms, color 250ms;
 }
 
 .submitBtn:hover {
@@ -667,9 +665,7 @@ button {
   color: rgb(69, 169, 202);
   border-radius: 5px;
   background-color: transparent;
-  transition:
-    color 250ms,
-    background-color 250ms;
+  transition: color 250ms, background-color 250ms;
 }
 
 .closePopup:hover {
@@ -748,4 +744,48 @@ button {
   align-items: center;
   justify-content: center;
   gap: 5px;
+}
+
+.toast {
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  bottom: 10px;
+  right: 10px;
+  width: 300px;
+  min-height: 60px;
+  max-height: 80px;
+  box-shadow: 1px rgba(0.1, 0.1, 0.1, 225);
+  border-radius: 5px;
+  margin: 0;
+  padding: 10px;
+  background-color: rgb(60, 60, 60);
+  transform: translateX(100%); /* Start off-screen */
+  transition: transform 400ms cubic-bezier(0.25, 0.8, 0.25, 1); /* Smoother easing function */
+  visibility: hidden; /* Hidden when off-screen */
+  opacity: 0; /* Start with opacity 0 */
+}
+
+.toastTitle {
+  font-size: large;
+  font-weight: bold;
+}
+
+.toastDescription {
+  margin-top: 10px;
+  font-size: medium;
+  word-wrap: break-word;
+}
+
+.showToast {
+  transform: translateX(0); /* Slide into view */
+  visibility: visible; /* Make visible when in view */
+  opacity: 1; /* Fade in when showing */
+}
+
+.hideToast {
+  transform: translateX(100%); /* Slide off-screen */
+  visibility: hidden; /* Hide when off-screen */
+  opacity: 0; /* Fade out when hiding */
 }

@@ -1,9 +1,11 @@
+/* eslint-disable react/prop-types */
 import { useState } from "react";
 import ReactDatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import axios from "axios";
 import { useGlobalContext } from "../Context/useGlobalContext";
 import { useCookies } from "react-cookie";
+import { useToastContext } from "../Context/useToastContext";
 
 export default function FormComponent({
   type,
@@ -29,15 +31,11 @@ export default function FormComponent({
     userOwner: "",
   });
 
+  // eslint-disable-next-line no-unused-vars
+  const userOwner = localStorage.getItem("User ID");
+  // eslint-disable-next-line no-unused-vars
   const [cookies, _] = useCookies(["access_token"]);
-  const addUserOwner = async () => {
-    return new Promise((resolve, reject) => {
-      const userOwner = localStorage.getItem("User ID");
-      let newData = { ...data, userOwner };
-      setData(newData);
-      resolve(newData);
-    });
-  };
+  const { toast } = useToastContext();
 
   const handleChange = (e, type) => {
     switch (type) {
@@ -89,41 +87,65 @@ export default function FormComponent({
     });
   };
 
-  const handleSubmit = async (e) => {
+  const submitIncome = async (e) => {
     e.preventDefault();
     try {
       if (!cookies.access_token) {
         setClose((prev) => !prev);
         return;
       }
-      const updatedData = await addUserOwner();
-      type === "income"
-        ? await axios.post(
-          `${BASE_URL}/income/add-income`,
-          { ...updatedData },
-          { headers: { authorization: cookies.access_token } },
-        )
-        : await axios.post(
-          `${BASE_URL}/expense/add-expense`,
-          { ...updatedData },
-          { headers: { authorization: cookies.access_token } },
-        );
+      const formDataWithUserId = { ...data, userOwner };
+      const res = await axios.post(
+        `${BASE_URL}/income/add-income`,
+        { ...formDataWithUserId },
+        { headers: { authorization: cookies.access_token } }
+      );
 
-      if (type === "income") {
+      console.log(res);
+
+      if (res.status === 200) {
         const updatedIncome = await fetchIncome("all", "all", "all");
         setIncome(updatedIncome);
-        setTotalIncome((_) => {
+        setTotalIncome(() => {
           return getTotalIncomeByMonthAndYear(updatedIncome);
         });
+        toast("Success", "New income added successfully");
       } else {
-        const updatedExpenses = await fetchExpenses("all", "all", "all");
-        setExpenses(updatedExpenses);
-        setTotalExpenses((_) => {
-          return getTotalExpensesByMonthAndYear(updatedExpenses);
-        });
+        toast("Error", "Unexpected error occured. Please try again later");
       }
     } catch (err) {
       console.log(err);
+      toast("Error", "Unexpected error occured. Please try again later");
+    }
+  };
+
+  const submitExpense = async (e) => {
+    e.preventDefault();
+    try {
+      if (!cookies.access_token) {
+        setClose((prev) => !prev);
+        return;
+      }
+      const formDataWithUserId = { ...data, userOwner };
+      const res = await axios.post(
+        `${BASE_URL}/expense/add-expense`,
+        { ...formDataWithUserId },
+        { headers: { authorization: cookies.access_token } }
+      );
+
+      if (res.status === 200) {
+        const updatedExpenses = await fetchExpenses("all", "all", "all");
+        setExpenses(updatedExpenses);
+        setTotalExpenses(() => {
+          return getTotalExpensesByMonthAndYear(updatedExpenses);
+        });
+        toast("Success", "New expense added successfully");
+      } else {
+        toast("Error", "Unexpected error occured. Please try again later");
+      }
+    } catch (err) {
+      console.log(err);
+      toast("Error", "Unexpected error occured. Please try again later");
     }
   };
 
@@ -173,7 +195,9 @@ export default function FormComponent({
     <form
       action="POST"
       className="formContainer"
-      onSubmit={(e) => handleSubmit(e)}
+      onSubmit={(e) => {
+        type === "income" ? submitIncome(e) : submitExpense(e);
+      }}
     >
       <input
         type="text"
