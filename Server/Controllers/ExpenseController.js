@@ -45,12 +45,16 @@ const getExpenseByMonthAndYear = async (req, res) => {
     let Expense = null;
 
     if (type === "all") {
-      Expense = await ExpenseSchema.find({ userOwner: id, date: regExp });
+      Expense = await ExpenseSchema.find({ userOwner: id, date: regExp }).sort({
+        date: -1,
+      });
     } else {
       Expense = await ExpenseSchema.find({
         userOwner: id,
         date: regExp,
         category: type,
+      }).sort({
+        date: -1,
       });
     }
 

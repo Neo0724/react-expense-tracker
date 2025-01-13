@@ -45,12 +45,16 @@ const getIncomeByMonthAndYear = async (req, res) => {
     let Income = null;
 
     if (type === "all") {
-      Income = await IncomeSchema.find({ userOwner: id, date: regExp });
+      Income = await IncomeSchema.find({ userOwner: id, date: regExp }).sort({
+        date: -1,
+      });
     } else {
       Income = await IncomeSchema.find({
         userOwner: id,
         date: regExp,
         category: type,
+      }).sort({
+        date: -1,
       });
     }
 
