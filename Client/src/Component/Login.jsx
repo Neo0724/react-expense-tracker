@@ -85,7 +85,7 @@ export default function Login() {
         required={true}
       />
       <div className="horizontalLine"></div>
-      <button className="submitBtn" type="submit" disabled={isLoading.current}>
+      <button className="submitBtn" type="submit" disabled={isLoading}>
         {isLoading ? "loading..." : "login"}
       </button>
       <span>
