@@ -3,7 +3,7 @@ services:
     build:
       context: ./Client
       dockerfile: ./Dockerfile
-    container_name: frontend
+    container_name: expense-tracker-frontend
     ports:
       - '5173:5173'
     env_file: 
@@ -15,7 +15,7 @@ services:
     build:
       context: ./Server
       dockerfile: ./Dockerfile
-    container_name: backend
+    container_name: expense-tracker-backend
     ports:
       - '3000:3000'
     env_file: 
