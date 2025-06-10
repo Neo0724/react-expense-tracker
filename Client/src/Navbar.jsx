@@ -67,8 +67,7 @@ export default function Navbar() {
           <div className="userName">{username}</div>
         ) : null}
       </div>
-      {navbar.map((item) => {
-        let randomID = crypto.randomUUID();
+      {navbar.map((item, index) => {
         return (
           <NavbarComponent
             id={item.id}
@@ -76,7 +75,7 @@ export default function Navbar() {
             icon={item.icon}
             active={item.active}
             setNavbar={setNavbar}
-            key={randomID}
+            key={index}
           />
         );
       })}

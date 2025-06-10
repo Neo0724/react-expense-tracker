@@ -1,0 +1,22 @@
+services:
+  client:
+    build:
+      context: ./Client
+      dockerfile: ./Dockerfile
+    container_name: frontend
+    ports:
+      - '5173:5173'
+    env_file: 
+      - path: ./Client/.env
+    depends_on:
+      - server
+
+  server:
+    build:
+      context: ./Server
+      dockerfile: ./Dockerfile
+    container_name: backend
+    ports:
+      - '3000:3000'
+    env_file: 
+      - path: ./Server/.env
