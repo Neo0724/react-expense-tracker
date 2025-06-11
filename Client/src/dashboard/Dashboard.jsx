@@ -1,6 +1,6 @@
 import { useGlobalContext } from "../Context/useGlobalContext";
 import Chart from "./Chart";
-import { HistoryContainer } from "./IncomeAndExpenseContainer";
+import { DashboardTransactionHistory } from "./DashboardTransactionHistory";
 import { useState, useCallback, useEffect } from "react";
 
 export default function Dashboard() {
@@ -114,6 +114,13 @@ export default function Dashboard() {
     );
   };
 
+  const monthAndYearText =
+    dashboardYear === "all" && dashboardMonth === "all"
+      ? "every month and every year"
+      : dashboardYear === "all" && dashboardMonth !== "all"
+      ? dictForMonth.get(dashboardMonth) + " , every year"
+      : dictForMonth.get(dashboardMonth) + " , " + dashboardYear;
+
   return (
     <div className="dashboardContainer">
       <div className="overview">
@@ -125,8 +132,12 @@ export default function Dashboard() {
         dashboardMonth={dashboardMonth}
         dashboardYear={dashboardYear}
       />
-      <div className="amountAndHistoryContainer">
-        <div className="amountContainer">
+      <div className="flex flex-col gap-7 md:flex-row mt-10">
+        {/* Total exxpenses, income and balance */}
+        <div className="flex-1/3">
+          <div className="totalBalanceTitle">
+            Total balance on {monthAndYearText}
+          </div>
           <div className="expenseAndIncomeDashboard">
             <div className="totalExpensesDashboard" style={{ color: "red" }}>
               Total Expenses: ${totalExpensesAmount}
@@ -139,23 +150,21 @@ export default function Dashboard() {
             Total Balance: ${getBalance(totalExpensesAmount, totalIncomeAmount)}
           </div>
         </div>
-        <div className="historyContainer">
+        {/* Transaction history */}
+        <div className="w-full flex-2/3">
           <div className="historyContainerTitle">
-            Transaction History on{" "}
-            {dashboardYear === "all" && dashboardMonth === "all"
-              ? "every month and every year"
-              : dashboardYear === "all" && dashboardMonth !== "all"
-                ? dictForMonth.get(dashboardMonth) + " , every year"
-                : dictForMonth.get(dashboardMonth) + " , " + dashboardYear}
-            :{" "}
+            Most Recent Transaction History on {monthAndYearText}
           </div>
           {!historyTransaction || historyTransaction.length === 0 ? (
             <div className="empty">Empty</div>
           ) : (
-            historyTransaction.map((item) => {
-              const randomID = crypto.randomUUID();
-              return <HistoryContainer history={item} key={randomID} />;
-            })
+            <div className="flex flex-col gap-3">
+              {historyTransaction.map((item) => {
+                return (
+                  <DashboardTransactionHistory history={item} key={item._id} />
+                );
+              })}
+            </div>
           )}
         </div>
       </div>

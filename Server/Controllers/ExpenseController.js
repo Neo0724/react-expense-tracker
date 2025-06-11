@@ -33,23 +33,23 @@ const getExpenseByMonthAndYear = async (req, res) => {
     let regExp = null;
 
     if (month === "all" && year === "all") {
-      regExp = new RegExp("\\d{4}");
+      regExp = new RegExp("");
     } else if (month !== "all" && year === "all") {
-      regExp = new RegExp(`\\d{4}-${month}`);
+      regExp = new RegExp(`^\\d{4}-${month}`);
     } else if (month === "all" && year !== "all") {
-      regExp = new RegExp(`${year}-0?\\d{1,2}`);
+      regExp = new RegExp(`^${year}`);
     } else {
-      regExp = new RegExp(`${year}-${month}`);
+      regExp = new RegExp(`^${year}-${month}`);
     }
 
-    let Expense = null;
+    let expense = null;
 
     if (type === "all") {
-      Expense = await ExpenseSchema.find({ userOwner: id, date: regExp }).sort({
+      expense = await ExpenseSchema.find({ userOwner: id, date: regExp }).sort({
         date: -1,
       });
     } else {
-      Expense = await ExpenseSchema.find({
+      expense = await ExpenseSchema.find({
         userOwner: id,
         date: regExp,
         category: type,
@@ -58,7 +58,7 @@ const getExpenseByMonthAndYear = async (req, res) => {
       });
     }
 
-    res.status(200).json(Expense);
+    res.status(200).json(expense);
   } catch {
     res.status(500).json({ message: "Server Error" });
   }
@@ -71,16 +71,16 @@ const getHistoryByMonthAndYear = async (req, res) => {
     let regExp = null;
 
     if (month === "all" && year === "all") {
-      regExp = new RegExp("\\d{4}");
+      regExp = new RegExp("");
     } else if (month !== "all" && year === "all") {
-      regExp = new RegExp(`\\d{4}-${month}`);
+      regExp = new RegExp(`^\\d{4}-${month}`);
     } else if (month === "all" && year !== "all") {
-      regExp = new RegExp(`${year}-0?\\d{1,2}`);
+      regExp = new RegExp(`^${year}`);
     } else {
-      regExp = new RegExp(`${year}-${month}`);
+      regExp = new RegExp(`^${year}-${month}`);
     }
 
-    const Expense = await ExpenseSchema.aggregate([
+    const expenseAndIncome = await ExpenseSchema.aggregate([
       {
         $unionWith: { coll: "incomes" },
       },
@@ -104,7 +104,7 @@ const getHistoryByMonthAndYear = async (req, res) => {
       },
     ]);
 
-    res.status(200).json(Expense);
+    res.status(200).json(expenseAndIncome);
   } catch {
     res.status(500).json({ message: "Server Error" });
   }
@@ -116,7 +116,7 @@ const deleteExpense = async (req, res) => {
   try {
     await ExpenseSchema.findByIdAndDelete(id);
 
-    res.json({ message: "Expense deleted" });
+    res.status(200).json({ message: "Expense deleted" });
   } catch (err) {
     res.status(500).json({ message: "Server Error" });
   }

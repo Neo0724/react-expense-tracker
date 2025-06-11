@@ -1,7 +1,14 @@
 /* eslint-disable react/prop-types */
 import { useNavigate } from "react-router";
 
-export default function NavbarComponent({ id, name, icon, active, setNavbar }) {
+export default function NavbarComponent({
+  id,
+  name,
+  route,
+  icon,
+  active,
+  setNavbar,
+}) {
   const navigate = useNavigate();
 
   const style = {
@@ -12,7 +19,7 @@ export default function NavbarComponent({ id, name, icon, active, setNavbar }) {
     opacity: active ? 1 : 0.7,
   };
 
-  const handleClick = () => {
+  const handleNavigate = () => {
     setNavbar((prev) => {
       let newItem = prev.map((item) =>
         item.id === id ? { ...item, active: true } : { ...item, active: false }
@@ -20,21 +27,19 @@ export default function NavbarComponent({ id, name, icon, active, setNavbar }) {
       return newItem;
     });
 
-    navigate(`/intermediateExpenseTracker/${name.toLowerCase()}`);
+    navigate(`/${route}`);
   };
 
   return (
     <div
       className="navbarComponentContainer"
-      onClick={handleClick}
+      onClick={handleNavigate}
       style={opacity}
     >
       <div className="verticalLine" style={style}></div>
       <div className="navbarComponentTitleAndIcon">
         <img src={icon} alt={name} className="navbarComponentIcons" />
-        <div className="dashboardTitle">
-          {name === "View Transaction" ? "Transactions" : name}
-        </div>
+        <div className="dashboardTitle">{name}</div>
       </div>
     </div>
   );

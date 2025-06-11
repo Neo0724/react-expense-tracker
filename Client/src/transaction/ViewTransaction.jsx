@@ -31,7 +31,7 @@ export default function ViewTransaction() {
 
       setIncome(fetchedIncome);
     },
-    [fetchIncome],
+    [fetchIncome]
   );
 
   const updateExpenses = useCallback(
@@ -40,7 +40,7 @@ export default function ViewTransaction() {
 
       setExpenses(fetchedExpenses);
     },
-    [fetchExpenses],
+    [fetchExpenses]
   );
 
   const changeMonth = (e, category) => {
@@ -74,7 +74,7 @@ export default function ViewTransaction() {
     updateIncome(
       transactionMonth.income,
       transactionYear.income,
-      transactionType.income,
+      transactionType.income
     );
   }, [
     transactionMonth.income,
@@ -87,7 +87,7 @@ export default function ViewTransaction() {
     updateExpenses(
       transactionMonth.expense,
       transactionYear.expense,
-      transactionType.expense,
+      transactionType.expense
     );
   }, [
     transactionMonth.expense,

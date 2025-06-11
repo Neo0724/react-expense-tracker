@@ -1,4 +1,4 @@
-import { useGlobalContext } from "./Context/useGlobalContext";
+import { useGlobalContext } from "../Context/useGlobalContext";
 
 export default function PopUp() {
   const { setClose, close } = useGlobalContext();

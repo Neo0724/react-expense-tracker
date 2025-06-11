@@ -8,7 +8,7 @@ import { useGlobalContext } from "../Context/useGlobalContext";
 export default function Login() {
   const { BASE_URL } = useGlobalContext();
 
-  const [data, setData] = useState({ username: "", password: "" });
+  const [formData, setFormData] = useState({ username: "", password: "" });
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -19,27 +19,24 @@ export default function Login() {
   const navigate = useNavigate();
 
   const handleUsernameChange = (e) => {
-    setData((prev) => {
+    setFormData((prev) => {
       return { ...prev, username: e.target.value };
     });
   };
 
   const handlePasswordChange = (e) => {
-    setData((prev) => {
+    setFormData((prev) => {
       return { ...prev, password: e.target.value };
     });
   };
 
-  const handleNavbar = async () => {
-    return new Promise((resolve, reject) => {
-      let updatedNavbar = navbar.map((item) => {
-        if (item.id === 1) return { ...item, active: true };
-        return item;
-      });
-
-      setNavbar(updatedNavbar);
-      resolve(updatedNavbar);
+  const resetNavbar = () => {
+    let updatedNavbar = navbar.map((item) => {
+      if (item.id === 1) return { ...item, active: true };
+      return item;
     });
+
+    setNavbar(updatedNavbar);
   };
 
   const handleSubmit = async (e) => {
@@ -48,14 +45,14 @@ export default function Login() {
 
     try {
       const res = await axios.post(`${BASE_URL}/auth/login`, {
-        username: data.username,
-        password: data.password,
+        username: formData.username,
+        password: formData.password,
       });
       setCookie("access_token", res.data.token);
       localStorage.setItem("User ID", res.data.userID);
       localStorage.setItem("Username", res.data.userName);
-      await handleNavbar();
-      navigate("/intermediateExpenseTracker/dashboard");
+      resetNavbar();
+      navigate("/dashboard");
     } catch (err) {
       const status = err.request.status;
       status === 404
@@ -71,7 +68,7 @@ export default function Login() {
         type="text"
         className="usernameInput"
         placeholder="Enter your username..."
-        value={data.username}
+        value={formData.username}
         onChange={handleUsernameChange}
         required={true}
       />
@@ -80,7 +77,7 @@ export default function Login() {
         type="password"
         className="usernameInput"
         placeholder="Enter your password ..."
-        value={data.password}
+        value={formData.password}
         onChange={handlePasswordChange}
         required={true}
       />
@@ -90,7 +87,9 @@ export default function Login() {
       </button>
       <span>
         Do not have an account?{" "}
-        <Link to="/intermediateExpenseTracker/register">Register now</Link>
+        <Link className="underline font-bold" to="/register">
+          Register now
+        </Link>
       </span>
     </form>
   );

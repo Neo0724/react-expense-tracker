@@ -7,20 +7,20 @@ import { useGlobalContext } from "../Context/useGlobalContext";
 export default function Register() {
   const { BASE_URL } = useGlobalContext();
 
-  const [data, setData] = useState({ username: "", password: "" });
+  const [formData, setFormData] = useState({ username: "", password: "" });
 
   const navigate = useNavigate();
 
   const [isLoading, setIsLoading] = useState(false);
 
   const handleUsernameChange = (e) => {
-    setData((prev) => {
+    setFormData((prev) => {
       return { ...prev, username: e.target.value };
     });
   };
 
   const handlePasswordChange = (e) => {
-    setData((prev) => {
+    setFormData((prev) => {
       return { ...prev, password: e.target.value };
     });
   };
@@ -31,10 +31,10 @@ export default function Register() {
 
     try {
       await axios.post(`${BASE_URL}/auth/register`, {
-        username: data.username,
-        password: data.password,
+        username: formData.username,
+        password: formData.password,
       });
-      navigate("/intermediateExpenseTracker/login");
+      navigate("/login");
     } catch (err) {
       alert(err);
     } finally {
@@ -47,7 +47,7 @@ export default function Register() {
         type="text"
         className="usernameInput"
         placeholder="Enter your username..."
-        value={data.username}
+        value={formData.username}
         onChange={handleUsernameChange}
         required={true}
       />
@@ -56,7 +56,7 @@ export default function Register() {
         type="password"
         className="usernameInput"
         placeholder="Enter your password ..."
-        value={data.password}
+        value={formData.password}
         onChange={handlePasswordChange}
         required={true}
       />
@@ -66,7 +66,9 @@ export default function Register() {
       </button>
       <span>
         Already have an account?{" "}
-        <Link to="/expenseTracker/login">Log in now</Link>
+        <Link className="underline font-bold" to="/login">
+          Log in now
+        </Link>
       </span>
     </form>
   );
