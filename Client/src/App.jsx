@@ -1,57 +1,30 @@
-import { HashRouter, Routes, Route } from "react-router-dom";
-import Dashboard from "./Component/Dashboard";
-import Register from "./Component/Register";
-import Navbar from "./Navbar";
-import Login from "./Component/Login";
-import Expenses from "./Component/Expenses";
-import Income from "./Component/Income";
-import ViewTransaction from "./Component/ViewTransaction";
-import PopUp from "./PopUp";
-import LoginError from "./LoginError";
-import { ToastContextProvider } from "./Context/ToastContextProvider";
+import { Routes, Route, BrowserRouter } from "react-router-dom";
+import Dashboard from "./dashboard/Dashboard";
+import Register from "./auth/Register";
+import Navbar from "./nav/Navbar";
+import Login from "./auth/Login";
+import Expenses from "./income-expenses/Expenses";
+import Income from "./income-expenses/Income";
+import ViewTransaction from "./transaction/ViewTransaction";
+import PopUp from "./utils/PopUp";
+import LoginError from "./auth/LoginError";
 
 function App() {
   return (
-    <HashRouter>
+    <BrowserRouter>
       <Navbar />
       <PopUp />
       <LoginError />
       <Routes>
         <Route path="/" element={<Dashboard />}></Route>
-        <Route
-          path="intermediateExpenseTracker/dashboard"
-          element={<Dashboard />}
-        ></Route>
-        <Route
-          path="intermediateExpenseTracker/view transaction"
-          element={<ViewTransaction />}
-        ></Route>
-        <Route
-          path="intermediateExpenseTracker/income"
-          element={
-            // <ToastContextProvider>
-            <Income />
-            // </ToastContextProvider>
-          }
-        ></Route>
-        <Route
-          path="intermediateExpenseTracker/expenses"
-          element={
-            <ToastContextProvider>
-              <Expenses />
-            </ToastContextProvider>
-          }
-        ></Route>
-        <Route
-          path="intermediateExpenseTracker/register"
-          element={<Register />}
-        ></Route>
-        <Route
-          path="intermediateExpenseTracker/login"
-          element={<Login />}
-        ></Route>
+        <Route path="/dashboard" element={<Dashboard />}></Route>
+        <Route path="/view-transaction" element={<ViewTransaction />}></Route>
+        <Route path="/income" element={<Income />}></Route>
+        <Route path="/expenses" element={<Expenses />}></Route>
+        <Route path="/register" element={<Register />}></Route>
+        <Route path="/login" element={<Login />}></Route>
       </Routes>
-    </HashRouter>
+    </BrowserRouter>
   );
 }
 

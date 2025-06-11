@@ -153,20 +153,3 @@ export function IncomeContainer({ income, setIncome, setTotalIncome }) {
   );
 }
 
-export function HistoryContainer({ history }) {
-  const style = {
-    color: history.type === "income" ? "green" : "red",
-  };
-
-  return (
-    <div className="historyAndExpenseContainer">
-      <div className="historyTitle" style={style}>
-        {history.title}
-      </div>
-      <div className="historyAmount" style={style}>
-        {history.type === "income" ? `+ ` : `- `}
-        {history.amount}
-      </div>
-    </div>
-  );
-}

@@ -5,9 +5,20 @@ services:
       dockerfile: ./Dockerfile
     container_name: expense-tracker-frontend
     ports:
-      - '5173:5173'
-    env_file: 
+      - "5173:5173"
+    env_file:
       - path: ./Client/.env
+    volumes:
+      - /frontend/node_modules
+    develop:
+      watch:
+        - action: sync
+          path: ./Client
+          target: /frontend
+          ignore:
+            - node_modules
+        - action: rebuild
+          path: ./Client/package.json
     depends_on:
       - server
 
@@ -17,6 +28,17 @@ services:
       dockerfile: ./Dockerfile
     container_name: expense-tracker-backend
     ports:
-      - '3000:3000'
-    env_file: 
+      - "3000:3000"
+    volumes:
+      - /backend/node_modules
+    env_file:
       - path: ./Server/.env
+    develop:
+      watch:
+        - action: sync
+          path: ./Server
+          target: /backend
+          ignore:
+            - node_modules
+        - action: rebuild
+          path: ./Server/package.json

@@ -1,7 +1,7 @@
 import React, { useEffect, useCallback } from "react";
 import { useState } from "react";
 import axios from "axios";
-import { navbarItems } from "../Component/navbarItems";
+import { navbarItems } from "../nav/navbarItems";
 import { useCookies } from "react-cookie";
 
 export const GlobalContext = React.createContext();

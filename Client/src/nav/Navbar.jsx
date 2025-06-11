@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router";
 import { useCookies } from "react-cookie";
-import NavbarComponent from "./Component/NavbarComponent";
-import { useGlobalContext } from "./Context/useGlobalContext";
+import NavbarComponent from "./NavbarComponent";
+import { useGlobalContext } from "../Context/useGlobalContext";
 import loginIcon from "/login.png";
 import signoutIcon from "/signout.png";
 
@@ -19,29 +19,22 @@ export default function Navbar() {
     marginRight: username ? "" : "auto",
   };
 
-  const removeNavbarItem = async () => {
-    return new Promise((resolve, reject) => {
-      const defaultNavbar = navbar.map((item) => {
-        return { ...item, active: false };
-      });
-
-      setNavbar(defaultNavbar);
-
-      resolve(defaultNavbar);
+  const resetNavbar = () => {
+    const defaultNavbar = navbar.map((item) => {
+      return { ...item, active: false };
     });
+
+    setNavbar(defaultNavbar);
   };
 
   const handleSignOut = async () => {
-    if (!cookies.access_token) return;
-    await removeNavbarItem();
+    resetNavbar();
     setCookies("access_token", "");
     localStorage.clear();
-    navigate("intermediateExpenseTracker/login");
+    navigate("/login");
   };
 
   const handleLogin = () => {
-    if (cookies.access_token) return;
-
     setNavbar((prev) => {
       let updatedNav = prev.map((item) => {
         return { ...item, active: false };
@@ -50,7 +43,7 @@ export default function Navbar() {
       return updatedNav;
     });
 
-    navigate("intermediateExpenseTracker/login");
+    navigate("/login");
   };
 
   return (
@@ -61,11 +54,15 @@ export default function Navbar() {
           style={style}
           src={loginIcon}
           alt="loginIcon"
-          onClick={handleLogin}
+          onClick={() => {
+            if (cookies.access_token) {
+              return;
+            }
+
+            handleLogin();
+          }}
         ></img>
-        {cookies.access_token ? (
-          <div className="userName">{username}</div>
-        ) : null}
+        {cookies.access_token && <div className="userName">{username}</div>}
       </div>
       {navbar.map((item, index) => {
         return (
@@ -74,19 +71,25 @@ export default function Navbar() {
             name={item.name}
             icon={item.icon}
             active={item.active}
+            route={item.route}
             setNavbar={setNavbar}
             key={index}
           />
         );
       })}
-      {cookies.access_token ? (
-        <img
-          className="signOut"
-          src={signoutIcon}
-          alt="signoutIcon"
+      {cookies.access_token && (
+        <button
+          className={`mt-auto flex flex-col md:flex-row justify-center items-center gap-3 !border-none !m-0 max-w-17 w-full md:!mt-auto md:!max-w-full md:h-14 md:text-[16px] text-[13px] min-w-fit opacity-70`}
           onClick={handleSignOut}
-        ></img>
-      ) : null}
+        >
+          <img
+            src={signoutIcon}
+            alt="signoutIcon"
+            className="w-[30px] h-[30px] object-contain"
+          />
+          Sign Out
+        </button>
+      )}
     </div>
   );
 }

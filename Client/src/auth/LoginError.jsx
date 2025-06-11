@@ -1,4 +1,4 @@
-import { useGlobalContext } from "./Context/useGlobalContext";
+import { useGlobalContext } from "../Context/useGlobalContext";
 
 export default function LoginError() {
   const { loginErr, setLoginErr } = useGlobalContext();

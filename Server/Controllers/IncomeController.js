@@ -33,23 +33,23 @@ const getIncomeByMonthAndYear = async (req, res) => {
     let regExp = null;
 
     if (month === "all" && year === "all") {
-      regExp = new RegExp("\\d{4}");
+      regExp = new RegExp("");
     } else if (month !== "all" && year === "all") {
-      regExp = new RegExp(`\\d{4}-${month}`);
+      regExp = new RegExp(`^\\d{4}-${month}`);
     } else if (month === "all" && year !== "all") {
-      regExp = new RegExp(`${year}-0?\\d{1,2}`);
+      regExp = new RegExp(`^${year}`);
     } else {
-      regExp = new RegExp(`${year}-${month}`);
+      regExp = new RegExp(`^${year}-${month}`);
     }
 
-    let Income = null;
+    let income = null;
 
     if (type === "all") {
-      Income = await IncomeSchema.find({ userOwner: id, date: regExp }).sort({
+      income = await IncomeSchema.find({ userOwner: id, date: regExp }).sort({
         date: -1,
       });
     } else {
-      Income = await IncomeSchema.find({
+      income = await IncomeSchema.find({
         userOwner: id,
         date: regExp,
         category: type,
@@ -58,7 +58,7 @@ const getIncomeByMonthAndYear = async (req, res) => {
       });
     }
 
-    res.status(200).json(Income);
+    res.status(200).json(income);
   } catch (err) {
     res.status(500).json({ message: "Server Error" });
   }

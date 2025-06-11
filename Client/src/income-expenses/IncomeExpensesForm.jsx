@@ -7,7 +7,7 @@ import { useGlobalContext } from "../Context/useGlobalContext";
 import { useCookies } from "react-cookie";
 import { useToastContext } from "../Context/useToastContext";
 
-export default function FormComponent({
+export default function IncomeExpensesForm({
   type,
   setIncome,
   setExpenses,

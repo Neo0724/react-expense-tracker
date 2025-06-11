@@ -1,6 +1,6 @@
-import Form from "../Form/FormComponent";
+import Form from "./IncomeExpensesForm";
 import { useGlobalContext } from "../Context/useGlobalContext";
-import { IncomeContainer } from "./IncomeAndExpenseContainer";
+import { IncomeContainer } from "../transaction/IncomeAndExpenseContainer";
 import { useEffect, useState } from "react";
 
 export default function Income() {
