@@ -189,14 +189,18 @@ export default function ViewTransaction() {
         <div className="viewTransactionTitle">
           Income Transactions on :
           <div className="viewTransactionDateAndType">
-            Month: <MonthSelect category="income" />
-            <span className="verticalDot" style={{ color: "green" }}>
-              &#x2022;
-            </span>
-            Year: <YearSelect category="income" />
-            <span className="verticalDot" style={{ color: "green" }}>
-              &#x2022;
-            </span>
+            <div className="flex gap-2 justify-center items-center">
+              <span>
+                Month: <MonthSelect category="income" />
+              </span>
+              <span className="text-green-600 md:mx-3">&#x2022;</span>
+            </div>
+            <div className="flex gap-2 justify-center items-center">
+              <span>
+                Year: <YearSelect category="income" />
+              </span>
+              <span className="text-green-600 md:mx-3">&#x2022;</span>
+            </div>
             <span>
               Category : <TransactionTypeSelect category="income" />
             </span>
@@ -217,14 +221,18 @@ export default function ViewTransaction() {
         <div className="viewTransactionTitle">
           Expense Transactions on :
           <div className="viewTransactionDateAndType">
-            Month: <MonthSelect category="expense" />
-            <span className="verticalDot" style={{ color: "red" }}>
-              &#x2022;
-            </span>
-            Year: <YearSelect category="expense" />
-            <span className="verticalDot" style={{ color: "red" }}>
-              &#x2022;
-            </span>
+            <div className="flex gap-2 justify-center items-center">
+              <span>
+                Month: <MonthSelect category="expense" />
+              </span>
+              <span className="text-red-500 md:mx-3">&#x2022;</span>
+            </div>
+            <div className="flex gap-2 justify-center items-center">
+              <span>
+                Year: <YearSelect category="expense" />
+              </span>
+              <span className="text-red-500 md:mx-3">&#x2022;</span>
+            </div>
             <span>
               Category : <TransactionTypeSelect category="expense" />
             </span>

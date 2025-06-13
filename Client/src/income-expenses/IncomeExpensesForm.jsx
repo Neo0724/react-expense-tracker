@@ -208,7 +208,7 @@ export default function IncomeExpensesForm({
         onChange={(e) => handleChange(e, "amount")}
       />
       <ReactDatePicker
-        className="dateInput"
+        wrapperClassName="max-w-[450px] w-full"
         dateFormat="dd/MM/yyyy"
         selected={data.date}
         onChange={(date) => handleDateChange(date)}

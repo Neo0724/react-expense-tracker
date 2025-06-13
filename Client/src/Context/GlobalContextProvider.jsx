@@ -112,6 +112,9 @@ export const GlobalContextProvider = ({ children }) => {
 
   const getHistory = async (month, year) => {
     try {
+      if (!userOwner) {
+        return [];
+      }
       const res = await axios.get(
         `${BASE_URL}/expense/get-history/${userOwner}/${month.toString()}/${year.toString()}`,
         { headers: { authorization: cookies.access_token } }

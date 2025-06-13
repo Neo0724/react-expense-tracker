@@ -123,8 +123,17 @@ export default function Dashboard() {
 
   return (
     <div className="dashboardContainer">
-      <div className="overview">
-        Month: <MonthSelect /> | Year: <YearSelect />
+      <div className="overview !text-sm md:!text-lg">
+        <div>
+          <span>Month: </span>
+          <MonthSelect />
+        </div>
+        {/* Vertical line seperator */}
+        <span className="h-5 !border-2 !border-black"></span>
+        <div>
+          <span>Year: </span>
+          <YearSelect />
+        </div>
       </div>
       <Chart
         income={income}
