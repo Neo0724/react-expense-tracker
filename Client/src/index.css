@@ -13,7 +13,7 @@ body {
   width: 240px;
   gap: 10px;
   padding: 10px;
-  height: 100svh;
+  height: 99svh;
 }
 
 .expenses {
@@ -60,6 +60,7 @@ body {
 #root {
   display: flex;
   gap: 10px;
+  margin: 5px;
 }
 
 .authContainer {
@@ -68,13 +69,14 @@ body {
   gap: 25px;
   border: 2px solid rgb(0, 0, 0, 0.2);
   border-radius: 5px;
-  height: 275px;
+  height: 300px;
   margin-left: auto;
   margin-right: auto;
   align-items: center;
   padding: 20px 0;
   margin-top: 100px;
-  width: 400px;
+  max-width: 500px;
+  width: 100%;
   min-width: 300px;
 }
 
@@ -89,7 +91,7 @@ button:hover {
 
 .submitBtn {
   text-transform: uppercase;
-  height: 40px;
+  padding: 5px 0;
   width: 100px;
   background-color: limegreen;
   color: white;
@@ -100,7 +102,8 @@ button:hover {
 
 .usernameInput,
 .passwordInput {
-  height: 30px;
+  padding: 5px 10px;
+  height: 60px;
   width: 300px;
   border: none;
 }
@@ -138,6 +141,8 @@ button:hover {
 .formContainer {
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
   gap: 10px;
   width: 200px;
   margin-top: 30px;
@@ -149,8 +154,6 @@ button:hover {
   display: flex;
   gap: 10px;
   margin-top: 20px;
-  height: 93vh;
-  overflow: scroll;
 }
 
 .formContainer {
@@ -159,11 +162,12 @@ button:hover {
 
 .incomeTransactionContainer,
 .expenseTransactionContainer {
-  height: 93vh;
+  height: 80vh;
   display: flex;
   flex-direction: column;
   flex: 2;
   overflow: scroll;
+  overflow-x: hidden
 }
 
 .upperContainer {
@@ -240,6 +244,7 @@ button:hover {
 .incomeUpperContainer,
 .expenseUpperContainer {
   overflow: scroll;
+  overflow-x: hidden
 }
 
 .description {
@@ -253,7 +258,7 @@ button:hover {
 input {
   padding-left: 3px;
   width: 95%;
-  height: 30px;
+  height: 45px;
   border-radius: 5px;
   border: 1px solid rgb(0, 0, 0, 0.2);
 }
@@ -262,6 +267,8 @@ input,
 select,
 textarea {
   padding-left: 8px;
+  max-width: 450px;
+  width: 100%;
 }
 
 select {
@@ -271,6 +278,7 @@ select {
 }
 
 textarea {
+  padding-top: 10px;
   border-radius: 5px;
   border: 1px solid rgb(0, 0, 0, 0.2);
 }
@@ -333,12 +341,31 @@ textarea {
 }
 
 @media only screen and (max-width: 768px) {
+  .categoryIcon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .details {
+    margin-left: 10px;
+  }
+
+  .upperContainer {
+    font-size: small;
+  }
+
+  .detailsLowerContainer {
+    flex-wrap: wrap;
+  }
+
   .amountAndHistoryContainer {
     flex-direction: column;
   }
   .incomeLowerContainer,
   .expenseLowerContainer {
     flex-direction: column;
+    max-height: 90svh;
+    overflow-y: scroll
   }
   .formContainer {
     width: 80%;
@@ -359,13 +386,16 @@ textarea {
 
   #root {
     flex-direction: column;
+    justify-content: center;
+    align-items: center;
   }
 
   .navbarContainer {
+    margin-top: 10px;
     flex-direction: row;
-    width: auto;
     overflow: auto;
     height: 20%;
+    width: 95%;
   }
 
   .navbarComponentContainer {
@@ -399,8 +429,9 @@ textarea {
   }
 
   .authContainer {
-    margin: 0;
     margin-top: 30px;
+    max-width: 95%;
+    padding: 20px;
   }
 
   .historyContainer {
@@ -418,10 +449,6 @@ textarea {
 
   .upperContainer {
     overflow: scroll;
-  }
-
-  .authContainer {
-    width: auto;
   }
 
   .userName {
@@ -594,7 +621,9 @@ textarea {
 .overview {
   font-size: 25px;
   font-weight: bold;
-  margin-left: 10px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
 }
 
 input,
@@ -680,8 +709,8 @@ button {
   border: 3px solid rgb(0, 0, 0, 0.2);
   border-radius: 5px;
   padding: 15px;
-  height: 100svh;
-  width: 90%;
+  height: 99svh;
+  width: 95%;
   gap: 10px;
 }
 
@@ -711,7 +740,7 @@ button {
   transition: bottom 250ms ease-in;
 }
 
-@media only screen and (max-width: 800px) {
+@media only screen and (max-width: 768px) {
   .loginErrorContainer {
     left: 50%;
     transform: translate(-50%, 0);
@@ -721,6 +750,7 @@ button {
 .monthSelector {
   height: auto;
   transition: opacity 250ms;
+  width: 60px;
 }
 
 .monthSelector:hover {
@@ -736,7 +766,6 @@ button {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: center;
   gap: 5px;
 }
 

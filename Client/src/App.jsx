@@ -10,6 +10,7 @@ import PopUp from "./utils/PopUp";
 import LoginError from "./auth/LoginError";
 
 function App() {
+  
   return (
     <BrowserRouter>
       <Navbar />
