@@ -1,11 +1,15 @@
 const express = require("express");
 const app = express();
 const cors = require("cors");
+const { setServers } = require("node:dns/promises");
 const mongoose = require("mongoose");
 const UserRouter = require("./Routes/user.js");
 const IncomeRouter = require("./Routes/income.js");
 const ExpenseRouter = require("./Routes/expense.js");
+
 require("dotenv").config();
+
+setServers(["1.1.1.1", "8.8.8.8"]);
 
 app.use(
   cors({
@@ -15,7 +19,7 @@ app.use(
       "http://localhost:5173",
       "https://neo0724-expense-tracker.netlify.app",
     ],
-  })
+  }),
 );
 
 const port = process.env.PORT || 3000;
