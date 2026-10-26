@@ -1,3 +1,6 @@
+const dns = require("node:dns/promises");
+dns.setServers(["1.1.1.1", "1.0.0.1"]);
+
 const express = require("express");
 const app = express();
 const cors = require("cors");
@@ -15,7 +18,7 @@ app.use(
       "http://localhost:5173",
       "https://neo0724-expense-tracker.netlify.app",
     ],
-  })
+  }),
 );
 
 const port = process.env.PORT || 3000;
