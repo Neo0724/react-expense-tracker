@@ -7,14 +7,25 @@ import (
 )
 
 type Expense struct {
-	ID          bson.ObjectID `bson:"_id,omitempty"`
-	Title       string        `bson:"title,omitempty"`
-	Amount      float64       `bson:"amount,omitempty"`
-	Type        string        `bson:"type,omitempty"`
-	Date        string        `bson:"date,omitempty"`
-	Category    string        `bson:"category,omitempty"`
-	Description string        `bson:"description,omitempty"`
-	UserOwner   bson.ObjectID `bson:"userOwner,omitempty"`
-	CreatedAt   time.Time     `bson:"createdAt,omitempty"`
-	UpdatedAt   time.Time     `bson:"updatedAt,omitempty"`
+	ID           bson.ObjectID `json:"_id" bson:"_id,omitempty"`
+	Title        string        `json:"title" bson:"title,omitempty"`
+	Amount       float64       `json:"amount" bson:"amount,omitempty"`
+	Type         string        `json:"type" bson:"type,omitempty"`
+	Date         time.Time     `json:"date" bson:"date,omitempty"`
+	Category     string        `json:"category" bson:"category,omitempty"`
+	Description  string        `json:"description" bson:"description,omitempty"`
+	UserOwner    bson.ObjectID `json:"userOwner" bson:"userOwner,omitempty"`
+	UserOwnerStr string        `json:"userOwnerStr" bson:"userOwnerStr,omitempty"`
+	CreatedAt    time.Time     `json:"createdAt" bson:"createdAt,omitempty"`
+	UpdatedAt    time.Time     `json:"updatedAt" bson:"updatedAt,omitempty"`
+}
+
+type AddExpenseRequest struct {
+	Title       string        `json:"title" binding:"required" bson:"title"`
+	Amount      float64       `json:"amount" binding:"required" bson:"amount"`
+	Type        string        `json:"type" bson:"type"`
+	Date        time.Time     `json:"date" binding:"required" bson:"date"`
+	Category    string        `json:"category" binding:"required" bson:"category"`
+	Description string        `json:"description" bson:"description,omitempty"`
+	UserOwner   bson.ObjectID `json:"userOwner" bson:"userOwner"`
 }

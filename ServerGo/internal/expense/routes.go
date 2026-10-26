@@ -1,40 +1,146 @@
 package expense
 
 import (
-	"context"
 	"log"
 	"net/http"
-	"strconv"
 	"time"
 
 	"github.com/Neo0724/intermediateExpenseTracker/internal/model"
+	"github.com/Neo0724/intermediateExpenseTracker/internal/utils"
 	"github.com/gin-gonic/gin"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/v2/bson"
+	"go.mongodb.org/mongo-driver/v2/mongo"
 )
 
-func RegisterRoutes(rg *gin.RouterGroup) {
-
+func (h *Handler) RegisterRoutes(rg *gin.RouterGroup) {
+	rg.GET("/get-expense/:id/:month/:year/:type", h.getExpense)
+	rg.GET("/get-history/:id/:month/:year", h.getExpenseHistory)
+	rg.DELETE("/delete-expense/:id", h.deleteExpense)
+	rg.POST("/add-expense", h.addExpense)
 }
 
 func (h *Handler) addExpense(c *gin.Context) {
+	ctx := c.Request.Context()
+
+	expenseDb := h.db.Collection("expenses")
+	userDb := h.db.Collection("users")
+
+	var req model.AddExpenseRequest
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, model.Response{
+			Success: false,
+			Error:   err.Error(),
+		})
+		return
+	}
+
+	if req.Type == "" {
+		req.Type = "expenses"
+	}
+
+	if req.Description == "" {
+		req.Description = "-"
+	}
+
+	userId := req.UserOwner
+
+	user := userDb.FindOne(ctx, bson.D{{Key: "_id", Value: userId}})
+
+	if user.Err() != nil {
+		if user.Err() == mongo.ErrNoDocuments {
+			c.JSON(http.StatusBadRequest, model.Response{
+				Success: false,
+				Error:   "UserID not found",
+			})
+			return
+		}
+		c.JSON(http.StatusBadRequest, model.Response{
+			Success: false,
+			Error:   user.Err().Error(),
+		})
+		return
+	}
+
+	expense := model.Expense{
+		Title:       req.Title,
+		Category:    req.Category,
+		Amount:      req.Amount,
+		Type:        req.Type,
+		Date:        req.Date,
+		Description: req.Description,
+		UserOwner:   userId,
+		CreatedAt:   time.Now(),
+		UpdatedAt:   time.Now(),
+	}
+
+	res, err := expenseDb.InsertOne(ctx, expense)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Success: false,
+			Error:   err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, model.Response{
+		Success: true,
+		Data:    res,
+	})
 
 }
 
+// "/delete-expense/:id"
 func (h *Handler) deleteExpense(c *gin.Context) {
+	ctx := c.Request.Context()
 
+	expenseDb := h.db.Collection("expenses")
+
+	id := c.Param("id")
+
+	objId, err := bson.ObjectIDFromHex(id)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, model.Response{
+			Success: false,
+			Data:    nil,
+			Error:   "Invalid expense ID",
+		})
+		return
+	}
+
+	filter := bson.D{
+		{Key: "_id", Value: objId},
+	}
+
+	res, err := expenseDb.DeleteOne(ctx, filter)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Success: false,
+			Error:   err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, model.Response{
+		Success: true,
+		Data:    res,
+	})
 }
 
 // "/get-expense/:id/:month/:year/:type",
 func (h *Handler) getExpense(c *gin.Context) {
+	ctx := c.Request.Context()
 	expenseDb := h.db.Collection("expenses")
 
-	id := c.Param("id")
+	userId := c.Param("id")
 	month := c.Param("month")
 	year := c.Param("year")
 	expenseType := c.Param("type")
 
-	userHexId, err := primitive.ObjectIDFromHex(id)
+	userHexId, err := bson.ObjectIDFromHex(userId)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, model.Response{
@@ -45,102 +151,52 @@ func (h *Handler) getExpense(c *gin.Context) {
 		return
 	}
 
-	loc, err := time.LoadLocation("Asia/Kuala_Lumpur")
+	loc, err := utils.RetrieveLocation()
 
 	if err != nil {
-		log.Fatalf("Failed to load location: %v", err)
+		log.Fatalf(err.Error())
 		c.JSON(http.StatusInternalServerError, model.Response{
 			Success: false,
 			Data:    nil,
-			Error:   "Failed to load location",
+			Error:   err.Error(),
 		})
 		return
 	}
 
-	var startMonth int
-	var startYear int
-	var endMonth int
-	var endYear int
+	var expenseFilterPipeline mongo.Pipeline
 
-	parsedMonth, monthErr := strconv.Atoi(month)
-	parsedYear, yearErr := strconv.Atoi(year)
+	var dateFilter bson.E = utils.GetFilterDateBson(month, year, loc)
+	var typeFilter bson.E
 
-	expenseFilter := bson.D{{Key: "$and", Value: bson.A{
-		bson.D{{Key: "userOwner", Value: userHexId}},
-	}}}
-
-	var dateFilter bson.D = bson.D{}
-
-	if monthErr == nil && yearErr == nil {
-		// Handle filter by month and year
-		startDate := time.Date(
-			parsedYear,
-			time.Month(parsedMonth),
-			1,
-			0,
-			0,
-			0,
-			0,
-			loc,
-		)
-		endDate := startDate.AddDate(0, 1, 0)
-
-		startStr := startDate.In(loc).Format(time.RFC3339)
-		endStr := endDate.In(loc).Format(time.RFC3339)
-
-		dateFilter = append(dateFilter, bson.E{
-			Key: "date",
-			Value: bson.D{
-				{Key: "$gte", Value: startStr},
-				{Key: "$lte", Value: endStr},
-			},
-		})
-
-
-	} else if (monthErr != nil && yearErr == nil) {
-		// Do not filter by month, only filter by year
-		// All month and specific year
-		startDate := time.Date(parsedYear, 1, 1, 0, 0, 0, 0, loc)
-		endDate := startDate.AddDate(1, 0, 0)
-
-		startStr := startDate.In(loc).Format(time.RFC3339)
-		endStr := endDate.In(loc).Format(time.RFC3339)
-
-		dateFilter = append(dateFilter, bson.E{
-			Key: "date",
-			Value: bson.D{
-				{Key: "$gte", Value: startStr},
-				{Key: "$lt", Value: endStr},
-			},
-		})
-	}  else if (monthErr == nil && yearErr != nil) {
-		// Do not filter by year, only filter by month
-		// All year and specific month
-		dateFilter = append(dateFilter, bson.E{
-			Key: "$expr",
-			Value: bson.D{
-				{Key: "$eq", Value: bson.A{
-					bson.D{
-						{Key: "$month", Value: bson.D{
-							{Key: "date", Value: bson.D{
-								{Key: "$dateFromString", Value: bson.D{
-									{Key: "dateString", Value: "$" + "date"},
-								}},
-							}},
-							{Key: "timezone", Value: "+08:00"},
-						}},
-					},
-					parsedMonth, 
-				}},
-			},
-		})
-
+	if expenseType != "all" {
+		typeFilter = bson.E{
+			Key:   "category",
+			Value: expenseType,
+		}
 	}
 
+	matchCriteria := bson.D{
+		{Key: "userOwner", Value: userHexId},
+	}
 
-	var expenseResult model.Expense
+	if dateFilter != (bson.E{}) {
+		matchCriteria = append(matchCriteria, dateFilter)
+	}
 
-	err = expenseDb.FindOne(context.TODO(), expenseFilter).Decode(&expenseResult)
+	if typeFilter != (bson.E{}) {
+		matchCriteria = append(matchCriteria, typeFilter)
+	}
+
+	matchFilter := bson.D{
+		{Key: "$match", Value: matchCriteria},
+	}
+
+	expenseFilterPipeline = append(expenseFilterPipeline, matchFilter)
+
+	var raw bson.M
+	err = expenseDb.FindOne(ctx, bson.D{}).Decode(&raw)
+
+	cursor, err := expenseDb.Aggregate(ctx, expenseFilterPipeline)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, model.Response{
@@ -151,9 +207,145 @@ func (h *Handler) getExpense(c *gin.Context) {
 		return
 	}
 
+	var expenseResults []model.Expense
+
+	if err = cursor.All(ctx, &expenseResults); err != nil {
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Success: false,
+			Data:    nil,
+			Error:   err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, model.Response{
+		Success: true,
+		Data:    expenseResults,
+	})
+
 }
 
 // "/get-history/:id/:month/:year",
 func (h *Handler) getExpenseHistory(c *gin.Context) {
+	ctx := c.Request.Context()
+	expenseDb := h.db.Collection("expenses")
 
+	userId := c.Param("id")
+	month := c.Param("month")
+	year := c.Param("year")
+
+	userObjId, err := bson.ObjectIDFromHex(userId)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, model.Response{
+			Success: false,
+			Data:    nil,
+			Error:   "Invalid UserID",
+		})
+		return
+	}
+
+	loc, err := utils.RetrieveLocation()
+
+	if err != nil {
+		log.Fatalf("E")
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Success: false,
+			Data:    nil,
+			Error:   err.Error(),
+		})
+		return
+	}
+
+	var joinIncomeFilter bson.D = bson.D{
+		bson.E{
+			Key: "$unionWith",
+			Value: bson.D{
+				bson.E{
+					Key:   "coll",
+					Value: "incomes",
+				},
+			},
+		},
+	}
+
+	var userIdToStringFilter bson.D = bson.D{{
+		Key: "$set",
+		Value: bson.D{
+			{
+				Key: "userOwnerStr",
+				Value: bson.D{
+					{
+						Key:   "$toString",
+						Value: "$userOwner",
+					},
+				},
+			},
+		},
+	}}
+
+	var dateFilter bson.E = utils.GetFilterDateBson(month, year, loc)
+
+	matchCriterias := bson.A{
+		bson.D{{Key: "userOwner", Value: userObjId}},
+	}
+
+	if dateFilter != (bson.E{}) {
+		matchCriterias = append(matchCriterias, bson.D{dateFilter})
+	}
+
+	matchFilter := bson.D{
+		{Key: "$match", Value: bson.D{
+			{
+				Key:   "$and",
+				Value: matchCriterias,
+			},
+		}},
+	}
+
+	sort := bson.D{
+		{Key: "$sort", Value: bson.D{
+			{
+				Key:   "date",
+				Value: -1,
+			},
+		}},
+	}
+
+	limit := bson.D{
+		{Key: "$limit", Value: 3},
+	}
+
+	var historyFilterPipeline mongo.Pipeline
+
+	historyFilterPipeline = append(historyFilterPipeline, joinIncomeFilter, matchFilter, userIdToStringFilter, sort, limit)
+
+	log.Println(historyFilterPipeline)
+
+	cursor, err := expenseDb.Aggregate(ctx, historyFilterPipeline)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, model.Response{
+			Success: false,
+			Data:    nil,
+			Error:   err.Error(),
+		})
+		return
+	}
+
+	var historyResults []model.Expense
+
+	if err = cursor.All(ctx, &historyResults); err != nil {
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Success: false,
+			Data:    nil,
+			Error:   err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, model.Response{
+		Success: true,
+		Data:    historyResults,
+	})
 }
