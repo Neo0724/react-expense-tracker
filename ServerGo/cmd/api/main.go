@@ -7,6 +7,8 @@ import (
 
 	"github.com/Neo0724/intermediateExpenseTracker/internal/auth"
 	"github.com/Neo0724/intermediateExpenseTracker/internal/expense"
+	"github.com/Neo0724/intermediateExpenseTracker/internal/income"
+	"github.com/Neo0724/intermediateExpenseTracker/internal/middleware"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/v2/mongo"
@@ -61,7 +63,10 @@ func main() {
 	authHandler.RegisterRoutes(api.Group("/auth"))
 
 	expenseHandler := expense.NewHandler(mongoClient)
-	expenseHandler.RegisterRoutes(api.Group("/expense"))
+	expenseHandler.RegisterRoutes(api.Group("/expense").Use(middleware.AuthMiddleware()))
+
+	incomeHandler := income.NewHandler(mongoClient)
+	incomeHandler.RegisterRoutes(api.Group("/income").Use(middleware.AuthMiddleware()))
 
 	r.Run()
 }

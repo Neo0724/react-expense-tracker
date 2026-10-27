@@ -19,3 +19,13 @@ type Income struct {
 	CreatedAt    time.Time     `json:"createdAt" bson:"createdAt,omitempty"`
 	UpdatedAt    time.Time     `json:"updatedAt" bson:"updatedAt,omitempty"`
 }
+
+type AddIncomeRequest struct {
+	Title       string        `json:"title" binding:"required"`
+	Amount      float64       `json:"amount" binding:"required"`
+	Type        string        `json:"type"`
+	Date        time.Time     `json:"date" binding:"required"`
+	Category    string        `json:"category" binding:"required"`
+	Description string        `json:"description"`
+	UserOwner   bson.ObjectID `json:"userOwner"`
+}

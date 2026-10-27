@@ -12,9 +12,9 @@ import (
 	"go.mongodb.org/mongo-driver/v2/mongo"
 )
 
-func (h *Handler) RegisterRoutes(rg *gin.RouterGroup) {
-	rg.GET("/get-expense/:id/:month/:year/:type", h.getExpense)
-	rg.GET("/get-history/:id/:month/:year", h.getExpenseHistory)
+func (h *Handler) RegisterRoutes(rg gin.IRoutes) {
+	rg.GET("/get-expense/:month/:year/:type", h.getExpense)
+	rg.GET("/get-history/:month/:year", h.getExpenseHistory)
 	rg.DELETE("/delete-expense/:id", h.deleteExpense)
 	rg.POST("/add-expense", h.addExpense)
 }
@@ -43,7 +43,15 @@ func (h *Handler) addExpense(c *gin.Context) {
 		req.Description = "-"
 	}
 
-	userId := req.UserOwner
+	userId, err := bson.ObjectIDFromHex(c.GetString("userId"))
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, model.Response{
+			Success: false,
+			Error:   err.Error(),
+		})
+		return
+	}
 
 	user := userDb.FindOne(ctx, bson.D{{Key: "_id", Value: userId}})
 
@@ -130,17 +138,23 @@ func (h *Handler) deleteExpense(c *gin.Context) {
 	})
 }
 
-// "/get-expense/:id/:month/:year/:type",
 func (h *Handler) getExpense(c *gin.Context) {
 	ctx := c.Request.Context()
 	expenseDb := h.db.Collection("expenses")
 
-	userId := c.Param("id")
 	month := c.Param("month")
 	year := c.Param("year")
 	expenseType := c.Param("type")
 
-	userHexId, err := bson.ObjectIDFromHex(userId)
+	userId, err := bson.ObjectIDFromHex(c.GetString("userId"))
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, model.Response{
+			Success: false,
+			Error:   err.Error(),
+		})
+		return
+	}
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, model.Response{
@@ -176,7 +190,7 @@ func (h *Handler) getExpense(c *gin.Context) {
 	}
 
 	matchCriteria := bson.D{
-		{Key: "userOwner", Value: userHexId},
+		{Key: "userOwner", Value: userId},
 	}
 
 	if dateFilter != (bson.E{}) {
@@ -191,10 +205,28 @@ func (h *Handler) getExpense(c *gin.Context) {
 		{Key: "$match", Value: matchCriteria},
 	}
 
-	expenseFilterPipeline = append(expenseFilterPipeline, matchFilter)
+	var userIdToStringFilter bson.D = bson.D{{
+		Key: "$set",
+		Value: bson.D{
+			{
+				Key: "userOwnerStr",
+				Value: bson.D{
+					{
+						Key:   "$toString",
+						Value: "$userOwner",
+					},
+				},
+			},
+		},
+	}}
 
-	var raw bson.M
-	err = expenseDb.FindOne(ctx, bson.D{}).Decode(&raw)
+	sort := bson.D{
+		{Key: "$sort", Value: bson.D{
+			{Key: "date", Value: -1},
+		}},
+	}
+
+	expenseFilterPipeline = append(expenseFilterPipeline, matchFilter, userIdToStringFilter, sort)
 
 	cursor, err := expenseDb.Aggregate(ctx, expenseFilterPipeline)
 
@@ -225,22 +257,19 @@ func (h *Handler) getExpense(c *gin.Context) {
 
 }
 
-// "/get-history/:id/:month/:year",
 func (h *Handler) getExpenseHistory(c *gin.Context) {
 	ctx := c.Request.Context()
 	expenseDb := h.db.Collection("expenses")
 
-	userId := c.Param("id")
 	month := c.Param("month")
 	year := c.Param("year")
 
-	userObjId, err := bson.ObjectIDFromHex(userId)
+	userId, err := bson.ObjectIDFromHex(c.GetString("userId"))
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, model.Response{
 			Success: false,
-			Data:    nil,
-			Error:   "Invalid UserID",
+			Error:   err.Error(),
 		})
 		return
 	}
@@ -287,7 +316,7 @@ func (h *Handler) getExpenseHistory(c *gin.Context) {
 	var dateFilter bson.E = utils.GetFilterDateBson(month, year, loc)
 
 	matchCriterias := bson.A{
-		bson.D{{Key: "userOwner", Value: userObjId}},
+		bson.D{{Key: "userOwner", Value: userId}},
 	}
 
 	if dateFilter != (bson.E{}) {
@@ -333,7 +362,7 @@ func (h *Handler) getExpenseHistory(c *gin.Context) {
 		return
 	}
 
-	var historyResults []model.Expense
+	var historyResults []model.Expense = []model.Expense{}
 
 	if err = cursor.All(ctx, &historyResults); err != nil {
 		c.JSON(http.StatusInternalServerError, model.Response{

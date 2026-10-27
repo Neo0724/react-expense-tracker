@@ -21,11 +21,11 @@ type Expense struct {
 }
 
 type AddExpenseRequest struct {
-	Title       string        `json:"title" binding:"required" bson:"title"`
-	Amount      float64       `json:"amount" binding:"required" bson:"amount"`
-	Type        string        `json:"type" bson:"type"`
-	Date        time.Time     `json:"date" binding:"required" bson:"date"`
-	Category    string        `json:"category" binding:"required" bson:"category"`
-	Description string        `json:"description" bson:"description,omitempty"`
-	UserOwner   bson.ObjectID `json:"userOwner" bson:"userOwner"`
+	Title       string        `json:"title" binding:"required"`
+	Amount      float64       `json:"amount" binding:"required"`
+	Type        string        `json:"type"`
+	Date        time.Time     `json:"date" binding:"required"`
+	Category    string        `json:"category" binding:"required"`
+	Description string        `json:"description"`
+	UserOwner   bson.ObjectID `json:"userOwner"`
 }
