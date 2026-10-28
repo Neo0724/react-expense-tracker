@@ -154,23 +154,13 @@ func (h *Handler) getIncome(c *gin.Context) {
 		{Key: "$match", Value: matchCriteria},
 	}
 
-	userIdToStringFilter := bson.D{
-		{Key: "$set", Value: bson.D{
-			{Key: "userOwnerStr", Value: bson.D{
-				{Key: "$toString", Value: "$userOwner"},
-			}},
-		}},
-	}
-
 	sort := bson.D{
 		{Key: "$sort", Value: bson.D{
 			{Key: "date", Value: -1},
 		}},
 	}
 
-	expenseFilterPipeline = append(expenseFilterPipeline, matchFilter, userIdToStringFilter, sort)
-
-	log.Println(expenseFilterPipeline)
+	expenseFilterPipeline = append(expenseFilterPipeline, matchFilter, sort, utils.ExpenseIncomeProjection())
 
 	cursor, err := incomeDb.Aggregate(ctx, expenseFilterPipeline)
 

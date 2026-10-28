@@ -205,28 +205,13 @@ func (h *Handler) getExpense(c *gin.Context) {
 		{Key: "$match", Value: matchCriteria},
 	}
 
-	var userIdToStringFilter bson.D = bson.D{{
-		Key: "$set",
-		Value: bson.D{
-			{
-				Key: "userOwnerStr",
-				Value: bson.D{
-					{
-						Key:   "$toString",
-						Value: "$userOwner",
-					},
-				},
-			},
-		},
-	}}
-
 	sort := bson.D{
 		{Key: "$sort", Value: bson.D{
 			{Key: "date", Value: -1},
 		}},
 	}
 
-	expenseFilterPipeline = append(expenseFilterPipeline, matchFilter, userIdToStringFilter, sort)
+	expenseFilterPipeline = append(expenseFilterPipeline, matchFilter, sort, utils.ExpenseIncomeProjection())
 
 	cursor, err := expenseDb.Aggregate(ctx, expenseFilterPipeline)
 
@@ -298,21 +283,6 @@ func (h *Handler) getExpenseHistory(c *gin.Context) {
 		},
 	}
 
-	var userIdToStringFilter bson.D = bson.D{{
-		Key: "$set",
-		Value: bson.D{
-			{
-				Key: "userOwnerStr",
-				Value: bson.D{
-					{
-						Key:   "$toString",
-						Value: "$userOwner",
-					},
-				},
-			},
-		},
-	}}
-
 	var dateFilter bson.E = utils.GetFilterDateBson(month, year, loc)
 
 	matchCriterias := bson.A{
@@ -347,7 +317,7 @@ func (h *Handler) getExpenseHistory(c *gin.Context) {
 
 	var historyFilterPipeline mongo.Pipeline
 
-	historyFilterPipeline = append(historyFilterPipeline, joinIncomeFilter, matchFilter, userIdToStringFilter, sort, limit)
+	historyFilterPipeline = append(historyFilterPipeline, joinIncomeFilter, matchFilter, sort, limit, utils.ExpenseIncomeProjection())
 
 	log.Println(historyFilterPipeline)
 

@@ -1,5 +1,5 @@
 package model
 
 type NewTokens struct {
-	AccessToken string `json:"accessToken"`
+	AccessToken string `json:"access_token"`
 }

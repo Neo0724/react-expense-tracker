@@ -93,3 +93,19 @@ func ValidatePasswordHash(password string, hash string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
 	return err == nil
 }
+
+func ExpenseIncomeProjection() bson.D {
+	return bson.D{
+		{
+			Key: "$project", Value: bson.D{
+				{Key: "_id", Value: 1},
+				{Key: "title", Value: 1},
+				{Key: "amount", Value: 1},
+				{Key: "type", Value: 1},
+				{Key: "date", Value: 1},
+				{Key: "category", Value: 1},
+				{Key: "description", Value: 1},
+			},
+		},
+	}
+}

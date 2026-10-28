@@ -77,12 +77,42 @@ func Validate(tokenString string) (*UserJWTClaims, error) {
 	return claims, nil
 }
 
-func SetRefreshCookie(c *gin.Context, refreshToken string) {
+func SetTokenCookie(c *gin.Context, refreshToken string, accessToken string) {
 	c.SetCookie(
 		"refresh_token",
 		refreshToken,
 		604800,
-		"/api/v1/auth",
+		"/api/v1/auth/refresh",
+		"localhost",
+		true,
+		true,
+	)
+	c.SetCookie(
+		"access_token",
+		accessToken,
+		1800,
+		"/api/v1/",
+		"localhost",
+		true,
+		true,
+	)
+}
+
+func UnsetTokenCookie(c *gin.Context) {
+	c.SetCookie(
+		"refresh_token",
+		"",
+		-1,
+		"/api/v1/auth/refresh",
+		"localhost",
+		true,
+		true,
+	)
+	c.SetCookie(
+		"access_token",
+		"",
+		-1,
+		"/api/v1/",
 		"localhost",
 		true,
 		true,

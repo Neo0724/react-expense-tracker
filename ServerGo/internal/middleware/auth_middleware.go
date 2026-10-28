@@ -2,7 +2,6 @@ package middleware
 
 import (
 	"net/http"
-	"strings"
 
 	"github.com/Neo0724/intermediateExpenseTracker/internal/model"
 	"github.com/Neo0724/intermediateExpenseTracker/internal/utils"
@@ -11,21 +10,17 @@ import (
 
 func AuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		authorizationHeader := c.Request.Header.Get("Authorization")
+		accessToken, err := c.Cookie("access_token")
 
-		tokenArr := strings.Split(authorizationHeader, " ")
-
-		if len(tokenArr) < 2 {
+		if err != nil {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, model.Response{
 				Success: false,
-				Error:   "Token is invalid",
+				Error:   "Token not found",
 			})
 			return
 		}
 
-		token := tokenArr[1]
-
-		claims, err := utils.Validate(token)
+		claims, err := utils.Validate(accessToken)
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, model.Response{

@@ -9,6 +9,7 @@ import (
 	"github.com/Neo0724/intermediateExpenseTracker/internal/expense"
 	"github.com/Neo0724/intermediateExpenseTracker/internal/income"
 	"github.com/Neo0724/intermediateExpenseTracker/internal/middleware"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/v2/mongo"
@@ -56,6 +57,14 @@ func main() {
 	}()
 
 	r := gin.Default()
+
+	config := cors.DefaultConfig()
+	config.AllowOrigins = []string{"http://localhost:3000", "http://localhost:5173"} // Your React app origin
+	config.AllowMethods = []string{"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"}
+	config.AllowHeaders = []string{"Origin", "Content-Type", "Accept", "Authorization"}
+	config.AllowCredentials = true
+
+	r.Use(cors.New(config))
 
 	api := r.Group("/api/v1")
 

@@ -16,7 +16,9 @@ import (
 func (h *Handler) RegisterRoutes(rg *gin.RouterGroup) {
 	rg.POST("/login", h.login)
 	rg.POST("/register", h.register)
-	rg.Use(middleware.AuthMiddleware()).GET("/refresh", h.refresh)
+	rg.GET("/refresh", h.refresh)
+	rg.GET("/logout", h.logout)
+	rg.Use(middleware.AuthMiddleware()).GET("/me", h.me)
 }
 
 func (h *Handler) login(c *gin.Context) {
@@ -64,7 +66,7 @@ func (h *Handler) login(c *gin.Context) {
 	passwordMatched := utils.ValidatePasswordHash(req.Password, user.Password)
 
 	if !passwordMatched {
-		c.JSON(http.StatusNotFound, model.Response{
+		c.JSON(http.StatusBadRequest, model.Response{
 			Success: false,
 			Error:   "Password not matched",
 		})
@@ -93,15 +95,7 @@ func (h *Handler) login(c *gin.Context) {
 		return
 	}
 
-	c.SetCookie(
-		"refresh_token",
-		refreshToken,
-		604800,
-		"/api/v1/auth",
-		"localhost",
-		true,
-		true,
-	)
+	utils.SetTokenCookie(c, refreshToken, accessToken)
 
 	c.JSON(http.StatusOK, model.Response{
 		Success: true,
@@ -165,9 +159,49 @@ func (h *Handler) register(c *gin.Context) {
 	})
 }
 
-func (h *Handler) refresh(c *gin.Context) {
-	userId := c.GetString("userId")
+func (h *Handler) me(c *gin.Context) {
 	username := c.GetString("username")
+
+	c.JSON(http.StatusOK, model.Response{
+		Success: true,
+		Data:    username,
+	})
+}
+
+func (h *Handler) logout(c *gin.Context) {
+	utils.UnsetTokenCookie(c)
+
+	c.JSON(http.StatusOK, model.Response{
+		Success: true,
+		Data:    "Logout successfully",
+	})
+}
+
+func (h *Handler) refresh(c *gin.Context) {
+	refreshToken, err := c.Cookie("refresh_token")
+
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, model.Response{
+			Success: false,
+			Error:   err.Error(),
+		})
+		utils.UnsetTokenCookie(c)
+		return
+	}
+
+	claims, err := utils.Validate(refreshToken)
+
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, model.Response{
+			Success: false,
+			Error:   "Token invalid or expired",
+		})
+		utils.UnsetTokenCookie(c)
+		return
+	}
+
+	userId := claims.UserId
+	username := claims.Username
 
 	newAccessToken, err := utils.CreateJWTToken(username, userId, 30*time.Minute)
 
@@ -176,6 +210,7 @@ func (h *Handler) refresh(c *gin.Context) {
 			Success: false,
 			Error:   err.Error(),
 		})
+		utils.UnsetTokenCookie(c)
 		return
 	}
 
@@ -186,10 +221,11 @@ func (h *Handler) refresh(c *gin.Context) {
 			Success: false,
 			Error:   err.Error(),
 		})
+		utils.UnsetTokenCookie(c)
 		return
 	}
 
-	utils.SetRefreshCookie(c, newRefreshToken)
+	utils.SetTokenCookie(c, newRefreshToken, newAccessToken)
 
 	c.JSON(http.StatusOK, model.Response{
 		Success: true,
