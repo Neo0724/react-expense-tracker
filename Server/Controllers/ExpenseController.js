@@ -5,6 +5,8 @@ const addExpense = async (req, res) => {
   const { title, amount, date, category, description, type, userOwner } =
     req.body;
 
+  console.log(date);
+
   const newDate = moment.utc(date).tz("Asia/Shanghai").format();
 
   try {
@@ -85,15 +87,15 @@ const getHistoryByMonthAndYear = async (req, res) => {
         $unionWith: { coll: "incomes" },
       },
       {
-        $addFields: {
-          // Convert ObjectId to string
-          userOwnerStr: { $toString: "$userOwner" },
-        },
-      },
-      {
         $match: {
           userOwnerStr: id,
           date: regExp,
+        },
+      },
+      {
+        $addFields: {
+          // Convert ObjectId to string
+          userOwnerStr: { $toString: "$userOwner" },
         },
       },
       {

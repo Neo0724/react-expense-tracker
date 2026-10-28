@@ -25,7 +25,7 @@ export default function IncomeExpensesForm({
   const [data, setData] = useState({
     title: "",
     amount: "",
-    date: "",
+    date: new Date(),
     category: "",
     description: "",
     userOwner: "",
@@ -94,11 +94,17 @@ export default function IncomeExpensesForm({
         setClose((prev) => !prev);
         return;
       }
-      const formDataWithUserId = { ...data, userOwner };
+
+      const formDataWithUserId = {
+        ...data,
+        userOwner,
+        date: data.date ? data.date.toISOString() : null,
+      };
+
       const res = await axios.post(
         `${BASE_URL}/income/add-income`,
         { ...formDataWithUserId },
-        { headers: { authorization: cookies.access_token } }
+        { headers: { authorization: cookies.access_token } },
       );
 
       console.log(res);
@@ -126,11 +132,19 @@ export default function IncomeExpensesForm({
         setClose((prev) => !prev);
         return;
       }
-      const formDataWithUserId = { ...data, userOwner };
+
+      console.log(data.date.toISOString());
+
+      const formDataWithUserId = {
+        ...data,
+        userOwner,
+        date: data.date ? data.date.toISOString() : null,
+      };
+
       const res = await axios.post(
         `${BASE_URL}/expense/add-expense`,
         { ...formDataWithUserId },
-        { headers: { authorization: cookies.access_token } }
+        { headers: { authorization: cookies.access_token } },
       );
 
       if (res.status === 200) {
