@@ -60,7 +60,7 @@ func main() {
 
 	var frontendUrl string = ""
 
-	if frontendUrl = os.Getenv("MONGODB_URL"); url == "" {
+	if frontendUrl = os.Getenv("MONGODB_URL"); frontendUrl == "" {
 		log.Println("Please set the frontend URL to be added to allowed origins")
 	}
 
