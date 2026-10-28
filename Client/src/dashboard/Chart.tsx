@@ -10,6 +10,8 @@ import {
   Legend,
 } from "chart.js";
 import { useGlobalContext } from "../Context/useGlobalContext";
+import { IncomeType } from "../types/Income";
+import { ExpenseType } from "../types/Expense";
 ChartJs.register(
   CategoryScale,
   LinearScale,
@@ -17,80 +19,84 @@ ChartJs.register(
   LineElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
 );
 
 export default function Chart({
-  income,
+  incomes,
   expenses,
   dashboardMonth,
   dashboardYear,
+}: {
+  incomes: IncomeType[];
+  expenses: ExpenseType[];
+  dashboardMonth: string;
+  dashboardYear: string;
 }) {
   const { dictForMonth } = useGlobalContext();
 
-  const filteredIncomeByMonth = () => {
-    if (!income || income.length === 0) return [];
+  const filteredIncomeByMonth = (): [string, [string, number]][] => {
+    if (!incomes || incomes.length === 0) return [];
 
     // Show all or specific year and all month
-    // Map = { 08: [08, 100] }
+    // Map = { "January": ["01", 100] }
     if (dashboardMonth === "all") {
-      let dateHash = new Map();
-      income.forEach((item) => {
+      const dateHash = new Map<string, [string, number]>();
+      for (let i = 1; i <= 12; i++) {
+        const month = String(i).padStart(2, "0");
+        dateHash.set(month, [month, 0]);
+      }
+
+      incomes.forEach((item) => {
         const date = item.date.split("T")[0].split("-").reverse();
 
         if (dateHash.has(date[1])) {
           dateHash.set(date[1], [
             date[1],
-            dateHash.get(date[1])[1] + item.amount,
+            dateHash.get(date[1])![1] + item.amount,
           ]);
-        } else {
-          dateHash.set(date[1], [date[1], item.amount]);
         }
       });
 
-      let dateArr = [];
+      let dateArr = [...dateHash];
 
-      for (let item of dateHash) {
-        dateArr.push(item);
-      }
+      dateArr.sort(
+        (a, b) => new Date(a[0]).getTime() - new Date(b[0]).getTime(),
+      );
 
-      dateArr.sort((a, b) => {
-        const dateA = parseInt(a[0]);
-        const dateB = parseInt(b[0]);
-
-        return dateA - dateB;
+      return dateArr.map((item) => {
+        const monthWord = dictForMonth.get(item[0]) as string;
+        return [monthWord, item[1]];
       });
-
-      dateArr.forEach((item) => {
-        item[0] = dictForMonth.get(item[0]);
-      });
-
-      return dateArr;
     }
     // Show specific month
     //  Map = { "2024-07-24", ["2024-07-24", 154.5] }
     else {
-      let dateHash = new Map();
-      income.forEach((item) => {
+      let dateHash = new Map<string, [string, number]>();
+
+      incomes.forEach((item) => {
         const formattedDate = item.date.split("T")[0].split("-").join("-");
 
         if (dateHash.has(formattedDate)) {
           dateHash.set(formattedDate, [
             formattedDate,
-            dateHash.get(formattedDate)[1] + item.amount,
+            dateHash.get(formattedDate)![1] + item.amount,
           ]);
         } else {
           dateHash.set(formattedDate, [formattedDate, item.amount]);
         }
       });
 
-      let dateArr = [];
+      let dateArr = [...dateHash];
 
-      for (let item of dateHash) {
-        dateArr.push(item);
-      }
-      dateArr.sort((a, b) => new Date(a) - new Date(b));
-      return dateArr;
+      dateArr.sort(
+        (a, b) => new Date(a[0]).getTime() - new Date(b[0]).getTime(),
+      );
+
+      return dateArr.map((item) => {
+        const monthWord = dictForMonth.get(item[0]) as string;
+        return [monthWord, item[1]];
+      });
     }
   };
 
@@ -100,38 +106,34 @@ export default function Chart({
     // Show all or specific year and all month
     // Map = { 08: [08, 100] }
     if (dashboardMonth === "all") {
-      let dateHash = new Map();
+      const dateHash = new Map<string, [string, number]>();
+      for (let i = 1; i <= 12; i++) {
+        const month = String(i).padStart(2, "0");
+        dateHash.set(month, [month, 0]);
+      }
       expenses.forEach((item) => {
         const date = item.date.split("T")[0].split("-").reverse();
 
         if (dateHash.has(date[1])) {
           dateHash.set(date[1], [
             date[1],
-            dateHash.get(date[1])[1] + item.amount,
+            dateHash.get(date[1])![1] + item.amount,
           ]);
         } else {
           dateHash.set(date[1], [date[1], item.amount]);
         }
       });
 
-      let dateArr = [];
+      let dateArr = [...dateHash];
 
-      for (let item of dateHash) {
-        dateArr.push(item);
-      }
+      dateArr.sort(
+        (a, b) => new Date(a[0]).getTime() - new Date(b[0]).getTime(),
+      );
 
-      dateArr.sort((a, b) => {
-        const dateA = parseInt(a[0]);
-        const dateB = parseInt(b[0]);
-
-        return dateA - dateB;
+      return dateArr.map((item) => {
+        const monthWord = dictForMonth.get(item[0]);
+        return [monthWord, item[1]];
       });
-
-      dateArr.forEach((item) => {
-        item[0] = dictForMonth.get(item[0]);
-      });
-
-      return dateArr;
     }
     // Show specific month
     //  Map = { "2024-07-24", ["2024-07-24", 154.5] }
@@ -150,12 +152,11 @@ export default function Chart({
         }
       });
 
-      let dateArr = [];
+      let dateArr = [...dateHash];
 
-      for (let item of dateHash) {
-        dateArr.push(item);
-      }
-      dateArr.sort((a, b) => new Date(a) - new Date(b));
+      dateArr.sort(
+        (a, b) => new Date(a[0]).getTime() - new Date(b[0]).getTime(),
+      );
       return dateArr;
     }
   };
@@ -171,6 +172,9 @@ export default function Chart({
           ...filteredExpensesByMonth().map((item) => item[0]),
           ...filteredIncomeByMonth().map((item) => item[0]),
         ];
+
+  // console.log(filteredExpensesByMonth());
+
   const options = {
     maintainAspectRatio: false,
     responsive: true,

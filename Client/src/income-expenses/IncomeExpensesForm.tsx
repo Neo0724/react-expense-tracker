@@ -1,11 +1,12 @@
-/* eslint-disable react/prop-types */
 import { useState } from "react";
 import ReactDatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import axios from "axios";
 import { useGlobalContext } from "../Context/useGlobalContext";
-import { useCookies } from "react-cookie";
 import { useToastContext } from "../Context/useToastContext";
+import { customAxios } from "../utils/custom-axios";
+import { useAuthContext } from "../Context/useAuthContext";
+import { IncomeType } from "../types/Income";
+import { ExpenseType } from "../types/Expense";
 
 export default function IncomeExpensesForm({
   type,
@@ -13,9 +14,22 @@ export default function IncomeExpensesForm({
   setExpenses,
   setTotalIncome,
   setTotalExpenses,
-}) {
+}:
+  | {
+      type: "expense";
+      setExpenses: React.Dispatch<React.SetStateAction<ExpenseType[]>>;
+      setTotalExpenses: React.Dispatch<React.SetStateAction<number>>;
+      setTotalIncome?: undefined;
+      setIncome?: undefined;
+    }
+  | {
+      type: "income";
+      setIncome: React.Dispatch<React.SetStateAction<IncomeType[]>>;
+      setTotalIncome: React.Dispatch<React.SetStateAction<number>>;
+      setExpenses?: undefined;
+      setTotalExpenses?: undefined;
+    }) {
   const {
-    BASE_URL,
     setClose,
     fetchIncome,
     fetchExpenses,
@@ -24,20 +38,23 @@ export default function IncomeExpensesForm({
   } = useGlobalContext();
   const [data, setData] = useState({
     title: "",
-    amount: "",
+    amount: 0,
     date: new Date(),
     category: "",
     description: "",
     userOwner: "",
   });
 
-  // eslint-disable-next-line no-unused-vars
   const userOwner = localStorage.getItem("User ID");
-  // eslint-disable-next-line no-unused-vars
-  const [cookies, _] = useCookies(["access_token"]);
   const { toast } = useToastContext();
+  const { isAuthenticated } = useAuthContext();
 
-  const handleChange = (e, type) => {
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLSelectElement | HTMLInputElement | HTMLTextAreaElement
+    >,
+    type: string,
+  ) => {
     switch (type) {
       case "title":
         setData((prev) => {
@@ -47,7 +64,10 @@ export default function IncomeExpensesForm({
 
       case "amount":
         setData((prev) => {
-          return { ...prev, amount: e.target.value };
+          return {
+            ...prev,
+            amount: parseFloat(e.target.value),
+          };
         });
         break;
 
@@ -81,16 +101,18 @@ export default function IncomeExpensesForm({
     }
   };
 
-  const handleDateChange = (date) => {
-    setData((prev) => {
-      return { ...prev, date: date };
-    });
+  const handleDateChange = (date: Date | null) => {
+    if (date) {
+      setData((prev) => {
+        return { ...prev, date: date };
+      });
+    }
   };
 
-  const submitIncome = async (e) => {
+  const submitIncome = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      if (!cookies.access_token) {
+      if (!isAuthenticated) {
         setClose((prev) => !prev);
         return;
       }
@@ -101,20 +123,18 @@ export default function IncomeExpensesForm({
         date: data.date ? data.date.toISOString() : null,
       };
 
-      const res = await axios.post(
-        `${BASE_URL}/income/add-income`,
-        { ...formDataWithUserId },
-        { headers: { authorization: cookies.access_token } },
-      );
-
-      console.log(res);
+      const res = await customAxios.post(`/income/add-income`, {
+        ...formDataWithUserId,
+      });
 
       if (res.status === 200) {
         const updatedIncome = await fetchIncome("all", "all", "all");
-        setIncome(updatedIncome);
-        setTotalIncome(() => {
-          return getTotalIncomeByMonthAndYear(updatedIncome);
-        });
+        if (type === "income") {
+          setIncome(updatedIncome);
+          setTotalIncome(() => {
+            return getTotalIncomeByMonthAndYear(updatedIncome);
+          });
+        }
         toast("Success", "New income added successfully");
       } else {
         toast("Error", "Unexpected error occured. Please try again later");
@@ -125,10 +145,10 @@ export default function IncomeExpensesForm({
     }
   };
 
-  const submitExpense = async (e) => {
+  const submitExpense = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      if (!cookies.access_token) {
+      if (!isAuthenticated) {
         setClose((prev) => !prev);
         return;
       }
@@ -141,18 +161,18 @@ export default function IncomeExpensesForm({
         date: data.date ? data.date.toISOString() : null,
       };
 
-      const res = await axios.post(
-        `${BASE_URL}/expense/add-expense`,
-        { ...formDataWithUserId },
-        { headers: { authorization: cookies.access_token } },
-      );
+      const res = await customAxios.post(`/expense/add-expense`, {
+        ...formDataWithUserId,
+      });
 
       if (res.status === 200) {
         const updatedExpenses = await fetchExpenses("all", "all", "all");
-        setExpenses(updatedExpenses);
-        setTotalExpenses(() => {
-          return getTotalExpensesByMonthAndYear(updatedExpenses);
-        });
+        if (type === "expense") {
+          setExpenses(updatedExpenses);
+          setTotalExpenses(() => {
+            return getTotalExpensesByMonthAndYear(updatedExpenses);
+          });
+        }
         toast("Success", "New expense added successfully");
       } else {
         toast("Error", "Unexpected error occured. Please try again later");
@@ -169,7 +189,6 @@ export default function IncomeExpensesForm({
         required
         value={data.category}
         onChange={(e) => handleChange(e, "category")}
-        placeholder="Select a category"
       >
         <option value="" disabled>
           Select an option
@@ -190,7 +209,6 @@ export default function IncomeExpensesForm({
         required
         value={data.category}
         onChange={(e) => handleChange(e, "category")}
-        placeholder="Select a category"
       >
         <option value="" disabled>
           Select an option
@@ -214,7 +232,8 @@ export default function IncomeExpensesForm({
       }}
     >
       <input
-        type="text"
+        type="number"
+        step="any"
         className="amountInput"
         placeholder="Enter the amount..."
         required
@@ -241,9 +260,9 @@ export default function IncomeExpensesForm({
         />
       ) : null}
       <textarea
-        cols="30"
-        rows="6"
-        maxLength="70"
+        cols={30}
+        rows={6}
+        maxLength={70}
         placeholder="Enter description"
         className="descriptionInput"
         value={data.description}

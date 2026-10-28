@@ -1,4 +1,6 @@
-export const navbarItems = [
+import { NavbarItemType } from "../types/NavbarItem";
+
+export const navbarItems: NavbarItemType[] = [
   {
     id: 1,
     name: "Dashboard",

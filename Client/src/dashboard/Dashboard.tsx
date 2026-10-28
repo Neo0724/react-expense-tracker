@@ -1,4 +1,7 @@
 import { useGlobalContext } from "../Context/useGlobalContext";
+import { ExpenseType } from "../types/Expense";
+import { HistoryType } from "../types/History";
+import { IncomeType } from "../types/Income";
 import Chart from "./Chart";
 import { DashboardTransactionHistory } from "./DashboardTransactionHistory";
 import { useState, useCallback, useEffect } from "react";
@@ -18,44 +21,49 @@ export default function Dashboard() {
 
   const [dashboardYear, setDashboardYear] = useState("all");
 
-  const [historyTransaction, setHistoryTransaction] = useState([]);
+  const [historyTransaction, setHistoryTransaction] = useState<HistoryType[]>(
+    [],
+  );
 
-  const [expenses, setExpenses] = useState([]);
+  const [expenses, setExpenses] = useState<ExpenseType[]>([]);
 
-  const [income, setIncome] = useState([]);
+  const [incomes, setIncome] = useState<IncomeType[]>([]);
 
   const [totalExpensesAmount, setTotalExpensesAmount] = useState(0);
 
   const [totalIncomeAmount, setTotalIncomeAmount] = useState(0);
 
-  const updateIncomeAndExpenses = useCallback(async (month, year) => {
-    try {
-      const [fetchedExpenses, fetchedIncome, fetchedHistory] =
-        await Promise.all([
-          fetchExpenses(month, year, "all"),
-          fetchIncome(month, year, "all"),
-          getHistory(month, year),
-        ]);
+  const updateIncomeAndExpenses = useCallback(
+    async (month: string, year: string) => {
+      try {
+        const [fetchedExpenses, fetchedIncome, fetchedHistory] =
+          await Promise.all([
+            fetchExpenses(month, year, "all"),
+            fetchIncome(month, year, "all"),
+            getHistory(month, year),
+          ]);
 
-      setTotalExpensesAmount(getTotalExpensesByMonthAndYear(fetchedExpenses));
-      setTotalIncomeAmount(getTotalIncomeByMonthAndYear(fetchedIncome));
-      setHistoryTransaction(fetchedHistory);
+        setTotalExpensesAmount(getTotalExpensesByMonthAndYear(fetchedExpenses));
+        setTotalIncomeAmount(getTotalIncomeByMonthAndYear(fetchedIncome));
+        setHistoryTransaction(fetchedHistory);
 
-      setExpenses(fetchedExpenses);
-      setIncome(fetchedIncome);
-    } catch (err) {
-      console.log(err);
-    }
-  }, []);
+        setExpenses(fetchedExpenses);
+        setIncome(fetchedIncome);
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    [],
+  );
 
-  const changeMonth = (e) => {
+  const changeMonth = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedMonth = e.target.value;
     setDashboardMonth(selectedMonth);
 
     updateIncomeAndExpenses(selectedMonth, dashboardYear);
   };
 
-  const changeYear = (e) => {
+  const changeYear = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedYear = e.target.value;
     setDashboardYear(selectedYear);
 
@@ -74,7 +82,6 @@ export default function Dashboard() {
   const MonthSelect = () => {
     return (
       <select
-        placeholder="1"
         value={dashboardMonth}
         onChange={(e) => changeMonth(e)}
         className="monthSelector"
@@ -99,7 +106,6 @@ export default function Dashboard() {
   const YearSelect = () => {
     return (
       <select
-        placeholder="2023"
         value={dashboardYear}
         onChange={(e) => changeYear(e)}
         className="monthSelector"
@@ -118,8 +124,8 @@ export default function Dashboard() {
     dashboardYear === "all" && dashboardMonth === "all"
       ? "every month and every year"
       : dashboardYear === "all" && dashboardMonth !== "all"
-      ? dictForMonth.get(dashboardMonth) + " , every year"
-      : dictForMonth.get(dashboardMonth) + " , " + dashboardYear;
+        ? dictForMonth.get(dashboardMonth) + " , every year"
+        : dictForMonth.get(dashboardMonth) + " , " + dashboardYear;
 
   return (
     <div className="dashboardContainer">
@@ -136,7 +142,7 @@ export default function Dashboard() {
         </div>
       </div>
       <Chart
-        income={income}
+        incomes={incomes}
         expenses={expenses}
         dashboardMonth={dashboardMonth}
         dashboardYear={dashboardYear}

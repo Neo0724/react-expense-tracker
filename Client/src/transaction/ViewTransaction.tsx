@@ -2,6 +2,8 @@ import { useEffect, useState, useCallback } from "react";
 import { useGlobalContext } from "../Context/useGlobalContext";
 import { ExpenseContainer } from "./IncomeAndExpenseContainer";
 import { IncomeContainer } from "./IncomeAndExpenseContainer";
+import { IncomeType } from "../types/Income";
+import { ExpenseType } from "../types/Expense";
 
 export default function ViewTransaction() {
   const { fetchExpenses, fetchIncome } = useGlobalContext();
@@ -21,29 +23,32 @@ export default function ViewTransaction() {
     expense: "all",
   });
 
-  const [expenses, setExpenses] = useState([]);
+  const [expenses, setExpenses] = useState<ExpenseType[]>([]);
 
-  const [income, setIncome] = useState([]);
+  const [income, setIncome] = useState<IncomeType[]>([]);
 
   const updateIncome = useCallback(
-    async (month, year, type) => {
+    async (month: string, year: string, type: string) => {
       const fetchedIncome = await fetchIncome(month, year, type);
 
       setIncome(fetchedIncome);
     },
-    [fetchIncome]
+    [fetchIncome],
   );
 
   const updateExpenses = useCallback(
-    async (month, year, type) => {
+    async (month: string, year: string, type: string) => {
       const fetchedExpenses = await fetchExpenses(month, year, type);
 
       setExpenses(fetchedExpenses);
     },
-    [fetchExpenses]
+    [fetchExpenses],
   );
 
-  const changeMonth = (e, category) => {
+  const changeMonth = (
+    e: React.ChangeEvent<HTMLSelectElement>,
+    category: string,
+  ) => {
     const selectedMonth = e.target.value;
 
     setTransactionMonth((prev) => ({
@@ -52,7 +57,10 @@ export default function ViewTransaction() {
     }));
   };
 
-  const changeYear = (e, category) => {
+  const changeYear = (
+    e: React.ChangeEvent<HTMLSelectElement>,
+    category: string,
+  ) => {
     const selectedYear = e.target.value;
 
     setTransactionYear((prev) => ({
@@ -61,7 +69,10 @@ export default function ViewTransaction() {
     }));
   };
 
-  const changeTransactionType = (e, category) => {
+  const changeTransactionType = (
+    e: React.ChangeEvent<HTMLSelectElement>,
+    category: string,
+  ) => {
     const selectedTransactionType = e.target.value;
 
     setTransactionType((prev) => ({
@@ -74,7 +85,7 @@ export default function ViewTransaction() {
     updateIncome(
       transactionMonth.income,
       transactionYear.income,
-      transactionType.income
+      transactionType.income,
     );
   }, [
     transactionMonth.income,
@@ -87,7 +98,7 @@ export default function ViewTransaction() {
     updateExpenses(
       transactionMonth.expense,
       transactionYear.expense,
-      transactionType.expense
+      transactionType.expense,
     );
   }, [
     transactionMonth.expense,
@@ -96,10 +107,13 @@ export default function ViewTransaction() {
     updateExpenses,
   ]);
 
-  const MonthSelect = ({ category }) => {
+  const MonthSelect = ({
+    category,
+  }: {
+    category: ["income", "expense"][number];
+  }) => {
     return (
       <select
-        placeholder="1"
         value={
           category === "income"
             ? transactionMonth.income
@@ -125,10 +139,13 @@ export default function ViewTransaction() {
     );
   };
 
-  const YearSelect = ({ category }) => {
+  const YearSelect = ({
+    category,
+  }: {
+    category: ["income", "expense"][number];
+  }) => {
     return (
       <select
-        placeholder="2023"
         value={
           category === "income"
             ? transactionYear.income
@@ -147,10 +164,13 @@ export default function ViewTransaction() {
     );
   };
 
-  const TransactionTypeSelect = ({ category }) => {
+  const TransactionTypeSelect = ({
+    category,
+  }: {
+    category: ["income", "expense"][number];
+  }) => {
     return (
       <select
-        placeholder="all"
         value={
           category === "income"
             ? transactionType.income
@@ -159,7 +179,9 @@ export default function ViewTransaction() {
         onChange={(e) => changeTransactionType(e, category)}
         className="monthSelector"
       >
-        <option value="all">all</option>
+        <option value="all" defaultValue="all">
+          all
+        </option>
         {category === "income" ? (
           <>
             <option value="salary">Salary</option>
@@ -212,7 +234,13 @@ export default function ViewTransaction() {
           ) : (
             income.map((income) => {
               const randomID = crypto.randomUUID();
-              return <IncomeContainer income={income} key={randomID} />;
+              return (
+                <IncomeContainer
+                  income={income}
+                  setIncome={setIncome}
+                  key={randomID}
+                />
+              );
             })
           )}
         </div>
@@ -244,7 +272,13 @@ export default function ViewTransaction() {
           ) : (
             expenses.map((expense) => {
               const randomID = crypto.randomUUID();
-              return <ExpenseContainer expense={expense} key={randomID} />;
+              return (
+                <ExpenseContainer
+                  expense={expense}
+                  setExpenses={setExpenses}
+                  key={randomID}
+                />
+              );
             })
           )}
         </div>

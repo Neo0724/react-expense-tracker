@@ -1,16 +1,15 @@
 import { useNavigate } from "react-router";
-import { useCookies } from "react-cookie";
 import NavbarComponent from "./NavbarComponent";
 import { useGlobalContext } from "../Context/useGlobalContext";
 import loginIcon from "/login.png";
 import signoutIcon from "/signout.png";
+import { useAuthContext } from "../Context/useAuthContext";
 
 export default function Navbar() {
-  const [cookies, setCookies] = useCookies(["access_token"]);
-
   const navigate = useNavigate();
 
   const { navbar, setNavbar } = useGlobalContext();
+  const { isAuthenticated, logout } = useAuthContext();
 
   const username = localStorage.getItem("Username");
 
@@ -28,8 +27,8 @@ export default function Navbar() {
   };
 
   const handleSignOut = async () => {
+    logout();
     resetNavbar();
-    setCookies("access_token", "");
     localStorage.clear();
     navigate("/login");
   };
@@ -55,14 +54,12 @@ export default function Navbar() {
           src={loginIcon}
           alt="loginIcon"
           onClick={() => {
-            if (cookies.access_token) {
-              return;
+            if (!isAuthenticated) {
+              handleLogin();
             }
-
-            handleLogin();
           }}
         ></img>
-        {cookies.access_token && <div className="userName">{username}</div>}
+        {isAuthenticated && <div className="userName">{username}</div>}
       </div>
       {navbar.map((item, index) => {
         return (
@@ -77,7 +74,7 @@ export default function Navbar() {
           />
         );
       })}
-      {cookies.access_token && (
+      {isAuthenticated && (
         <button
           className={`mt-auto flex flex-col md:flex-row justify-center items-center gap-3 !border-none !m-0 max-w-17 w-full md:!mt-auto md:!max-w-full md:h-14 md:text-[16px] text-[13px] min-w-fit opacity-70`}
           onClick={handleSignOut}
