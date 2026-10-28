@@ -3,6 +3,7 @@ package utils
 import (
 	"errors"
 	"log"
+	"net/http"
 	"os"
 	"time"
 
@@ -77,6 +78,8 @@ func Validate(tokenString string) (*UserJWTClaims, error) {
 }
 
 func SetTokenCookie(c *gin.Context, refreshToken string, accessToken string) {
+	c.SetSameSite(http.SameSiteNoneMode)
+
 	c.SetCookie(
 		"refresh_token",
 		refreshToken,
@@ -98,6 +101,8 @@ func SetTokenCookie(c *gin.Context, refreshToken string, accessToken string) {
 }
 
 func UnsetTokenCookie(c *gin.Context) {
+	c.SetSameSite(http.SameSiteNoneMode)
+
 	c.SetCookie(
 		"refresh_token",
 		"",
