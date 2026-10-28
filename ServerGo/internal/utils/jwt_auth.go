@@ -78,12 +78,23 @@ func Validate(tokenString string) (*UserJWTClaims, error) {
 }
 
 func SetTokenCookie(c *gin.Context, refreshToken string, accessToken string) {
+	if err := godotenv.Load(); err != nil {
+		log.Println("No .env file found or error reading it:", err)
+	}
+
+	var domain string = ""
+
+	if domain = os.Getenv("DOMAIN"); domain == "" {
+		log.Fatal("You must set the MONGODB_URL env")
+		domain = "localhost"
+	}
+
 	c.SetCookie(
 		"refresh_token",
 		refreshToken,
 		604800,
 		"/api/v1/auth/refresh",
-		"localhost",
+		domain,
 		true,
 		true,
 	)
@@ -92,19 +103,30 @@ func SetTokenCookie(c *gin.Context, refreshToken string, accessToken string) {
 		accessToken,
 		1800,
 		"/api/v1/",
-		"localhost",
+		domain,
 		true,
 		true,
 	)
 }
 
 func UnsetTokenCookie(c *gin.Context) {
+	if err := godotenv.Load(); err != nil {
+		log.Println("No .env file found or error reading it:", err)
+	}
+
+	var domain string = ""
+
+	if domain = os.Getenv("DOMAIN"); domain == "" {
+		log.Fatal("You must set the MONGODB_URL env")
+		domain = "localhost"
+	}
+
 	c.SetCookie(
 		"refresh_token",
 		"",
 		-1,
 		"/api/v1/auth/refresh",
-		"localhost",
+		domain,
 		true,
 		true,
 	)
@@ -113,7 +135,7 @@ func UnsetTokenCookie(c *gin.Context) {
 		"",
 		-1,
 		"/api/v1/",
-		"localhost",
+		domain,
 		true,
 		true,
 	)
