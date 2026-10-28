@@ -1,30 +1,29 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
-import axios from "axios";
-import { useCookies } from "react-cookie";
 import { Link } from "react-router-dom";
 import { useGlobalContext } from "../Context/useGlobalContext";
+import { customAxios } from "../utils/custom-axios";
+import { useAuthContext } from "../Context/useAuthContext";
+import axios from "axios";
 
 export default function Login() {
-  const { BASE_URL } = useGlobalContext();
-
   const [formData, setFormData] = useState({ username: "", password: "" });
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const [_, setCookie] = useCookies(["access_token"]);
-
   const { setNavbar, navbar, setLoginErr } = useGlobalContext();
+
+  const { setIsAuthenticated } = useAuthContext();
 
   const navigate = useNavigate();
 
-  const handleUsernameChange = (e) => {
+  const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData((prev) => {
       return { ...prev, username: e.target.value };
     });
   };
 
-  const handlePasswordChange = (e) => {
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData((prev) => {
       return { ...prev, password: e.target.value };
     });
@@ -39,25 +38,29 @@ export default function Login() {
     setNavbar(updatedNavbar);
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     setIsLoading(true);
     e.preventDefault();
 
     try {
-      const res = await axios.post(`${BASE_URL}/auth/login`, {
+      const res = await customAxios.post(`/auth/login`, {
         username: formData.username,
         password: formData.password,
       });
-      setCookie("access_token", res.data.token);
-      localStorage.setItem("User ID", res.data.userID);
-      localStorage.setItem("Username", res.data.userName);
+
+      localStorage.setItem("Username", res.data.data.username);
       resetNavbar();
+      setIsAuthenticated(true);
       navigate("/dashboard");
     } catch (err) {
-      const status = err.request.status;
-      status === 404
-        ? setLoginErr({ text: "User not found", error: true })
-        : setLoginErr({ text: "Password is incorrect", error: true });
+      if (axios.isAxiosError(err)) {
+        const status = err.request.status;
+        status === 404
+          ? setLoginErr({ text: "User not found", error: true })
+          : setLoginErr({ text: "Password is incorrect", error: true });
+      } else {
+        console.error(err);
+      }
     } finally {
       setIsLoading(false);
     }

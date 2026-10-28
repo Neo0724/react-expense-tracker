@@ -1,4 +1,10 @@
-export function DashboardTransactionHistory({ history }) {
+import { HistoryType } from "../types/History";
+
+export function DashboardTransactionHistory({
+  history,
+}: {
+  history: HistoryType;
+}) {
   const style = {
     color: history.type === "income" ? "green" : "red",
   };

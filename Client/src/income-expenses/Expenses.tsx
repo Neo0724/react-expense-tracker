@@ -2,13 +2,14 @@ import Form from "./IncomeExpensesForm";
 import { useGlobalContext } from "../Context/useGlobalContext";
 import { ExpenseContainer } from "../transaction/IncomeAndExpenseContainer";
 import { useEffect, useState } from "react";
+import { ExpenseType } from "../types/Expense";
 
 export default function Expenses() {
   const { getTotalExpensesByMonthAndYear, fetchExpenses } = useGlobalContext();
 
-  const [expenses, setExpenses] = useState([]);
+  const [expenses, setExpenses] = useState<ExpenseType[]>([]);
 
-  const [totalExpenses, setTotalExpenses] = useState(0);
+  const [totalExpenses, setTotalExpenses] = useState<number>(0);
 
   useEffect(() => {
     const updateExpenses = async () => {
@@ -25,7 +26,7 @@ export default function Expenses() {
     <div className="expenseUpperContainer">
       <div className="expenseTitle">Expenses</div>
       <div className="totalExpense">
-        Total Expense: $ {parseFloat(totalExpenses).toFixed(2)}
+        Total Expense: $ {totalExpenses.toFixed(2)}
       </div>
       <div className="expenseLowerContainer">
         <Form

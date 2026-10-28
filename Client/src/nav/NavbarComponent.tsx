@@ -1,5 +1,7 @@
 /* eslint-disable react/prop-types */
+import React from "react";
 import { useNavigate } from "react-router";
+import { NavbarItemType } from "../types/NavbarItem";
 
 export default function NavbarComponent({
   id,
@@ -8,6 +10,13 @@ export default function NavbarComponent({
   icon,
   active,
   setNavbar,
+}: {
+  id: number;
+  name: string;
+  route: string;
+  icon: string;
+  active: boolean;
+  setNavbar: React.Dispatch<React.SetStateAction<NavbarItemType[]>>;
 }) {
   const navigate = useNavigate();
 
@@ -22,7 +31,7 @@ export default function NavbarComponent({
   const handleNavigate = () => {
     setNavbar((prev) => {
       let newItem = prev.map((item) =>
-        item.id === id ? { ...item, active: true } : { ...item, active: false }
+        item.id === id ? { ...item, active: true } : { ...item, active: false },
       );
       return newItem;
     });

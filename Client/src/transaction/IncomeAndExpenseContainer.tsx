@@ -1,27 +1,30 @@
-/* eslint-disable react/prop-types */
-import axios from "axios";
-import { useGlobalContext } from "../Context/useGlobalContext";
 import calenderIcon from "/calendar.png";
 import commentIcon from "/comment.png";
 import dollarIcon from "/dollar.png";
 import deleteIcon from "/delete.png";
-import { useCookies } from "react-cookie";
+import { useToastContext } from "../Context/useToastContext";
+import { customAxios } from "../utils/custom-axios";
+import { ExpenseType } from "../types/Expense";
+import { IncomeType } from "../types/Income";
 
-export function ExpenseContainer({ expense, setExpenses, setTotalExpenses }) {
+export function ExpenseContainer({
+  expense,
+  setExpenses,
+  setTotalExpenses,
+}: {
+  expense: ExpenseType;
+  setExpenses: React.Dispatch<React.SetStateAction<ExpenseType[]>>;
+  setTotalExpenses?: React.Dispatch<React.SetStateAction<number>>;
+}) {
+  const { toast } = useToastContext();
+
   let date = expense
     ? expense.date.split("T")[0].split("-").reverse().join("-")
     : "";
 
-  const { BASE_URL } = useGlobalContext();
-
-  // eslint-disable-next-line no-unused-vars
-  const [cookies, _] = useCookies(["access_token"]);
-
   const handleDelete = async () => {
     try {
-      await axios.delete(`${BASE_URL}/expense/delete-expense/${expense._id}`, {
-        headers: { authorization: cookies.access_token },
-      });
+      await customAxios.delete(`/expense/delete-expense/${expense._id}`);
 
       setExpenses((prev) => {
         return prev.filter((item) => {
@@ -29,10 +32,14 @@ export function ExpenseContainer({ expense, setExpenses, setTotalExpenses }) {
         });
       });
 
-      setTotalExpenses((prev) => {
-        return prev - expense.amount;
-      });
+      if (setTotalExpenses) {
+        setTotalExpenses((prev) => {
+          return prev - expense.amount;
+        });
+      }
+      toast("Success", "Deleted successfully!");
     } catch (err) {
+      toast("Error", "Unexpected error occured");
       console.log(err);
     }
   };
@@ -80,19 +87,22 @@ export function ExpenseContainer({ expense, setExpenses, setTotalExpenses }) {
   );
 }
 
-export function IncomeContainer({ income, setIncome, setTotalIncome }) {
+export function IncomeContainer({
+  income,
+  setIncome,
+  setTotalIncome,
+}: {
+  income: IncomeType;
+  setIncome: React.Dispatch<React.SetStateAction<IncomeType[]>>;
+  setTotalIncome?: React.Dispatch<React.SetStateAction<number>>;
+}) {
+  const { toast } = useToastContext();
+
   const date = income.date.split("T")[0].split("-").reverse().join("-");
-
-  const { BASE_URL } = useGlobalContext();
-
-  // eslint-disable-next-line no-unused-vars
-  const [cookies, _] = useCookies(["access_token"]);
 
   const handleDelete = async () => {
     try {
-      await axios.delete(`${BASE_URL}/income/delete-income/${income._id}`, {
-        headers: { authorization: cookies.access_token },
-      });
+      await customAxios.delete(`/income/delete-income/${income._id}`);
 
       setIncome((prev) => {
         let filteredIncome = prev.filter((item) => {
@@ -102,10 +112,15 @@ export function IncomeContainer({ income, setIncome, setTotalIncome }) {
         return filteredIncome;
       });
 
-      setTotalIncome((prev) => {
-        return prev - income.amount;
-      });
+      if (setTotalIncome) {
+        setTotalIncome((prev) => {
+          return prev - income.amount;
+        });
+      }
+
+      toast("Success", "Deleted successfully!");
     } catch (err) {
+      toast("Error", "Unexpected error occured");
       console.log(err);
     }
   };
@@ -152,4 +167,3 @@ export function IncomeContainer({ income, setIncome, setTotalIncome }) {
     </div>
   );
 }
-

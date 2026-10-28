@@ -1,36 +1,33 @@
-import axios from "axios";
 import { useNavigate } from "react-router";
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { useGlobalContext } from "../Context/useGlobalContext";
+import { customAxios } from "../utils/custom-axios";
 
 export default function Register() {
-  const { BASE_URL } = useGlobalContext();
-
   const [formData, setFormData] = useState({ username: "", password: "" });
 
   const navigate = useNavigate();
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleUsernameChange = (e) => {
+  const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData((prev) => {
       return { ...prev, username: e.target.value };
     });
   };
 
-  const handlePasswordChange = (e) => {
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData((prev) => {
       return { ...prev, password: e.target.value };
     });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     setIsLoading(true);
     e.preventDefault();
 
     try {
-      await axios.post(`${BASE_URL}/auth/register`, {
+      await customAxios.post(`/auth/register`, {
         username: formData.username,
         password: formData.password,
       });

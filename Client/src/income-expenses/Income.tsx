@@ -2,11 +2,12 @@ import Form from "./IncomeExpensesForm";
 import { useGlobalContext } from "../Context/useGlobalContext";
 import { IncomeContainer } from "../transaction/IncomeAndExpenseContainer";
 import { useEffect, useState } from "react";
+import { IncomeType } from "../types/Income";
 
 export default function Income() {
   const { getTotalIncomeByMonthAndYear, fetchIncome } = useGlobalContext();
 
-  const [income, setIncome] = useState([]);
+  const [income, setIncome] = useState<IncomeType[]>([]);
 
   const [totalIncome, setTotalIncome] = useState(0);
 
@@ -29,7 +30,7 @@ export default function Income() {
     <div className="incomeUpperContainer">
       <div className="incomeTitle">Income</div>
       <div className="totalIncome">
-        Total Income: $ {parseFloat(totalIncome).toFixed(2)}
+        Total Income: $ {totalIncome.toFixed(2)}
       </div>
       <div className="incomeLowerContainer">
         <Form
