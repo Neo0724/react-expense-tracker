@@ -60,14 +60,14 @@ func main() {
 
 	var frontendUrl string = ""
 
-	if frontendUrl = os.Getenv("MONGODB_URL"); frontendUrl == "" {
+	if frontendUrl = os.Getenv("FRONTEND_URL"); frontendUrl == "" {
 		log.Println("Please set the frontend URL to be added to allowed origins")
 	}
 
 	r := gin.Default()
 
 	config := cors.DefaultConfig()
-	config.AllowOrigins = []string{"http://localhost:3000", "http://localhost:5173", "http://expense-tracker-frontend:5173", frontendUrl} // Your React app origin
+	config.AllowOrigins = []string{"http://localhost:3000", "http://localhost:5173", frontendUrl} // Your React app origin
 	config.AllowMethods = []string{"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"}
 	config.AllowHeaders = []string{"Origin", "Content-Type", "Accept", "Authorization"}
 	config.AllowCredentials = true
