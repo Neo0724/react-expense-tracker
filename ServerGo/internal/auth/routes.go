@@ -1,7 +1,6 @@
 package auth
 
 import (
-	"log"
 	"net/http"
 	"time"
 
@@ -72,8 +71,6 @@ func (h *Handler) login(c *gin.Context) {
 		})
 		return
 	}
-
-	log.Println(user)
 
 	accessToken, err := utils.CreateJWTToken(user.Username, user.ID.Hex(), 30*time.Minute)
 

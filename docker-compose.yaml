@@ -8,37 +8,21 @@ services:
       - "5173:5173"
     env_file:
       - path: ./Client/.env
-    volumes:
-      - /frontend/node_modules
-    develop:
-      watch:
-        - action: sync
-          path: ./Client
-          target: /frontend
-          ignore:
-            - node_modules
-        - action: rebuild
-          path: ./Client/package.json
+    environment:
+      - VITE_BACKEND_URL=http://localhost:8080/api/v1
     depends_on:
       - server
+    restart: unless-stopped
 
   server:
     build:
-      context: ./Server
+      context: ./ServerGo
       dockerfile: ./Dockerfile
     container_name: expense-tracker-backend
     ports:
-      - "3000:3000"
-    volumes:
-      - /backend/node_modules
+      - "8080:8080"
     env_file:
-      - path: ./Server/.env
-    develop:
-      watch:
-        - action: sync
-          path: ./Server
-          target: /backend
-          ignore:
-            - node_modules
-        - action: rebuild
-          path: ./Server/package.json
+      - path: ./ServerGo/.env
+    environment:
+      - DOMAIN=localhost
+    restart: unless-stopped

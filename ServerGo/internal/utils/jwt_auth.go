@@ -18,9 +18,8 @@ type UserJWTClaims struct {
 }
 
 func getSecret() (string, error) {
-	if err := godotenv.Load(); err != nil {
-		log.Fatal("No .env file found or error reading it:", err)
-		return "", err
+	if loadErr := godotenv.Load(); loadErr != nil {
+		log.Println("No .env file found or error reading it in getSecret():", loadErr)
 	}
 
 	var secret string = ""
@@ -78,14 +77,14 @@ func Validate(tokenString string) (*UserJWTClaims, error) {
 }
 
 func SetTokenCookie(c *gin.Context, refreshToken string, accessToken string) {
-	if err := godotenv.Load(); err != nil {
-		log.Println("No .env file found or error reading it:", err)
+	if loadErr := godotenv.Load(); loadErr != nil {
+		log.Println("No .env file found or error reading it in SetTokenCookie():", loadErr)
 	}
 
 	var domain string = ""
 
 	if domain = os.Getenv("DOMAIN"); domain == "" {
-		log.Fatal("You must set the MONGODB_URL env")
+		log.Fatal("You must set your domain")
 		domain = "localhost"
 	}
 
@@ -110,14 +109,14 @@ func SetTokenCookie(c *gin.Context, refreshToken string, accessToken string) {
 }
 
 func UnsetTokenCookie(c *gin.Context) {
-	if err := godotenv.Load(); err != nil {
-		log.Println("No .env file found or error reading it:", err)
+	if loadErr := godotenv.Load(); loadErr != nil {
+		log.Println("No .env file found or error reading it in UnsetTokenCookie():", loadErr)
 	}
 
 	var domain string = ""
 
 	if domain = os.Getenv("DOMAIN"); domain == "" {
-		log.Fatal("You must set the MONGODB_URL env")
+		log.Fatal("You must set your domain")
 		domain = "localhost"
 	}
 

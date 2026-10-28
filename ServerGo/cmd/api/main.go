@@ -17,10 +17,8 @@ import (
 )
 
 func initializeDb() *mongo.Client {
-	if err := godotenv.Load(); err != nil {
-		log.Println("No .env file found or error reading it:", err)
-		// We log a warning instead of fatal because in production (Docker, Kubernetes, Heroku)
-		// variables are often passed via the OS directly, not via a .env file.
+	if loadErr := godotenv.Load(); loadErr != nil {
+		log.Println("No .env file found or error reading it in initializeDb():", loadErr)
 	}
 
 	var url string = ""
@@ -59,7 +57,7 @@ func main() {
 	r := gin.Default()
 
 	config := cors.DefaultConfig()
-	config.AllowOrigins = []string{"http://localhost:3000", "http://localhost:5173"} // Your React app origin
+	config.AllowOrigins = []string{"http://localhost:3000", "http://localhost:5173", "http://expense-tracker-frontend:5173"} // Your React app origin
 	config.AllowMethods = []string{"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"}
 	config.AllowHeaders = []string{"Origin", "Content-Type", "Accept", "Authorization"}
 	config.AllowCredentials = true

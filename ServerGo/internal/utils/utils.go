@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strconv"
 	"time"
+	_ "time/tzdata"
 
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"golang.org/x/crypto/bcrypt"

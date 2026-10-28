@@ -168,7 +168,7 @@ func (h *Handler) getExpense(c *gin.Context) {
 	loc, err := utils.RetrieveLocation()
 
 	if err != nil {
-		log.Fatalf(err.Error())
+		log.Println(err.Error())
 		c.JSON(http.StatusInternalServerError, model.Response{
 			Success: false,
 			Data:    nil,
@@ -262,7 +262,7 @@ func (h *Handler) getExpenseHistory(c *gin.Context) {
 	loc, err := utils.RetrieveLocation()
 
 	if err != nil {
-		log.Fatalf("E")
+		log.Println(err.Error())
 		c.JSON(http.StatusInternalServerError, model.Response{
 			Success: false,
 			Data:    nil,
@@ -318,8 +318,6 @@ func (h *Handler) getExpenseHistory(c *gin.Context) {
 	var historyFilterPipeline mongo.Pipeline
 
 	historyFilterPipeline = append(historyFilterPipeline, joinIncomeFilter, matchFilter, sort, limit, utils.ExpenseIncomeProjection())
-
-	log.Println(historyFilterPipeline)
 
 	cursor, err := expenseDb.Aggregate(ctx, historyFilterPipeline)
 

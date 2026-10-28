@@ -117,7 +117,7 @@ func (h *Handler) getIncome(c *gin.Context) {
 	loc, err := utils.RetrieveLocation()
 
 	if err != nil {
-		log.Fatalf(err.Error())
+		log.Println(err.Error())
 		c.JSON(http.StatusInternalServerError, model.Response{
 			Success: false,
 			Data:    nil,
