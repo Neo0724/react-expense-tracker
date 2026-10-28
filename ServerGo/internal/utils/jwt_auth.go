@@ -77,23 +77,12 @@ func Validate(tokenString string) (*UserJWTClaims, error) {
 }
 
 func SetTokenCookie(c *gin.Context, refreshToken string, accessToken string) {
-	if loadErr := godotenv.Load(); loadErr != nil {
-		log.Println("No .env file found or error reading it in SetTokenCookie():", loadErr)
-	}
-
-	var domain string = ""
-
-	if domain = os.Getenv("DOMAIN"); domain == "" {
-		log.Fatal("You must set your domain")
-		domain = "localhost"
-	}
-
 	c.SetCookie(
 		"refresh_token",
 		refreshToken,
 		604800,
 		"/api/v1/auth/refresh",
-		domain,
+		"",
 		true,
 		true,
 	)
@@ -102,30 +91,19 @@ func SetTokenCookie(c *gin.Context, refreshToken string, accessToken string) {
 		accessToken,
 		1800,
 		"/api/v1/",
-		domain,
+		"",
 		true,
 		true,
 	)
 }
 
 func UnsetTokenCookie(c *gin.Context) {
-	if loadErr := godotenv.Load(); loadErr != nil {
-		log.Println("No .env file found or error reading it in UnsetTokenCookie():", loadErr)
-	}
-
-	var domain string = ""
-
-	if domain = os.Getenv("DOMAIN"); domain == "" {
-		log.Fatal("You must set your domain")
-		domain = "localhost"
-	}
-
 	c.SetCookie(
 		"refresh_token",
 		"",
 		-1,
 		"/api/v1/auth/refresh",
-		domain,
+		"",
 		true,
 		true,
 	)
@@ -134,7 +112,7 @@ func UnsetTokenCookie(c *gin.Context) {
 		"",
 		-1,
 		"/api/v1/",
-		domain,
+		"",
 		true,
 		true,
 	)
